@@ -1,0 +1,36 @@
+
+<div class="row margin-5">
+
+
+<div class="col-sm-4 noPadding">
+  <div class="card">
+    <div class="card-header">Elements</div>
+    <div class="card-body">
+      <!-- <dynamic-form-builder [fields]="getFields()"></dynamic-form-builder> -->
+
+      <div *ngFor="let item of jsonData">
+        <div [dndDraggable]="item" (dndEnd)="onDragEnd(item.responseType)" class="col-sm-12 element"  >{{ item.responseType }}</div>
+        <!-- <div class="col-sm-12 element" (click)="addFormElement(item.responseType)" >Number</div> -->
+      </div>
+      <!-- <div class="col-sm-12 element" (click)="addFormElement('input')" >Input</div>
+      <div class="col-sm-12 element" (click)="addFormElement('number')" >Number</div> -->
+    </div>
+  </div>
+</div>
+<div class="col-sm-8 noPadding">
+  <div class="card">
+    <div class="card-header">Dynamic Forms</div>
+    <div dndDropzone class="card-body">
+        <form (ngSubmit)="onSubmit(this.form.value)" [formGroup]="form" class="form-horizontal">
+      <dynamic-form-builder [fields]="getFields()" [form]="form"></dynamic-form-builder>
+      </form>
+    </div>
+  </div>
+</div>
+</div>
+<div class="col-sm-12">
+ <!-- <div class="form-group" [formGroup]="form">
+    <label >JSON</label>
+    <textarea formControlName="fields" class="form-control" rows="3"></textarea>
+  </div> -->
+</div>

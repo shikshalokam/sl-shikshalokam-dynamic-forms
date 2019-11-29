@@ -1,0 +1,27 @@
+p {
+    font-family: Lato;
+  }
+  .noPadding {
+      padding: 0px;
+  }
+  .margin-5 {
+      margin-top:5%;
+  }
+  .element {
+      border: 1px solid #ccc;
+      padding: 10px;
+      background: #daa6a6;
+      color: #333;
+      margin: 10px;
+      text-align: left;
+      text-transform: capitalize;
+  }
+  .form-group {
+      margin-bottom: 0.5rem;
+      border: 1px solid #ece7e7;
+  }
+  .cursor-pntr {
+      cursor: pointer;
+  }
+  
+  
