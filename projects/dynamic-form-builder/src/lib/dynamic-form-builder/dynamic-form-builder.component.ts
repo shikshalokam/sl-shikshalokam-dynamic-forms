@@ -35,12 +35,17 @@ export class DynamicFormBuilderComponent implements OnInit {
 
       console.log(data,"this.form before");
 
-      this.onFieldUpdate.emit(data);
+     let transferData =  {
+        action:"copy",
+        data:data
+      }
+
+      this.onFieldUpdate.emit(transferData);
       
     //  data.field = (this.fields.length+1)+"question";
 
     //  console.log("data",data)
-      this.formBuild(obj);
+      // this.formBuild(obj);
 
     }else if(data.action="delete"){
 
@@ -83,48 +88,48 @@ export class DynamicFormBuilderComponent implements OnInit {
     // this.formBuild();
   }
 
-  formBuild(item){
-    let fieldsCtrls = {};
+//   formBuild(item){
+//     let fieldsCtrls = {};
 
-    this.form = new FormGroup(fieldsCtrls);
+//     this.form = new FormGroup(fieldsCtrls);
 
-    // var formData = this.fields;
+//     // var formData = this.fields;
 
-    // console.log("this.fields",this.fields); 
+//     // console.log("this.fields",this.fields); 
 
-    let len = this.fields.length + 1;
+//     let len = this.fields.length + 1;
 
 
-    var obj = {
-      "position":len,
-      "field": len + "question",
-      "type": item.type,
-      "label": item.label,
-      "placeholder": item.placeholder,
-      "validations":item.validations  
+//     var obj = {
+//       "position":len,
+//       "field": len + "question",
+//       "type": item.type,
+//       "label": item.label,
+//       "placeholder": item.placeholder,
+//       "validations":item.validations  
 
-    }
+//     }
    
-    this.fields.push(obj);
-   this.fields.forEach(function(f){
-    // console.log("f.type", f);
+//     this.fields.push(obj);
+//    this.fields.forEach(function(f){
+//     // console.log("f.type", f);
 
-    if (f['type'] != 'checkbox') {
+//     if (f['type'] != 'checkbox') {
    
-      fieldsCtrls[f['field']] = new FormControl(f['value'] || '')
-    } else {
+//       fieldsCtrls[f['field']] = new FormControl(f['value'] || '')
+//     } else {
 
-      let opts = {};
-      for (let opt of f['options']) {
+//       let opts = {};
+//       for (let opt of f['options']) {
 
-        opts[opt.key] = new FormControl(opt.label);
-      }
-      fieldsCtrls[f['field']] = new FormGroup(opts)
-    }
-  });
+//         opts[opt.key] = new FormControl(opt.label);
+//       }
+//       fieldsCtrls[f['field']] = new FormGroup(opts)
+//     }
+//   });
 
-  this.form = new FormGroup(fieldsCtrls);
+//   this.form = new FormGroup(fieldsCtrls);
 
-  // console.log("fieldsCtrls",fieldsCtrls);
-}
+//   // console.log("fieldsCtrls",fieldsCtrls);
+// }
 }

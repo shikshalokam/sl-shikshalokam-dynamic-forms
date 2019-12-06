@@ -17,7 +17,7 @@ import { HttpClientModule } from '@angular/common/http';
 
 // import { DragulaModule } from 'ng2-dragula';
 
-import  { MatButtonModule } from '@angular/material'
+import  { MatButtonModule,MatDatepickerModule } from '@angular/material'
 
 import { DndModule } from 'ngx-drag-drop';
 
@@ -34,7 +34,8 @@ import { DndModule } from 'ngx-drag-drop';
     // DragulaModule.forRoot()
     // DragAndDropModule
     DndModule,
-    MatButtonModule
+    MatButtonModule,
+    MatDatepickerModule
   ],
   exports: [DynamicFormBuilderComponent]
 })

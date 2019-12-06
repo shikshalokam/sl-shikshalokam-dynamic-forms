@@ -48,7 +48,7 @@ import { THIS_EXPR } from '@angular/compiler/src/output/output_ast';
     </div>
 
     <div class="custom-control custom-radio">
-  <input type="checkbox" class="custom-control-input"  [(ngModel)]="required"  id="defaultChecked" name="defaultExampleRadios">
+  <input type="checkbox" class="custom-control-input"  [(ngModel)]="required"  id=" " name="defaultExampleRadios">
   <label class="custom-control-label" for="defaultChecked">is Reqired ?</label>
 </div>
   
@@ -192,7 +192,10 @@ export class FieldBuilderComponent implements OnInit {
     // this.activeModelData = data;
 
     this.label = item.label;
-    this.type = item.type;
+    // if(item.validations.required){
+    //   this.type = 
+    // }
+    this.type = item.validations.required;
     this.placeholder = item.placeholder;
     this.options = item.options;
 

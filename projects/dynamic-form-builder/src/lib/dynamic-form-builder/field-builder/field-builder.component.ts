@@ -7,7 +7,9 @@ import { THIS_EXPR } from '@angular/compiler/src/output/output_ast';
   selector: 'field-builder',
   template: `
   <style>
-
+  .mat-slider-horizontal {
+    min-width: 80% !important;
+  }
   .example-radio-group {
     display: flex;
     flex-direction: block;
@@ -44,6 +46,12 @@ import { THIS_EXPR } from '@angular/compiler/src/output/output_ast';
         </div>
       </div>
       <div class="col-sm-12 form-group">
+      <label for="label">Hint/Description</label>
+        <div class="input-group">
+        <input type="text" class="form-control" [(ngModel)]="description" name="Hint or Description of question">
+        </div>
+      </div>
+      <div class="col-sm-12 form-group">
     <label for="label">Input Type</label>
       <select class="form-control" [(ngModel)]="type" name="type">
         <option value="text">text</option>
@@ -51,20 +59,52 @@ import { THIS_EXPR } from '@angular/compiler/src/output/output_ast';
         <option value="radio">radio</option>
       </select>
     </div>
+    <div class="col-sm-12 form-group" *ngIf="type=='slider'">
+    <div class="col-sm-12 form-group">
+      <label for="label">Min</label>
+      <input type="text" class="form-control" [(ngModel)]="min" name="min value">
+    </div>
+    <div class="col-sm-12 form-group">
+      <label for="label">Max</label>
+      <input type="text" class="form-control" [(ngModel)]="max" name="max value">
+    </div>
+    </div>
+    <div class="col-sm-12 form-group" *ngIf="type=='date'">
+   
+
+      <mat-form-field>
+  <input matInput [matDatepicker]="picker" [(ngModel)]="minDate" placeholder="Choose a min date">
+  <mat-datepicker-toggle matSuffix [for]="picker"></mat-datepicker-toggle>
+  <mat-datepicker #picker></mat-datepicker>
+</mat-form-field>
+      <mat-form-field>
+  <input matInput [matDatepicker]="pickerMaxDate" [(ngModel)]="maxDate" placeholder="Choose a max date">
+  <mat-datepicker-toggle matSuffix [for]="pickerMaxDate"></mat-datepicker-toggle>
+  <mat-datepicker #pickerMaxDate></mat-datepicker>
+</mat-form-field>
+
+
+    </div>
     <div class="col-sm-12 form-group" *ngIf="type=='radio' || type=='checkbox' || type=='dropdown'">
-    <label for="label">Options</label>
+    <label for="label" class="col-sm-12">Options</label>
     
-    <ul class="col" *ngFor="let opt of options">
+    <ul class="col" *ngFor="let opt of options;let index">
      <li class="">
-      {{opt.label}}
+      <span>{{opt.label}} </span><span style="    color: #333;
+      margin-left: 30px;
+      font-size: 17px;
+      padding: 1px 7px;" (click)="deleteOption(opt,index)">X</span>
     </li>
     
     </ul>
-    <div class="col"> 
+    <div class="form-group col-sm-6"> 
     
-    <input type="tex" name="newOption" placeholder="Label" class="col-sm-4" [(ngModel)]="newOptionLabel">
-    <input type="tex" name="newOption" placeholder="key" class="col-sm-4" [(ngModel)]="newOptionKey">
-  <div class="col-sm-2 btn btn-primary" (click)="AddNewOptions()">Add</div>
+    <input type="tex" name="newOption" placeholder="Label" class="col-sm-4 form-control" style="margin-bottom: 10px;" [(ngModel)]="newOptionLabel">
+    <input type="tex" name="newOption" placeholder="key" class="col-sm-4 form-control" [(ngModel)]="newOptionKey">
+  
+  <button mat-flat-button color="primary" style="margin-top: 10px;"  (click)="AddNewOptions()">
+Add
+</button>
     </div>
     </div>
 
@@ -75,10 +115,10 @@ import { THIS_EXPR } from '@angular/compiler/src/output/output_ast';
   aria-labelledby="example-radio-group-label"
   class="example-radio-group"
   [(ngModel)]="required">
-  <mat-radio-button class="example-radio-button" value="Yes">
+  <mat-radio-button class="example-radio-button" [value]=true>
     Yes
   </mat-radio-button>
-  <mat-radio-button class="example-radio-button" value="No">
+  <mat-radio-button class="example-radio-button" [value]=false>
     No
   </mat-radio-button>
 </mat-radio-group>
@@ -104,6 +144,8 @@ Save
     <div class="col-md-12" [ngSwitch]="field.type">
     <textbox *ngSwitchCase="'number'" [field]="field" [form]="form"></textbox>
     <textbox *ngSwitchCase="'text'" [field]="field" [form]="form"></textbox>
+    <date *ngSwitchCase="'date'" [field]="field" [form]="form"></date>
+    <slider *ngSwitchCase="'slider'" [field]="field" [form]="form"></slider>
       <dropdown *ngSwitchCase="'dropdown'" [field]="field" [form]="form"></dropdown>
       <checkbox *ngSwitchCase="'checkbox'" [field]="field" [form]="form"></checkbox>
       <radio *ngSwitchCase="'radio'" [field]="field" [form]="form"></radio>
@@ -141,6 +183,12 @@ export class FieldBuilderComponent implements OnInit {
   required:any;
   openEdit:boolean = false;
   _id:any;
+  description:any;
+  minDate:any;
+  maxDate:any;
+  min:any;
+  max:any;
+
 
   // private modalRef: NgbModalRef;
   @ViewChild('content',{static:false}) myModal: ElementRef;
@@ -166,18 +214,23 @@ export class FieldBuilderComponent implements OnInit {
     console.log("item ---",  item);
 
      this.activeModelData = "";
-    // this.activeModelData = data;
-
     this.label = item.label;
     this.type = item.type;
     this.placeholder = item.placeholder;
     this.options = item.options;
     this._id= item._id;
-  
 
+    this.required = item.validations.required;
+    this.description = item.description;
 
-
-    // this.required = data
+    if(item.type=="date"){
+      this.minDate = item.validations.minDate;
+      this.maxDate = item.validations.maxDate
+    }
+    else if(item.type=="sliser"){
+      this.min = item.validations.min;
+      this.max = item.validations.max;
+    }
 
     this.required = this.field.validations.required;
     
@@ -219,10 +272,19 @@ export class FieldBuilderComponent implements OnInit {
         options:this.options,
         validations:this.validations,
         field:this.field,
-        _id:this._id
+        _id:this._id,
+        description:this.description
       }
 
-      console.log("obj",obj);
+      if(this.type=='date'){
+        obj['minDate'] = this.minDate;
+        obj['maxDate'] = this.maxDate
+      }else if(this.type=='slider'){
+        obj['min'] = this.min;
+        obj['max'] = this.max;
+      }
+
+      // console.log("obj",obj);
 
 
       this.sendDataToParent.emit(JSON.stringify(obj));
@@ -235,6 +297,16 @@ export class FieldBuilderComponent implements OnInit {
       this.field.type = this.type;
       this.field.placeholder = this.placeholder;
       this.field.options = this.options;
+
+      this.field.description = this.description;
+
+      if(this.type=='date'){
+        this.field.validations.minDate = this.minDate;
+        this.field.validations.maxDate = this.maxDate;
+      }else if(this.type=='slider'){
+        this.field.validations.min = this.min;
+        this.field.validations.max = this.max;
+      }
 
       // this.field.validations
 
@@ -279,6 +351,29 @@ export class FieldBuilderComponent implements OnInit {
   //   // }
   // }
 
+  deleteOption(opt,index){
+    console.log("delete",this.options);
+
+    // let newArr = [];
+    let optionsArr = this.options.filter(item=>{
+      // if(item.lable==opt.label && item.key==opt.key){
+
+      // }else{
+
+      // }
+
+      return (item.label != opt.label && item.key!= opt.key)
+      
+      // if(item.lable==opt.label && item.key==opt.key){
+
+      // }else{
+      //   return true;
+      // }
+    })
+
+    this.options = optionsArr;
+    console.log("delete new ",optionsArr);
+  }
   AddNewOptions(){
 
     if(this.newOptionKey!="" && this.newOptionLabel!="" ){
@@ -304,8 +399,9 @@ export class FieldBuilderComponent implements OnInit {
   copyElement(item){
     // this.field.push(item);
     item.action='copy';
+    console.log("field ----------",item);
     this.copyOrDeleteEvent.emit(item);
-    console.log("field",item);
+    
   }
   deleteElement(item){
 

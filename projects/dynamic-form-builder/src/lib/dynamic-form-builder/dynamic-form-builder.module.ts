@@ -11,12 +11,23 @@ import { DropDownComponent } from './atoms/dropdown';
 import { FileComponent } from './atoms/file';
 import { CheckBoxComponent } from './atoms/checkbox';
 import { RadioComponent } from './atoms/radio';
+import { DateComponent } from './atoms/date';
+import { SliderComponent } from './atoms/slider';
+
 // import {MatIconModule} from '@angular/material/icon';
 // import { NgDragDropModule } from 'ng-drag-drop';
 // import { DragAndDropModule } from 'angular-draggable-droppable';
 import { AngularFontAwesomeModule } from 'angular-font-awesome';
-import  { MatButtonModule,MatRadioModule } from '@angular/material';
+import  {
+  MatButtonModule,
+  MatRadioModule,
+  MatDatepickerModule,
+  MatFormFieldModule,
+  MatInputModule ,
+  MatSliderModule
+} from '@angular/material';
 import { DragDropModule } from "@angular/cdk/drag-drop";
+
 // import {  } from '@angular/cdk/'
 
 
@@ -27,6 +38,10 @@ import { DragDropModule } from "@angular/cdk/drag-drop";
     FormsModule,
     MatButtonModule,
     MatRadioModule,
+    MatDatepickerModule,
+    MatFormFieldModule,
+    MatInputModule,
+    MatSliderModule,
     // MatIconModule
     AngularFontAwesomeModule,
     DragDropModule
@@ -38,7 +53,10 @@ import { DragDropModule } from "@angular/cdk/drag-drop";
     DropDownComponent,
     CheckBoxComponent,
     FileComponent,
-    RadioComponent
+    RadioComponent,
+    DateComponent,
+    SliderComponent
+    
   ],
   exports: [DynamicFormBuilderComponent],
   providers: []

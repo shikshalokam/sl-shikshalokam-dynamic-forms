@@ -39,7 +39,7 @@ p {
           <!-- <dynamic-form-builder [fields]="getFields()"></dynamic-form-builder> -->
     
           <div *ngFor="let item of jsonData">
-            <div *ngIf="item.responseType=='checkbox'" [dndDraggable]="item" (dndEnd)="onDragEnd(item.responseType)" class="col-sm-12 element"  >{{ item.responseType }}</div>
+            <div *ngIf="item.responseType=='checkbox'" [dndDraggable]="item" (onDrop)="onDragEnd(item.responseType)" class="col-sm-12 element"  >{{ item.responseType }}</div>
             <!-- <div class="col-sm-12 element" (click)="addFormElement(item.responseType)" >Number</div> -->
           </div>
           <!-- <div class="col-sm-12 element" (click)="addFormElement('input')" >Input</div>
