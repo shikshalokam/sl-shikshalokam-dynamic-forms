@@ -25,7 +25,7 @@ import { DndModule } from 'ngx-drag-drop';
 
 import { LibComponent } from 'src/app/lib.component';
 
-import  { DynamicFormBuilderModule1 } from 'dynamic-form-builder';
+// import  { DynamicFormBuilderModule1 } from 'dynamic-form-builder';
 
 
 
@@ -40,7 +40,7 @@ import  { DynamicFormBuilderModule1 } from 'dynamic-form-builder';
     // DragAndDropModule
     DndModule,
     // MyLibModule,
-    DynamicFormBuilderModule1
+    // DynamicFormBuilderModule1
   ],
   declarations: [ LibComponent ],
   bootstrap:    [ LibComponent ]
