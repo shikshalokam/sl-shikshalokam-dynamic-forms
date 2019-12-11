@@ -24,7 +24,8 @@ import  {
   MatDatepickerModule,
   MatFormFieldModule,
   MatInputModule ,
-  MatSliderModule
+  MatSliderModule,
+  MatSelectModule
 } from '@angular/material';
 import { DragDropModule } from "@angular/cdk/drag-drop";
 
@@ -42,6 +43,7 @@ import { DragDropModule } from "@angular/cdk/drag-drop";
     MatFormFieldModule,
     MatInputModule,
     MatSliderModule,
+    MatSelectModule,
     // MatIconModule
     AngularFontAwesomeModule,
     DragDropModule

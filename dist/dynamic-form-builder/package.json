@@ -1,0 +1,22 @@
+{
+  "name": "dynamic-form-builder",
+  "version": "0.0.1",
+  "peerDependencies": {
+    "@angular/common": "^7.0.0",
+    "@angular/core": "^7.0.0"
+  },
+  "dependencies": {
+    "ngx-drag-drop": "^2.0.0",
+    "tslib": "^1.9.0"
+  },
+  "main": "bundles/dynamic-form-builder.umd.js",
+  "module": "fesm5/dynamic-form-builder.js",
+  "es2015": "fesm2015/dynamic-form-builder.js",
+  "esm5": "esm5/dynamic-form-builder.js",
+  "esm2015": "esm2015/dynamic-form-builder.js",
+  "fesm5": "fesm5/dynamic-form-builder.js",
+  "fesm2015": "fesm2015/dynamic-form-builder.js",
+  "typings": "dynamic-form-builder.d.ts",
+  "metadata": "dynamic-form-builder.metadata.json",
+  "sideEffects": false
+}

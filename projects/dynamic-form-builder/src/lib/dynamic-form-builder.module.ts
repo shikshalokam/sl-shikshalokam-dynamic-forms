@@ -3,7 +3,7 @@ import { DynamicFormBuilderComponent } from './dynamic-form-builder.component';
 
 import { CommonModule } from '@angular/common';
 // import { BrowserModule } from '@angular/platform-browser';
-import { ReactiveFormsModule } from '@angular/forms';
+import { ReactiveFormsModule, FormsModule } from '@angular/forms';
 // import { NgbModule } from '@ng-bootstrap/ng-bootstrap';
 // dynamic form builder
 import { DynamicFormBuilderModule } from './dynamic-form-builder/dynamic-form-builder.module';
@@ -17,7 +17,8 @@ import { HttpClientModule } from '@angular/common/http';
 
 // import { DragulaModule } from 'ng2-dragula';
 
-import  { MatButtonModule,MatDatepickerModule } from '@angular/material'
+import  { MatButtonModule,MatDatepickerModule, MatFormFieldModule,
+  MatTabsModule, MatSelectModule} from '@angular/material'
 
 import { DndModule } from 'ngx-drag-drop';
 
@@ -30,9 +31,13 @@ import { DndModule } from 'ngx-drag-drop';
      ReactiveFormsModule,
     DynamicFormBuilderModule,
     HttpClientModule,
+    FormsModule,
+    MatSelectModule,
+    MatTabsModule,
     // NgbModule.forRoot(),
     // DragulaModule.forRoot()
     // DragAndDropModule
+    MatFormFieldModule,
     DndModule,
     MatButtonModule,
     MatDatepickerModule

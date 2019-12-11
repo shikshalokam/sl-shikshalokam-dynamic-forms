@@ -55,15 +55,40 @@ import { Observable } from 'rxjs';
           </div>
         </div>
       </div>
-      <div class="col-sm-8 noPadding">
-        <div class="card">
+
+    <div class="col-sm-8 noPadding">
+    <mat-tab-group>
+    <mat-tab label="Page 1"> 
+    <div class="card">
           <div dndDropzone class="card-body" (dndDrop)="onDrop($event)">
               <form (ngSubmit)="onSubmit(this.form.value)" [formGroup]="form" class="form-horizontal">
             <dynamic-form-builder [fields]="getFields()" [form]="form"  (onFieldUpdate)="onFieldUpdate($event)" ></dynamic-form-builder>
             </form>
           </div>
         </div>
+    </mat-tab>
+    <mat-tab label="Page 2"> 
+    <div class="card">
+          <div dndDropzone class="card-body" (dndDrop)="onDrop($event)">
+              <form (ngSubmit)="onSubmit(this.form.value)" [formGroup]="form" class="form-horizontal">
+            <dynamic-form-builder [fields]="getFields()" [form]="form"  (onFieldUpdate)="onFieldUpdate($event)" ></dynamic-form-builder>
+            </form>
+          </div>
+        </div>
+     </mat-tab>
+    <mat-tab label="Page 3">
+    <div class="card">
+          <div dndDropzone class="card-body" (dndDrop)="onDrop($event)">
+              <form (ngSubmit)="onSubmit(this.form.value)" [formGroup]="form" class="form-horizontal">
+            <dynamic-form-builder [fields]="getFields()" [form]="form"  (onFieldUpdate)="onFieldUpdate($event)" ></dynamic-form-builder>
+            </form>
+          </div>
+        </div>
+     </mat-tab>
+    </mat-tab-group>
       </div>
+
+
       </div>
       <div class="col-sm-12">
       </div>`,
@@ -74,7 +99,7 @@ export class DynamicFormBuilderComponent implements OnInit {
   unsubcribe: any;
   jsonData: any;
   formData: any;
-
+  pageNumber: any;
 
   // @Input() data;
   @Input() events: Observable<any>;

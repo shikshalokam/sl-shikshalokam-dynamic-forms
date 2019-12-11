@@ -6,3 +6,9 @@
   left: 94%;
   top: 25px;cursor: pointer;z-index: 100;
 }
+
+.input-group {
+  position: relative;
+    /* display: table; */
+    border-collapse: separate;
+}
