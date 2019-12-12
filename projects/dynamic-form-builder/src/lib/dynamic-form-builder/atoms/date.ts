@@ -5,8 +5,10 @@ import { FormGroup } from '@angular/forms';
 @Component({
     selector: 'date',
     template: `
-      <div [formGroup]="form" >
-    
+      <div [formGroup]="form">
+      <label class="col-md-12 form-control-label" [attr.for]="field.label">
+      {{field.label}}
+    </label>
         <input *ngIf="!field.multiline" [attr.type]="field.type" class="form-control"  [id]="field.field" [name]="field.field" [formControlName]="field.field">
         <textarea *ngIf="field.multiline" [class.is-invalid]="isDirty && !isValid" [formControlName]="field.field" [id]="field.field"
         rows="20" class="form-control" [placeholder]="field.placeholder"></textarea>

@@ -1,4 +1,4 @@
-import { EventEmitter, Component, Input, Output, ViewChild, NgModule } from '@angular/core';
+import { EventEmitter, Component, Input, Output, ViewChild, ChangeDetectorRef, NgModule } from '@angular/core';
 import { FormGroup, FormControl, FormBuilder, ReactiveFormsModule, FormsModule } from '@angular/forms';
 import { HttpClient, HttpClientModule } from '@angular/common/http';
 import 'rxjs';
@@ -96,6 +96,9 @@ class DynamicFormBuilderComponent {
                 "responseType": "date"
             }, {
                 "responseType": "slider"
+            },
+            {
+                "responseType": "multiselect"
             }
         ];
     }
@@ -117,6 +120,173 @@ class DynamicFormBuilderComponent {
      */
     ngDistroy() {
         this.unsubcribe();
+    }
+    /**
+     * @param {?} ele
+     * @param {?} len
+     * @return {?}
+     */
+    getToolObj(ele, len) {
+        /** @type {?} */
+        let obj = {};
+        if (ele == 'text') {
+            obj = {
+                "position": len,
+                "field": len + "question",
+                "type": "text",
+                "label": len + ". question",
+                "placeholder": "Please enter your question here",
+                "description": "",
+                "validations": {
+                    "required": true,
+                    "minLenght": "",
+                    "maxLength": ""
+                }
+            };
+        }
+        else if (ele == 'number') {
+            obj = {
+                "field": len + "question",
+                "type": "number",
+                "label": len + ". question",
+                "placeholder": "Please enter your question here",
+                "description": "",
+                "validations": {
+                    "required": true,
+                    "minLenght": "",
+                    "maxLength": ""
+                }
+            };
+        }
+        else if (ele == 'radio') {
+            obj = {
+                field: len + "question",
+                type: 'radio',
+                name: len + ". question",
+                label: len + ". question",
+                description: "",
+                required: true,
+                "validations": {
+                    "required": true,
+                    "minLenght": "",
+                    "maxLength": ""
+                },
+                options: [
+                    { key: 'option1', label: 'Label 1' },
+                    { key: 'option2', label: 'Label 1' }
+                ]
+            };
+        }
+        else if (ele == "checkbox") {
+            obj = {
+                field: len + "question",
+                type: "checkbox",
+                name: len + ". question",
+                label: len + ". question",
+                description: "",
+                required: true,
+                "validations": {
+                    "required": true,
+                    "minLenght": "",
+                    "maxLength": ""
+                },
+                options: [
+                    { key: 'option1', label: 'option 1' },
+                    { key: 'option2', label: 'option 2' }
+                ]
+            };
+        }
+        else if (ele == "dropdown") {
+            obj = {
+                field: len + "question",
+                type: 'dropdown',
+                name: len + ". question",
+                label: len + ". question",
+                value: 'option1',
+                description: "",
+                required: true,
+                "validations": {
+                    "required": true,
+                    "minLenght": "",
+                    "maxLength": ""
+                },
+                options: [
+                    { key: 'option1', label: 'Option 1' },
+                    { key: 'option1', label: 'Option 2' }
+                ]
+            };
+        }
+        else if (ele == "date") {
+            obj = {
+                field: len + "question",
+                type: 'date',
+                name: len + ". question",
+                label: len + ". question",
+                description: "",
+                required: true,
+                "validations": {
+                    "required": true,
+                    "minLenght": "",
+                    "maxLength": "",
+                    "maxDate": "",
+                    "minDate": "",
+                },
+                options: []
+            };
+        }
+        else if (ele == 'multiselect') {
+            if (ele == 'childDroped') {
+                /** @type {?} */
+                let childdata = {
+                    "field": len + "question",
+                    "type": ele.type,
+                    "label": len + ". question",
+                    "child": [],
+                    "placeholder": "Please add Child's here",
+                    "description": "",
+                    "validations": {
+                        "required": false,
+                        "minLenght": "",
+                        "maxLength": ""
+                    }
+                };
+            }
+            /** @type {?} */
+            let finalchild = [];
+            finalchild.push();
+            obj = {
+                "field": len + "question",
+                "type": "multiselect",
+                "label": len + ". question",
+                "child": [],
+                "placeholder": "Please add Child's here",
+                "description": "",
+                "validations": {
+                    "required": false,
+                    "minLenght": "",
+                    "maxLength": ""
+                }
+            };
+        }
+        else if (ele == "slider") {
+            obj = {
+                field: len + "question",
+                type: 'slider',
+                name: len + ". question",
+                label: len + ". question",
+                description: "",
+                required: true,
+                "validations": {
+                    "required": true,
+                    "min": "",
+                    "max": "",
+                    "maxDate": "",
+                    "minDate": "",
+                },
+                options: []
+            };
+        }
+        return obj;
     }
     /**
      * @param {?} ele
@@ -147,129 +317,7 @@ class DynamicFormBuilderComponent {
             obj = copyObj;
         }
         else {
-            if (ele == 'text') {
-                obj = {
-                    "position": len,
-                    "field": len + "question",
-                    "type": "text",
-                    "label": len + ". question",
-                    "placeholder": "Please enter your question here",
-                    "description": "",
-                    "validations": {
-                        "required": true,
-                        "minLenght": "",
-                        "maxLength": ""
-                    }
-                };
-            }
-            else if (ele == 'number') {
-                obj = {
-                    "field": len + "question",
-                    "type": "number",
-                    "label": len + ". question",
-                    "placeholder": "Please enter your question here",
-                    "description": "",
-                    "validations": {
-                        "required": true,
-                        "minLenght": "",
-                        "maxLength": ""
-                    }
-                };
-            }
-            else if (ele == 'radio') {
-                obj = {
-                    field: len + "question",
-                    type: 'radio',
-                    name: len + ". question",
-                    label: len + ". question",
-                    description: "",
-                    required: true,
-                    "validations": {
-                        "required": true,
-                        "minLenght": "",
-                        "maxLength": ""
-                    },
-                    options: [
-                        { key: 'option1', label: 'Label 1' },
-                        { key: 'option2', label: 'Label 1' }
-                    ]
-                };
-            }
-            else if (ele == "checkbox") {
-                obj = {
-                    field: len + "question",
-                    type: "checkbox",
-                    name: len + ". question",
-                    label: len + ". question",
-                    description: "",
-                    required: true,
-                    "validations": {
-                        "required": true,
-                        "minLenght": "",
-                        "maxLength": ""
-                    },
-                    options: [
-                        { key: 'option1', label: 'option 1' },
-                        { key: 'option2', label: 'option 2' }
-                    ]
-                };
-            }
-            else if (ele == "dropdown") {
-                obj = {
-                    field: len + "question",
-                    type: 'dropdown',
-                    name: len + ". question",
-                    label: len + ". question",
-                    value: 'option1',
-                    description: "",
-                    required: true,
-                    "validations": {
-                        "required": true,
-                        "minLenght": "",
-                        "maxLength": ""
-                    },
-                    options: [
-                        { key: 'option1', label: 'Option 1' },
-                        { key: 'option1', label: 'Option 2' }
-                    ]
-                };
-            }
-            else if (ele == "date") {
-                obj = {
-                    field: len + "question",
-                    type: 'date',
-                    name: len + ". question",
-                    label: len + ". question",
-                    description: "",
-                    required: true,
-                    "validations": {
-                        "required": true,
-                        "minLenght": "",
-                        "maxLength": "",
-                        "maxDate": "",
-                        "minDate": "",
-                    },
-                    options: []
-                };
-            }
-            else if (ele == "slider") {
-                obj = {
-                    field: len + "question",
-                    type: 'slider',
-                    name: len + ". question",
-                    label: len + ". question",
-                    description: "",
-                    required: true,
-                    "validations": {
-                        "required": true,
-                        "min": "",
-                        "max": "",
-                        "maxDate": "",
-                        "minDate": "",
-                    },
-                    options: []
-                };
-            }
+            obj = this.getToolObj(ele, len);
         }
         /** @type {?} */
         let elem = this.fields;
@@ -391,7 +439,9 @@ class DynamicFormBuilderComponent {
      * @return {?}
      */
     onFieldUpdate($event) {
-        // console.log("eventData ------", $event);
+        console.log("eventData sssssss------", $event.data);
+        /** @type {?} */
+        let eventObj = $event;
         /** @type {?} */
         let trnasformData = {};
         if ($event.action == "copy") {
@@ -402,6 +452,29 @@ class DynamicFormBuilderComponent {
                 action: 'delete',
                 data: $event
             };
+        }
+        else if ($event.action == "childDroped") {
+            /** @type {?} */
+            let obj = this.getToolObj($event.data.responseType, this.fields.length + 1);
+            console.log('this.fields', this.fields);
+            /** @type {?} */
+            const final = this.fields.filter((/**
+             * @param {?} item
+             * @return {?}
+             */
+            item => {
+                if (item.field === eventObj.data.mutiSelect.field) {
+                    item.child.push(obj);
+                    return item;
+                }
+                else {
+                    return item;
+                }
+            }));
+            // final.push(obj);
+            // this.fields
+            console.log('final result', final);
+            console.log("main obj", obj);
         }
         else {
             trnasformData = {
@@ -432,7 +505,7 @@ DynamicFormBuilderComponent.decorators = [
       color: #333;
       text-align: left;
       text-transform: capitalize;
-      box-shadow: 0 0px 0px rgba(0,0,0,0.19), 0 1px 1px rgba(0,0,0,0.23);
+      box-shadow: 1px 1px 4px 1px rgba(0,0,0,0.19);
   }
     .form-group {
         margin-bottom: 0.5rem;
@@ -569,8 +642,15 @@ class DynamicFormBuilderComponent$1 {
      * @return {?}
      */
     copyOrDeleteEvent(data) {
-        /** @type {?} */
-        let obj = data;
+        console.log('data type', typeof (data));
+        if (typeof (data) === 'string') {
+            data = JSON.parse(data);
+            console.log('inside string');
+        }
+        // let childdata = data;
+        // let finaldata = JSON.parse(childdata);
+        // console.log(JSON.parse(data),"parse copyEvent occured");
+        // let obj = data;
         console.log(data, "copyEvent occured");
         // data.field =(this.fields.length+1)+"question";
         // data.label = (this.fields.length+1)+" question";
@@ -586,7 +666,7 @@ class DynamicFormBuilderComponent$1 {
             //  console.log("data",data)
             // this.formBuild(obj);
         }
-        else if (data.action = "delete") {
+        else if (data.action == "delete") {
             /** @type {?} */
             var index = this.fields.indexOf(data);
             console.log("ind", index);
@@ -600,6 +680,9 @@ class DynamicFormBuilderComponent$1 {
             // console.log("this.form",this.form);
             // this.fields.
             // console.log(this.fields.length,"copyEvent occured",evens);
+        }
+        else if (data.action == "childDroped") {
+            this.onFieldUpdate.emit(data);
         }
     }
     /**
@@ -625,7 +708,9 @@ DynamicFormBuilderComponent$1.decorators = [
                 template: `
    
      <div cdkDropList (cdkDropListDropped)="drop($event)"> <div *ngFor="let field of fields"  cdkDrag>
-          <field-builder *ngIf="!field.isDeleted" [field]="field" [form]="form"  (sendDataToParent)="eventFromChild($event)" (copyOrDeleteEvent)="copyOrDeleteEvent($event)"></field-builder>
+          <field-builder *ngIf="!field.isDeleted" [field]="field" [form]="form"  
+          (sendDataToParent)="eventFromChild($event)" (copyOrDeleteEvent)="copyOrDeleteEvent($event)">
+          </field-builder>
       </div></div>`,
             },] },
 ];
@@ -863,6 +948,21 @@ class FieldBuilderComponent {
         this.copyOrDeleteEvent.emit(item);
         console.log("field delete", this.field);
     }
+    /**
+     * @param {?} $event
+     * @return {?}
+     */
+    childrenDropEvent($event) {
+        console.log("childrenDropEvent", this.field);
+        // const action  = 'childDroped';
+        /** @type {?} */
+        let newObj = {
+            action: 'childDroped',
+            data: $event
+        };
+        this.copyOrDeleteEvent.emit(JSON.stringify(newObj));
+        console.log("field delete", this.field);
+    }
 }
 FieldBuilderComponent.decorators = [
     { type: Component, args: [{
@@ -905,8 +1005,7 @@ FieldBuilderComponent.decorators = [
   </style>
   <div class="row"  *ngIf="openEdit" style="padding: 20px;
   border: 1px solid #ccc;margin-top:10px;
-  box-shadow:0 4px 8px rgba(0,0,0,0.19), 0 2px 0px rgba(0,0,0,0.23);margin-left: 0px;
-  margin-right: 0px;">
+  box-shadow: 1px 1px 4px 1px rgba(0,0,0,0.19);">
 
     <div class="col-sm-7 form-group">
       <mat-form-field>
@@ -940,7 +1039,7 @@ FieldBuilderComponent.decorators = [
 
 <div class="col-sm-7 form-group">
 <mat-form-field>
-<mat-label>Input Type</mat-label>
+<mat-label>Pages</mat-label>
   <mat-select  [(ngModel)]="pageNumber">
     <mat-option value="page_1">page 1</mat-option>
     <mat-option value="page_2">page 2</mat-option>
@@ -1052,15 +1151,8 @@ Save
 
 </div>
   </div>
-  <div class="form-group row" [formGroup]="form" style="background:#def9d8f5;padding:10px;margin:0px;margin-top:10px;box-shadow:0 0px 0px rgba(0,0,0,0.19), 0 1px 1px rgba(0,0,0,0.23)">
-  
-  
-
-
+  <div class="form-group row" [formGroup]="form" style="padding:10px;margin:0px;margin-top:10px;box-shadow:0 0px 0px rgba(0,0,0,0.19), 0 1px 1px rgba(0,0,0,0.23)">
   <div class="col-sm-2 edit-icon" ><i class="fa fa-edit" (click)="loadFormElement(field)" ></i></div>
-    <label class="col-md-12 form-control-label" [attr.for]="field.label">
-      {{field.label}}
-    </label>
     <div class="col-md-12" [ngSwitch]="field.type">
     <textbox *ngSwitchCase="'number'" [field]="field" [form]="form"></textbox>
     <textbox *ngSwitchCase="'text'" [field]="field" [form]="form"></textbox>
@@ -1069,6 +1161,7 @@ Save
       <dropdown *ngSwitchCase="'dropdown'" [field]="field" [form]="form"></dropdown>
       <checkbox *ngSwitchCase="'checkbox'" [field]="field" [form]="form"></checkbox>
       <radio *ngSwitchCase="'radio'" [field]="field" [form]="form"></radio>
+      <lib-multi-select *ngSwitchCase="'multiselect'" (childrenDropEvent)="childrenDropEvent($event)" [field]="field" [form]="form"></lib-multi-select>
       <file *ngSwitchCase="'file'" [field]="field" [form]="form"></file>
       <div style="float:right">
           <span class="cursor-pntr" (click)="copyElement(field)"><i class="fa fa-copy"></i></span>
@@ -1167,10 +1260,13 @@ TextBoxComponent.decorators = [
     { type: Component, args: [{
                 selector: 'textbox',
                 template: `
-      <div [formGroup]="form" >
+      <div [formGroup]="form">
+      <label class="col-md-12 form-control-label" [attr.for]="field.label">
+      {{field.label}}
+      </label>
     
-        <input *ngIf="!field.multiline" [attr.type]="field.type" class="form-control"  [id]="field.field" [name]="field.field" [formControlName]="field.field">
-        <textarea *ngIf="field.multiline" [class.is-invalid]="isDirty && !isValid" [formControlName]="field.field" [id]="field.field"
+        <input *ngIf="!field.multiline" [attr.type]="field.type" class="form-control"  [id]="field.field" [name]="field.field" >
+        <textarea *ngIf="field.multiline"  [id]="field.field"
         rows="20" class="form-control" [placeholder]="field.placeholder"></textarea>
 
       </div> 
@@ -1205,6 +1301,9 @@ DropDownComponent.decorators = [
                 selector: 'dropdown',
                 template: `
       <div [formGroup]="form">
+      <label class="col-md-12 form-control-label" [attr.for]="field.label">
+      {{field.label}}
+    </label>
         <select class="form-control" [id]="field.field" [formControlName]="field.field">
           <option *ngFor="let opt of field.options" [value]="opt.key">{{opt.label}}</option>
         </select>
@@ -1358,6 +1457,9 @@ CheckBoxComponent.decorators = [
                 selector: 'checkbox',
                 template: `
       <div [formGroup]="form">
+      <label class="col-md-12 form-control-label" [attr.for]="field.label">
+      {{field.label}}
+    </label>
         <div [formGroupName]="field.field" >
           <div *ngFor="let opt of field.options" class="form-check form-check">
           <label class="form-check-label">
@@ -1396,6 +1498,9 @@ RadioComponent.decorators = [
                 selector: 'radio',
                 template: `
       <div [formGroup]="form">
+      <label class="col-md-12 form-control-label" [attr.for]="field.label">
+      {{field.label}}
+    </label>
         <div class="form-check" *ngFor="let opt of field.options">
           <input class="form-check-input" type="radio" [formControlName]="field.field" [id]="field.field" [value]="opt.key" >
           <label class="form-check-label">
@@ -1442,8 +1547,10 @@ DateComponent.decorators = [
     { type: Component, args: [{
                 selector: 'date',
                 template: `
-      <div [formGroup]="form" >
-    
+      <div [formGroup]="form">
+      <label class="col-md-12 form-control-label" [attr.for]="field.label">
+      {{field.label}}
+    </label>
         <input *ngIf="!field.multiline" [attr.type]="field.type" class="form-control"  [id]="field.field" [name]="field.field" [formControlName]="field.field">
         <textarea *ngIf="field.multiline" [class.is-invalid]="isDirty && !isValid" [formControlName]="field.field" [id]="field.field"
         rows="20" class="form-control" [placeholder]="field.placeholder"></textarea>
@@ -1491,7 +1598,9 @@ SliderComponent.decorators = [
                 selector: 'slider',
                 template: `
       <div [formGroup]="form" >
-    
+      <label class="col-md-12 form-control-label" [attr.for]="field.label">
+      {{field.label}}
+    </label>
         <input *ngIf="!field.multiline" type="hidden" class="form-control"  [id]="field.field" [name]="field.field" [formControlName]="field.field">
         
         <mat-slider
@@ -1523,6 +1632,291 @@ if (false) {
 
 /**
  * @fileoverview added by tsickle
+ * Generated from: lib/dynamic-form-builder/atoms/multi-select.ts
+ * @suppress {checkTypes,constantProperty,extraRequire,missingOverride,missingReturn,unusedPrivateMembers,uselessCode} checked by tsc
+ */
+class MultiSelectComponent {
+    /**
+     * @param {?} cdr
+     */
+    constructor(cdr) {
+        // this.form.controls = this.field.name;
+        // console.log("form",this.form);
+        this.cdr = cdr;
+        this.field = {};
+        this.childrenDropEvent = new EventEmitter();
+        this.openEdit = false;
+    }
+    /**
+     * @return {?}
+     */
+    get isValid() { return this.form.controls[this.field.name].valid; }
+    /**
+     * @return {?}
+     */
+    get isDirty() { return this.form.controls[this.field.name].dirty; }
+    /**
+     * @param {?} $event
+     * @param {?} field
+     * @return {?}
+     */
+    onDropNew($event, field) {
+        console.log("---- MultiSelectComponent -", $event);
+        $event.data.mutiSelect = field;
+        this.childrenDropEvent.emit($event.data);
+    }
+    /**
+     * @param {?} action
+     * @return {?}
+     */
+    closeModel(action) {
+    }
+    /**
+     * @param {?} item
+     * @return {?}
+     */
+    loadFormElement(item) {
+        console.log("item ---", item);
+        this.activeModelData = "";
+        this.label = item.label;
+        this.type = item.type;
+        this.placeholder = item.placeholder;
+        this.options = item.options;
+        this._id = item._id;
+        this.required = item.validations.required;
+        this.description = item.description;
+        if (item.type == "date") {
+            this.minDate = item.validations.minDate;
+            this.maxDate = item.validations.maxDate;
+            this.autoCollect = item.validations.autoCollect;
+        }
+        else if (item.type == "slider") {
+            this.min = item.validations.min;
+            this.max = item.validations.max;
+        }
+        this.required = this.field.validations.required;
+        console.log(item.validations.required, "item.validations.required", this.required, "label", this.label);
+        // console.log("label",this.label);
+        this.openEdit = this.openEdit ? false : true;
+        this.cdr.detectChanges();
+        // document.getElementById("openModalButton").click();
+        // this.open(this.myModal);
+        // this.myModal.show();
+        // this.myModal.nativeElement.className = 'modal fade show';
+    }
+}
+MultiSelectComponent.decorators = [
+    { type: Component, args: [{
+                selector: 'lib-multi-select',
+                template: `<div [formGroup]="form" dndDropzone  (dndDrop)="onDropNew($event,field)" class="card-body">
+  <label class="col-md-12 form-control-label" [attr.for]="field.label">
+      {{field.label}}
+    </label>
+  <textarea  rows="3" class="form-control">
+  
+  </textarea>
+  <div class="row" *ngIf="openEdit" style="padding: 20px;
+  border: 1px solid #ccc;margin-top:10px;
+  box-shadow: 1px 1px 4px 1px rgba(0,0,0,0.19);">
+
+  <div class="col-sm-7 form-group">
+    <mat-form-field>
+      <input matInput placeholder="Label" [(ngModel)]="label" [ngModelOptions]="{standalone: true}">
+    </mat-form-field>
+  </div>
+
+  <div class="col-sm-7 form-group">
+    <mat-form-field>
+      <input matInput placeholder="Input Place Holder" [(ngModel)]="placeholder" [ngModelOptions]="{standalone: true}">
+    </mat-form-field>
+  </div>
+
+  <div class="col-sm-7 form-group">
+    <mat-form-field>
+      <input matInput placeholder="Hint/Description" [(ngModel)]="description" [ngModelOptions]="{standalone: true}">
+    </mat-form-field>
+  </div>
+
+  <div class="col-sm-7 form-group">
+    <mat-form-field>
+      <mat-label>Input Type</mat-label>
+      <mat-select [(ngModel)]="type">
+        <mat-option value="text">text</mat-option>
+        <mat-option value="number">number</mat-option>
+        <mat-option value="radio">radio</mat-option>
+        <mat-option value="date">date</mat-option>
+      </mat-select>
+    </mat-form-field>
+  </div>
+
+  <div class="col-sm-7 form-group">
+    <mat-form-field>
+      <mat-label>Pages</mat-label>
+      <mat-select [(ngModel)]="pageNumber">
+        <mat-option value="page_1">page 1</mat-option>
+        <mat-option value="page_2">page 2</mat-option>
+        <mat-option value="page_3">page 3</mat-option>
+      </mat-select>
+    </mat-form-field>
+  </div>
+
+  <div class="col-sm-7 form-group" *ngIf="type=='slider'">
+    <mat-form-field>
+      <input type="text" placeholder="Min" matInput [(ngModel)]="min" formControlName="min value">
+    </mat-form-field>
+  </div>
+
+  <div class="col-sm-7 form-group" *ngIf="type=='slider'">
+    <mat-form-field>
+      <input type="text" placeholder="Max" matInput [(ngModel)]="max" formControlName="min value">
+    </mat-form-field>
+  </div>
+
+  <div class="col-sm-12 form-group" *ngIf="type=='date'">
+    <mat-form-field>
+      <input matInput [matDatepicker]="picker" [(ngModel)]="minDate" placeholder="Choose a min date">
+      <mat-datepicker-toggle matSuffix [for]="picker"></mat-datepicker-toggle>
+      <mat-datepicker #picker></mat-datepicker>
+    </mat-form-field>
+
+    <mat-form-field>
+      <input matInput [matDatepicker]="pickerMaxDate" [(ngModel)]="maxDate" placeholder="Choose a max date">
+      <mat-datepicker-toggle matSuffix [for]="pickerMaxDate"></mat-datepicker-toggle>
+      <mat-datepicker #pickerMaxDate></mat-datepicker>
+    </mat-form-field>
+
+
+  </div>
+  <div class="col-sm-12 form-group" *ngIf="type=='radio' || type=='checkbox' || type=='dropdown'">
+    <label for="label" class="col-sm-12">Options</label>
+
+    <div class="col-sm-7 form-group" *ngIf="type=='slider'">
+      <mat-form-field>
+        <input type="text" placeholder="Max" matInput [(ngModel)]="max" formControlName="min value">
+      </mat-form-field>
+    </div>
+
+  </div>
+
+
+  <div class="col-sm-7">
+    <label id="example-radio-group-label">is Reqired ?</label>
+    <mat-radio-group aria-labelledby="example-radio-group-label" class="example-radio-group" [(ngModel)]="required">
+      <mat-radio-button class="example-radio-button" [value]=true>
+        Yes
+      </mat-radio-button>
+      <mat-radio-button class="example-radio-button" [value]=false>
+        No
+      </mat-radio-button>
+    </mat-radio-group>
+  </div>
+
+  <div class="col-sm-7" *ngIf="type=='date'">
+    <label id="example-radio-group-label">is autoCollect</label>
+    <mat-radio-group aria-labelledby="example-radio-group-label" class="example-radio-group" [(ngModel)]="autoCollect">
+      <mat-radio-button class="example-radio-button" [value]=true>
+        True
+      </mat-radio-button>
+      <mat-radio-button class="example-radio-button" [value]=false>
+        False
+      </mat-radio-button>
+    </mat-radio-group>
+  </div>
+
+
+  <div class="col-sm-12">
+
+    <button mat-flat-button color="primary" style="margin-right:10px;" (click)="closeModel('save')">
+      Save
+    </button>
+
+  </div>
+</div>
+  <div *ngIf="field.child.length > 0">
+
+  <div *ngFor="let obj of field.child">
+  <div [ngSwitch]="obj.type">
+
+  <div style="float: right;right: -90px; cursor:pointer;
+  top: 20px;" class="col-sm-2 edit-icon" ><i class="fa fa-edit" (click)="loadFormElement(field)" ></i></div>
+
+  <textbox style ="padding-left:20px" *ngSwitchCase="'number'" [field]="obj" [form]="form"></textbox>
+
+  <textbox style ="padding-left:20px" *ngSwitchCase="'text'" [field]="obj" [form]="form"></textbox>
+
+  <date style ="padding-left:20px" *ngSwitchCase="'date'" [field]="obj" [form]="form"></date>
+
+  <slider style ="padding-left:20px" *ngSwitchCase="'slider'" [field]="obj" [form]="form"></slider>
+
+    <dropdown style ="padding-left:20px" *ngSwitchCase="'dropdown'" [field]="obj" [form]="form"></dropdown>
+
+    <checkbox style ="padding-left:20px" *ngSwitchCase="'checkbox'" [field]="obj" [form]="form"></checkbox>
+
+   <radio style ="padding-left:20px" *ngSwitchCase="'radio'" [field]="obj" [form]="form"></radio>
+
+    <file style ="padding-left:20px" *ngSwitchCase="'file'" [field]="obj" [form]="form"></file>
+
+    
+     </div>
+  </div>
+  </div>
+  </div>`,
+            },] },
+];
+/** @nocollapse */
+MultiSelectComponent.ctorParameters = () => [
+    { type: ChangeDetectorRef }
+];
+MultiSelectComponent.propDecorators = {
+    field: [{ type: Input }],
+    form: [{ type: Input }],
+    childrenDropEvent: [{ type: Output }]
+};
+if (false) {
+    /** @type {?} */
+    MultiSelectComponent.prototype.field;
+    /** @type {?} */
+    MultiSelectComponent.prototype.form;
+    /** @type {?} */
+    MultiSelectComponent.prototype.childrenDropEvent;
+    /** @type {?} */
+    MultiSelectComponent.prototype.activeModelData;
+    /** @type {?} */
+    MultiSelectComponent.prototype.validations;
+    /** @type {?} */
+    MultiSelectComponent.prototype.required;
+    /** @type {?} */
+    MultiSelectComponent.prototype.autoCollect;
+    /** @type {?} */
+    MultiSelectComponent.prototype.openEdit;
+    /** @type {?} */
+    MultiSelectComponent.prototype._id;
+    /** @type {?} */
+    MultiSelectComponent.prototype.description;
+    /** @type {?} */
+    MultiSelectComponent.prototype.minDate;
+    /** @type {?} */
+    MultiSelectComponent.prototype.maxDate;
+    /** @type {?} */
+    MultiSelectComponent.prototype.min;
+    /** @type {?} */
+    MultiSelectComponent.prototype.max;
+    /** @type {?} */
+    MultiSelectComponent.prototype.label;
+    /** @type {?} */
+    MultiSelectComponent.prototype.type;
+    /** @type {?} */
+    MultiSelectComponent.prototype.placeholder;
+    /** @type {?} */
+    MultiSelectComponent.prototype.options;
+    /** @type {?} */
+    MultiSelectComponent.prototype.pageNumber;
+    /** @type {?} */
+    MultiSelectComponent.prototype.cdr;
+}
+
+/**
+ * @fileoverview added by tsickle
  * Generated from: lib/dynamic-form-builder/dynamic-form-builder.module.ts
  * @suppress {checkTypes,constantProperty,extraRequire,missingOverride,missingReturn,unusedPrivateMembers,uselessCode} checked by tsc
  */
@@ -1544,7 +1938,8 @@ DynamicFormBuilderModule.decorators = [
                     MatSelectModule,
                     // MatIconModule
                     AngularFontAwesomeModule,
-                    DragDropModule
+                    DragDropModule,
+                    DndModule
                 ],
                 declarations: [
                     DynamicFormBuilderComponent$1,
@@ -1555,7 +1950,8 @@ DynamicFormBuilderModule.decorators = [
                     FileComponent,
                     RadioComponent,
                     DateComponent,
-                    SliderComponent
+                    SliderComponent,
+                    MultiSelectComponent
                 ],
                 exports: [DynamicFormBuilderComponent$1],
                 providers: []
@@ -1605,5 +2001,5 @@ DynamicFormBuilderModule1.decorators = [
  * @suppress {checkTypes,constantProperty,extraRequire,missingOverride,missingReturn,unusedPrivateMembers,uselessCode} checked by tsc
  */
 
-export { DynamicFormBuilderModule1, DynamicFormBuilderService, DynamicFormBuilderComponent as ɵa, DynamicFormBuilderModule as ɵb, DynamicFormBuilderComponent$1 as ɵc, FieldBuilderComponent as ɵd, TextBoxComponent as ɵe, DropDownComponent as ɵf, CheckBoxComponent as ɵg, FileComponent as ɵh, RadioComponent as ɵi, DateComponent as ɵj, SliderComponent as ɵk };
+export { DynamicFormBuilderModule1, DynamicFormBuilderService, DynamicFormBuilderComponent as ɵa, DynamicFormBuilderModule as ɵb, DynamicFormBuilderComponent$1 as ɵc, FieldBuilderComponent as ɵd, TextBoxComponent as ɵe, DropDownComponent as ɵf, CheckBoxComponent as ɵg, FileComponent as ɵh, RadioComponent as ɵi, DateComponent as ɵj, SliderComponent as ɵk, MultiSelectComponent as ɵl };
 //# sourceMappingURL=dynamic-form-builder.js.map

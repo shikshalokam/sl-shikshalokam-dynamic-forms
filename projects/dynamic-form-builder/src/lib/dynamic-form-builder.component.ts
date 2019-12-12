@@ -27,7 +27,7 @@ import { Observable } from 'rxjs';
       color: #333;
       text-align: left;
       text-transform: capitalize;
-      box-shadow: 0 0px 0px rgba(0,0,0,0.19), 0 1px 1px rgba(0,0,0,0.23);
+      box-shadow: 1px 1px 4px 1px rgba(0,0,0,0.19);
   }
     .form-group {
         margin-bottom: 0.5rem;
@@ -156,10 +156,13 @@ export class DynamicFormBuilderComponent implements OnInit {
       },
       {
         "responseType": "dropdown"
-      },{
-        "responseType":"date"
-      },{
-        "responseType":"slider"
+      }, {
+        "responseType": "date"
+      }, {
+        "responseType": "slider"
+      },
+      {
+        "responseType": "multiselect"
       }
     ]
   }
@@ -174,9 +177,178 @@ export class DynamicFormBuilderComponent implements OnInit {
   ngDistroy() {
     this.unsubcribe();
   }
+
+
+  getToolObj(ele, len) {
+
+    let obj = {
+
+    }
+    if (ele == 'text') {
+      obj = {
+        "position": len,
+        "field": len + "question",
+        "type": "text",
+        "label": len + ". question",
+        "placeholder": "Please enter your question here",
+        "description": "",
+        "validations": {
+          "required": true,
+          "minLenght": "",
+          "maxLength": ""
+        }
+      }
+    } else if (ele == 'number') {
+      obj = {
+        "field": len + "question",
+        "type": "number",
+        "label": len + ". question",
+        "placeholder": "Please enter your question here",
+        "description": "",
+        "validations": {
+          "required": true,
+          "minLenght": "",
+          "maxLength": ""
+        }
+      }
+    } else if (ele == 'radio') {
+      obj = {
+        field: len + "question",
+        type: 'radio',
+        name: len + ". question",
+        label: len + ". question",
+        description: "",
+        required: true,
+        "validations": {
+          "required": true,
+          "minLenght": "",
+          "maxLength": ""
+        },
+        options: [
+          { key: 'option1', label: 'Label 1' },
+          { key: 'option2', label: 'Label 1' }
+        ]
+      }
+    } else if (ele == "checkbox") {
+      obj = {
+        field: len + "question",
+        type: "checkbox",
+        name: len + ". question",
+        label: len + ". question",
+        description: "",
+        required: true,
+        "validations": {
+          "required": true,
+          "minLenght": "",
+          "maxLength": ""
+        },
+        options: [
+          { key: 'option1', label: 'option 1' },
+          { key: 'option2', label: 'option 2' }
+        ]
+      }
+    } else if (ele == "dropdown") {
+      obj = {
+        field: len + "question",
+        type: 'dropdown',
+        name: len + ". question",
+        label: len + ". question",
+        value: 'option1',
+        description: "",
+        required: true,
+        "validations": {
+          "required": true,
+          "minLenght": "",
+          "maxLength": ""
+        },
+        options: [
+          { key: 'option1', label: 'Option 1' },
+          { key: 'option1', label: 'Option 2' }
+        ]
+      }
+    }
+    else if (ele == "date") {
+      obj = {
+        field: len + "question",
+        type: 'date',
+        name: len + ". question",
+        label: len + ". question",
+        description: "",
+        required: true,
+        "validations": {
+          "required": true,
+          "minLenght": "",
+          "maxLength": "",
+          "maxDate": "",
+          "minDate": "",
+
+        },
+        options: [
+
+        ]
+      }
+    } else if (ele == 'multiselect') {
+      if (ele == 'childDroped') {
+        let childdata = {
+          "field": len + "question",
+          "type": ele.type,
+          "label": len + ". question",
+          "child": [],
+          "placeholder": "Please add Child's here",
+          "description": "",
+          "validations": {
+            "required": false,
+            "minLenght": "",
+            "maxLength": ""
+          }
+        }
+      }
+      let finalchild = [];
+
+      finalchild.push()
+
+
+      obj = {
+        "field": len + "question",
+        "type": "multiselect",
+        "label": len + ". question",
+        "child": [],
+        "placeholder": "Please add Child's here",
+        "description": "",
+        "validations": {
+          "required": false,
+          "minLenght": "",
+          "maxLength": ""
+        }
+      }
+    } else if (ele == "slider") {
+      obj = {
+        field: len + "question",
+        type: 'slider',
+        name: len + ". question",
+        label: len + ". question",
+        description: "",
+        required: true,
+        "validations": {
+          "required": true,
+          "min": "",
+          "max": "",
+          "maxDate": "",
+          "minDate": "",
+
+        },
+        options: [
+
+        ]
+      }
+    }
+
+    return obj;
+  }
+
   onDrop(ele, action = "") {
-    console.log("drop ele",ele);
-    if(ele.data){
+    console.log("drop ele", ele);
+    if (ele.data) {
       ele = ele.data.responseType
     }
     let len = this.fields.length + 1;
@@ -190,139 +362,16 @@ export class DynamicFormBuilderComponent implements OnInit {
         "placeholder": ele.placeholder,
         "validations": ele.validations,
         "options": ele.options,
-        "description":ele.description
+        "description": ele.description
       }
       obj = copyObj;
 
     } else {
 
 
+      obj = this.getToolObj(ele, len);
 
 
-      if (ele == 'text') {
-        obj = {
-          "position": len,
-          "field": len + "question",
-          "type": "text",
-          "label": len + ". question",
-          "placeholder": "Please enter your question here",
-          "description":"",
-          "validations": {
-            "required": true,
-            "minLenght": "",
-            "maxLength": ""
-          }
-        }
-      } else if (ele == 'number') {
-        obj = {
-          "field": len + "question",
-          "type": "number",
-          "label": len + ". question",
-          "placeholder": "Please enter your question here",
-          "description":"",
-          "validations": {
-            "required": true,
-            "minLenght": "",
-            "maxLength": ""
-          }
-        }
-      } else if (ele == 'radio') {
-        obj = {
-          field: len + "question",
-          type: 'radio',
-          name: len + ". question",
-          label: len + ". question",
-          description:"",
-          required: true,
-          "validations": {
-            "required": true,
-            "minLenght": "",
-            "maxLength": ""
-          },
-          options: [
-            { key: 'option1', label: 'Label 1' },
-            { key: 'option2', label: 'Label 1' }
-          ]
-        }
-      } else if (ele == "checkbox") {
-        obj = {
-          field: len + "question",
-          type: "checkbox",
-          name: len + ". question",
-          label: len + ". question",
-          description:"",
-          required: true,
-          "validations": {
-            "required": true,
-            "minLenght": "",
-            "maxLength": ""
-          },
-          options: [
-            { key: 'option1', label: 'option 1' },
-            { key: 'option2', label: 'option 2' }
-          ]
-        }
-      } else if (ele == "dropdown") {
-        obj = {
-          field: len + "question",
-          type: 'dropdown',
-          name: len + ". question",
-          label: len + ". question",
-          value: 'option1',
-          description:"",
-          required: true,
-          "validations": {
-            "required": true,
-            "minLenght": "",
-            "maxLength": ""
-          },
-          options: [
-            { key: 'option1', label: 'Option 1' },
-            { key: 'option1', label: 'Option 2' }
-          ]
-        }
-      }
-      else if (ele == "date") {
-        obj = {
-          field: len + "question",
-          type: 'date',
-          name: len + ". question",
-          label: len + ". question",
-          description:"",
-          required: true,
-          "validations": {
-            "required": true,
-            "minLenght": "",
-            "maxLength": "",
-            "maxDate":"",
-            "minDate":"",
-
-          },
-          options: [
-         
-          ]
-        }
-      }else if (ele == "slider") {
-        obj = {
-          field: len + "question",
-          type: 'slider',
-          name: len + ". question",
-          label: len + ". question",
-          description:"",
-          required: true,
-          "validations": {
-            "required": true,
-            "min": "",
-            "max": "",
-            "maxDate":"",
-            "minDate":"",
-
-          },
-          options: [
-         
-          ]
-        }
-      }
 
     }
 
@@ -451,22 +500,47 @@ export class DynamicFormBuilderComponent implements OnInit {
     this.eventsSubscription.unsubscribe()
   }
   onFieldUpdate($event) {
-    // console.log("eventData ------", $event);
+    console.log("eventData sssssss------", $event.data);
+
+    let eventObj = $event
     let trnasformData = {};
     if ($event.action == "copy") {
       this.onDrop($event.data, "copy");
-    } else
-      if ($event.action == "delete") {
-        trnasformData = {
-          action: 'delete',
-          data: $event
-        }
-      } else {
-        trnasformData = {
-          action: 'update',
-          data: JSON.parse($event)
-        }
+    } else if ($event.action == "delete") {
+      trnasformData = {
+        action: 'delete',
+        data: $event
       }
+    } else if ($event.action == "childDroped") {
+      let obj = this.getToolObj($event.data.responseType, this.fields.length + 1);
+
+      console.log('this.fields', this.fields);
+
+      const final = this.fields.filter(
+        item => {
+          if(item.field === eventObj.data.mutiSelect.field){
+            item.child.push(obj);
+            return item;
+          }else{
+            return item;
+          }
+        });
+
+        // final.push(obj);
+
+
+        // this.fields
+
+      console.log('final result', final);
+
+      console.log("main obj", obj);
+
+    } else {
+      trnasformData = {
+        action: 'update',
+        data: JSON.parse($event)
+      }
+    }
     this.questionTrigger.emit(trnasformData);
   }
 }

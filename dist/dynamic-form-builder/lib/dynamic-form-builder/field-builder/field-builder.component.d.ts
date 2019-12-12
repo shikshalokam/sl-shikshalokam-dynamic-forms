@@ -38,4 +38,5 @@ export declare class FieldBuilderComponent implements OnInit {
     AddNewOptions(): void;
     copyElement(item: any): void;
     deleteElement(item: any): void;
+    childrenDropEvent($event: any): void;
 }

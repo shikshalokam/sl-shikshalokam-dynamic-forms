@@ -7,6 +7,7 @@ export { CheckBoxComponent as ɵg } from './lib/dynamic-form-builder/atoms/check
 export { DateComponent as ɵj } from './lib/dynamic-form-builder/atoms/date';
 export { DropDownComponent as ɵf } from './lib/dynamic-form-builder/atoms/dropdown';
 export { FileComponent as ɵh } from './lib/dynamic-form-builder/atoms/file';
+export { MultiSelectComponent as ɵl } from './lib/dynamic-form-builder/atoms/multi-select';
 export { RadioComponent as ɵi } from './lib/dynamic-form-builder/atoms/radio';
 export { SliderComponent as ɵk } from './lib/dynamic-form-builder/atoms/slider';
 export { TextBoxComponent as ɵe } from './lib/dynamic-form-builder/atoms/textbox';

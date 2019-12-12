@@ -20,6 +20,7 @@ export declare class DynamicFormBuilderComponent implements OnInit {
     onUpload(e: any): void;
     getFields(): any[];
     ngDistroy(): void;
+    getToolObj(ele: any, len: any): {};
     onDrop(ele: any, action?: string): void;
     formBuild(data: any): void;
     onSubmit(value: any): void;

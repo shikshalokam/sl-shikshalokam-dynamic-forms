@@ -28,6 +28,8 @@ import  {
   MatSelectModule
 } from '@angular/material';
 import { DragDropModule } from "@angular/cdk/drag-drop";
+import { MultiSelectComponent } from './atoms/multi-select';
+import { DndModule } from 'ngx-drag-drop';
 
 // import {  } from '@angular/cdk/'
 
@@ -46,7 +48,8 @@ import { DragDropModule } from "@angular/cdk/drag-drop";
     MatSelectModule,
     // MatIconModule
     AngularFontAwesomeModule,
-    DragDropModule
+    DragDropModule,
+    DndModule
   ],
   declarations: [
     DynamicFormBuilderComponent,
@@ -57,7 +60,8 @@ import { DragDropModule } from "@angular/cdk/drag-drop";
     FileComponent,
     RadioComponent,
     DateComponent,
-    SliderComponent
+    SliderComponent,
+    MultiSelectComponent
     
   ],
   exports: [DynamicFormBuilderComponent],

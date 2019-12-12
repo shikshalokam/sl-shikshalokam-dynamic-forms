@@ -7,7 +7,9 @@ import {CdkDragDrop, moveItemInArray} from '@angular/cdk/drag-drop';
   template:`
    
      <div cdkDropList (cdkDropListDropped)="drop($event)"> <div *ngFor="let field of fields"  cdkDrag>
-          <field-builder *ngIf="!field.isDeleted" [field]="field" [form]="form"  (sendDataToParent)="eventFromChild($event)" (copyOrDeleteEvent)="copyOrDeleteEvent($event)"></field-builder>
+          <field-builder *ngIf="!field.isDeleted" [field]="field" [form]="form"  
+          (sendDataToParent)="eventFromChild($event)" (copyOrDeleteEvent)="copyOrDeleteEvent($event)">
+          </field-builder>
       </div></div>`, 
 })
 export class DynamicFormBuilderComponent implements OnInit {
@@ -25,7 +27,18 @@ export class DynamicFormBuilderComponent implements OnInit {
 
   copyOrDeleteEvent(data){
 
-    let obj = data;
+    console.log('data type', typeof(data));
+
+    if(typeof(data) === 'string') {
+      data  = JSON.parse(data);
+      console.log('inside string');
+    }
+
+    // let childdata = data;
+    // let finaldata = JSON.parse(childdata);
+
+    // console.log(JSON.parse(data),"parse copyEvent occured");
+    // let obj = data;
     console.log(data,"copyEvent occured");
 
     // data.field =(this.fields.length+1)+"question";
@@ -47,7 +60,7 @@ export class DynamicFormBuilderComponent implements OnInit {
     //  console.log("data",data)
       // this.formBuild(obj);
 
-    }else if(data.action="delete"){
+    }else if(data.action=="delete"){
 
       var index = this.fields.indexOf(data);
 
@@ -70,6 +83,8 @@ export class DynamicFormBuilderComponent implements OnInit {
       // console.log("this.form",this.form);
       // this.fields.
       // console.log(this.fields.length,"copyEvent occured",evens);
+    } else if(data.action =="childDroped"){
+      this.onFieldUpdate.emit(data);
     }
     
   }

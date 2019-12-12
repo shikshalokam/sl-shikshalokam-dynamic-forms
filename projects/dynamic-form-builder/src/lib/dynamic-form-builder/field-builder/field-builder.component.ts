@@ -41,10 +41,9 @@ import { THIS_EXPR } from '@angular/compiler/src/output/output_ast';
   top: 25px;cursor: pointer;z-index: 100;
 }
   </style>
-  <div class="row"  *ngIf="openEdit" style="padding: 20px;
+  <div class="row"  *ngIf="openEdit" style="padding: 25px;
   border: 1px solid #ccc;margin-top:10px;
-  box-shadow:0 4px 8px rgba(0,0,0,0.19), 0 2px 0px rgba(0,0,0,0.23);margin-left: 0px;
-  margin-right: 0px;">
+  box-shadow: 1px 1px 4px 1px rgba(0,0,0,0.19);">
 
     <div class="col-sm-7 form-group">
       <mat-form-field>
@@ -190,15 +189,8 @@ Save
 
 </div>
   </div>
-  <div class="form-group row" [formGroup]="form" style="background:#def9d8f5;padding:10px;margin:0px;margin-top:10px;box-shadow:0 0px 0px rgba(0,0,0,0.19), 0 1px 1px rgba(0,0,0,0.23)">
-  
-  
-
-
+  <div class="form-group row" [formGroup]="form" style="padding:10px;margin:0px;margin-top:10px;box-shadow: 1px 1px 4px 1px rgba(0,0,0,0.19)">
   <div class="col-sm-2 edit-icon" ><i class="fa fa-edit" (click)="loadFormElement(field)" ></i></div>
-    <label class="col-md-12 form-control-label" [attr.for]="field.label">
-      {{field.label}}
-    </label>
     <div class="col-md-12" [ngSwitch]="field.type">
     <textbox *ngSwitchCase="'number'" [field]="field" [form]="form"></textbox>
     <textbox *ngSwitchCase="'text'" [field]="field" [form]="form"></textbox>
@@ -207,6 +199,7 @@ Save
       <dropdown *ngSwitchCase="'dropdown'" [field]="field" [form]="form"></dropdown>
       <checkbox *ngSwitchCase="'checkbox'" [field]="field" [form]="form"></checkbox>
       <radio *ngSwitchCase="'radio'" [field]="field" [form]="form"></radio>
+      <lib-multi-select *ngSwitchCase="'multiselect'" (childrenDropEvent)="childrenDropEvent($event)" [field]="field" [form]="form"></lib-multi-select>
       <file *ngSwitchCase="'file'" [field]="field" [form]="form"></file>
       <div style="float:right">
           <span class="cursor-pntr" (click)="copyElement(field)"><i class="fa fa-copy"></i></span>
@@ -225,7 +218,7 @@ export class FieldBuilderComponent implements OnInit {
   @Output() sendDataToParent = new EventEmitter<string>();
 
   @Output() copyOrDeleteEvent = new EventEmitter<string>();
-
+  
   closeResult: string;
   modalReference: any;
   pageNumber; any;
@@ -474,6 +467,17 @@ export class FieldBuilderComponent implements OnInit {
     this.copyOrDeleteEvent.emit(item);
     console.log("field delete", this.field);
 
+  }
+  childrenDropEvent($event){
+    console.log("childrenDropEvent", this.field);
+    // const action  = 'childDroped';
+    let newObj = {
+      action : 'childDroped',
+      data:$event
+    }
+   
+    this.copyOrDeleteEvent.emit(JSON.stringify(newObj));
+    console.log("field delete", this.field);
   }
 }
 
