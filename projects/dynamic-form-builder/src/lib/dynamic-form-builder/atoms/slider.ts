@@ -6,10 +6,10 @@ import { FormGroup } from '@angular/forms';
     selector: 'slider',
     template: `
       <div [formGroup]="form" >
-      <label class="col-md-12 form-control-label" [attr.for]="field.label">
+      <label class="col-md-0 form-control-label" [attr.for]="field.label">
       {{field.label}}
     </label>
-        <input *ngIf="!field.multiline" type="hidden" class="form-control"  [id]="field.field" [name]="field.field" [formControlName]="field.field">
+        <input *ngIf="!field.multiline" type="hidden" class="form-control" [id]="field.field" [name]="field.field">
         
         <mat-slider
    class = "tp-margin"

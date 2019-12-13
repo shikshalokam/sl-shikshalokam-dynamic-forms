@@ -42,7 +42,7 @@ import { THIS_EXPR } from '@angular/compiler/src/output/output_ast';
 }
   </style>
   <div class="row"  *ngIf="openEdit" style="padding: 25px;
-  border: 1px solid #ccc;margin-top:10px;
+  border: 1px solid #ccc;margin-top:10px; margin: 40px;
   box-shadow: 1px 1px 4px 1px rgba(0,0,0,0.19);">
 
     <div class="col-sm-7 form-group">
@@ -261,7 +261,6 @@ export class FieldBuilderComponent implements OnInit {
 
 
   loadFormElement(item) {
-
 
     console.log("item ---", item);
 

@@ -40,23 +40,9 @@ import { Observable } from 'rxjs';
     
   </style>
   <div class="col-sm-12">
-      <div class="col-sm-4 noPadding">
-        <div class="card">
-          <div class="card-header">ToolBox</div>
-          <div class="card-body">
-            <!-- <dynamic-form-builder [fields]="getFields()"></dynamic-form-builder> -->
       
-            <div *ngFor="let item of jsonData">
-              <div [dndDraggable]="item"  class="col-sm-12 element"  >{{ item.responseType }}</div>
-              <!-- <div class="col-sm-12 element" (click)="addFormElement(item.responseType)" >Number</div> -->
-            </div>
-            <!-- <div class="col-sm-12 element" (click)="addFormElement('input')" >Input</div>
-            <div class="col-sm-12 element" (click)="addFormElement('number')" >Number</div> -->
-          </div>
-        </div>
-      </div>
 
-    <div class="col-sm-8 noPadding">
+    <div class="col-sm-12 noPadding">
     <mat-tab-group>
     <mat-tab label="Page 1"> 
     <div class="card">
@@ -88,8 +74,24 @@ import { Observable } from 'rxjs';
     </mat-tab-group>
       </div>
 
+      <div class="col-sm-4" style="padding-top:25px">
+          
+          <div  class="col-md-12">
+            <!-- <dynamic-form-builder [fields]="getFields()"></dynamic-form-builder> -->
+      
+            <span *ngFor="let item of jsonData" style ="padding:5px">
+              <span [dndDraggable]="item"  class="element"  >{{ item.responseType }}</span>
+              </span>
 
+              <!-- <div class="col-sm-12 element" (click)="addFormElement(item.responseType)" >Number</div> -->
+            <!-- <div class="col-sm-12 element" (click)="addFormElement('input')" >Input</div>
+            <div class="col-sm-12 element" (click)="addFormElement('number')" >Number</div> -->
+
+          </div>
       </div>
+
+
+      
       <div class="col-sm-12">
       </div>`,
   styleUrls: []
@@ -512,28 +514,29 @@ export class DynamicFormBuilderComponent implements OnInit {
         data: $event
       }
     } else if ($event.action == "childDroped") {
-      let obj = this.getToolObj($event.data.responseType, this.fields.length + 1);
 
       console.log('this.fields', this.fields);
 
-      const final = this.fields.filter(
+      var final = this.fields.filter(
         item => {
-          if(item.field === eventObj.data.mutiSelect.field){
+          if (item.field === eventObj.data.mutiSelect.field) {
+
+            let obj = this.getToolObj($event.data.responseType, item.child.length + 1);
             item.child.push(obj);
             return item;
-          }else{
+          } else {
             return item;
           }
         });
 
-        // final.push(obj);
+      // final.push(obj);
 
 
-        // this.fields
+      // this.fields
 
       console.log('final result', final);
 
-      console.log("main obj", obj);
+      // console.log("main obj", obj);
 
     } else {
       trnasformData = {

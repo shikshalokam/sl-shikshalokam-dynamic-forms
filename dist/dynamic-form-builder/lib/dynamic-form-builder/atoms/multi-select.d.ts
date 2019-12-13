@@ -5,12 +5,13 @@ export declare class MultiSelectComponent {
     form: any;
     readonly isValid: any;
     readonly isDirty: any;
+    sendDataToParent: EventEmitter<string>;
     childrenDropEvent: EventEmitter<string>;
     activeModelData: any;
     validations: any;
     required: any;
     autoCollect: any;
-    openEdit: boolean;
+    openEditChild: boolean;
     _id: any;
     description: any;
     minDate: any;
@@ -24,6 +25,7 @@ export declare class MultiSelectComponent {
     pageNumber: any;
     constructor(cdr: ChangeDetectorRef);
     onDropNew($event: any, field: any): void;
-    closeModel(action: any): void;
-    loadFormElement(item: any): void;
+    closeModelChild(action: any, data?: string): void;
+    currentItem: any;
+    loadFormElement(item: any, id: any): void;
 }

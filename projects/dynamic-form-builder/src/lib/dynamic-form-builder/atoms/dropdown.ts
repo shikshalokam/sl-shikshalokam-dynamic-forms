@@ -5,10 +5,10 @@ import { FormGroup } from '@angular/forms';
     selector: 'dropdown',
     template: `
       <div [formGroup]="form">
-      <label class="col-md-12 form-control-label" [attr.for]="field.label">
+      <label class="col-md-8 form-control-label" [attr.for]="field.label">
       {{field.label}}
     </label>
-        <select class="form-control" [id]="field.field" [formControlName]="field.field">
+        <select class="form-control" [id]="field.field">
           <option *ngFor="let opt of field.options" [value]="opt.key">{{opt.label}}</option>
         </select>
       </div> 

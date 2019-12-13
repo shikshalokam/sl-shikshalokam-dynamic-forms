@@ -9,7 +9,7 @@ import { FormGroup } from '@angular/forms';
       {{field.label}}
     </label>
         <div class="form-check" *ngFor="let opt of field.options">
-          <input class="form-check-input" type="radio" [formControlName]="field.field" [id]="field.field" [value]="opt.key" >
+          <input class="form-check-input" type="radio" [id]="field.field" [value]="opt.key">
           <label class="form-check-label">
             {{opt.label}}
           </label>

@@ -1,4 +1,4 @@
-import { EventEmitter, Component, Input, Output, ViewChild, ChangeDetectorRef, NgModule } from '@angular/core';
+import { EventEmitter, Component, Input, Output, ViewChild, NgModule, ChangeDetectorRef } from '@angular/core';
 import { FormGroup, FormControl, FormBuilder, ReactiveFormsModule, FormsModule } from '@angular/forms';
 import { HttpClient, HttpClientModule } from '@angular/common/http';
 import 'rxjs';
@@ -454,16 +454,16 @@ class DynamicFormBuilderComponent {
             };
         }
         else if ($event.action == "childDroped") {
-            /** @type {?} */
-            let obj = this.getToolObj($event.data.responseType, this.fields.length + 1);
             console.log('this.fields', this.fields);
             /** @type {?} */
-            const final = this.fields.filter((/**
+            var final = this.fields.filter((/**
              * @param {?} item
              * @return {?}
              */
             item => {
                 if (item.field === eventObj.data.mutiSelect.field) {
+                    /** @type {?} */
+                    let obj = this.getToolObj($event.data.responseType, item.child.length + 1);
                     item.child.push(obj);
                     return item;
                 }
@@ -474,7 +474,7 @@ class DynamicFormBuilderComponent {
             // final.push(obj);
             // this.fields
             console.log('final result', final);
-            console.log("main obj", obj);
+            // console.log("main obj", obj);
         }
         else {
             trnasformData = {
@@ -518,23 +518,9 @@ DynamicFormBuilderComponent.decorators = [
     
   </style>
   <div class="col-sm-12">
-      <div class="col-sm-4 noPadding">
-        <div class="card">
-          <div class="card-header">ToolBox</div>
-          <div class="card-body">
-            <!-- <dynamic-form-builder [fields]="getFields()"></dynamic-form-builder> -->
       
-            <div *ngFor="let item of jsonData">
-              <div [dndDraggable]="item"  class="col-sm-12 element"  >{{ item.responseType }}</div>
-              <!-- <div class="col-sm-12 element" (click)="addFormElement(item.responseType)" >Number</div> -->
-            </div>
-            <!-- <div class="col-sm-12 element" (click)="addFormElement('input')" >Input</div>
-            <div class="col-sm-12 element" (click)="addFormElement('number')" >Number</div> -->
-          </div>
-        </div>
-      </div>
 
-    <div class="col-sm-8 noPadding">
+    <div class="col-sm-12 noPadding">
     <mat-tab-group>
     <mat-tab label="Page 1"> 
     <div class="card">
@@ -566,8 +552,24 @@ DynamicFormBuilderComponent.decorators = [
     </mat-tab-group>
       </div>
 
+      <div class="col-sm-4" style="padding-top:25px">
+          
+          <div  class="col-md-12">
+            <!-- <dynamic-form-builder [fields]="getFields()"></dynamic-form-builder> -->
+      
+            <span *ngFor="let item of jsonData" style ="padding:5px">
+              <span [dndDraggable]="item"  class="element"  >{{ item.responseType }}</span>
+              </span>
 
+              <!-- <div class="col-sm-12 element" (click)="addFormElement(item.responseType)" >Number</div> -->
+            <!-- <div class="col-sm-12 element" (click)="addFormElement('input')" >Input</div>
+            <div class="col-sm-12 element" (click)="addFormElement('number')" >Number</div> -->
+
+          </div>
       </div>
+
+
+      
       <div class="col-sm-12">
       </div>`,
                 styleUrls: []
@@ -1003,8 +1005,8 @@ FieldBuilderComponent.decorators = [
   top: 25px;cursor: pointer;z-index: 100;
 }
   </style>
-  <div class="row"  *ngIf="openEdit" style="padding: 20px;
-  border: 1px solid #ccc;margin-top:10px;
+  <div class="row"  *ngIf="openEdit" style="padding: 25px;
+  border: 1px solid #ccc;margin-top:10px; margin: 40px;
   box-shadow: 1px 1px 4px 1px rgba(0,0,0,0.19);">
 
     <div class="col-sm-7 form-group">
@@ -1151,7 +1153,7 @@ Save
 
 </div>
   </div>
-  <div class="form-group row" [formGroup]="form" style="padding:10px;margin:0px;margin-top:10px;box-shadow:0 0px 0px rgba(0,0,0,0.19), 0 1px 1px rgba(0,0,0,0.23)">
+  <div class="form-group row" [formGroup]="form" style="padding:10px;margin:0px;margin-top:10px;box-shadow: 1px 1px 4px 1px rgba(0,0,0,0.19)">
   <div class="col-sm-2 edit-icon" ><i class="fa fa-edit" (click)="loadFormElement(field)" ></i></div>
     <div class="col-md-12" [ngSwitch]="field.type">
     <textbox *ngSwitchCase="'number'" [field]="field" [form]="form"></textbox>
@@ -1261,7 +1263,7 @@ TextBoxComponent.decorators = [
                 selector: 'textbox',
                 template: `
       <div [formGroup]="form">
-      <label class="col-md-12 form-control-label" [attr.for]="field.label">
+      <label class="col-md-8 form-control-label" [attr.for]="field.label">
       {{field.label}}
       </label>
     
@@ -1301,10 +1303,10 @@ DropDownComponent.decorators = [
                 selector: 'dropdown',
                 template: `
       <div [formGroup]="form">
-      <label class="col-md-12 form-control-label" [attr.for]="field.label">
+      <label class="col-md-8 form-control-label" [attr.for]="field.label">
       {{field.label}}
     </label>
-        <select class="form-control" [id]="field.field" [formControlName]="field.field">
+        <select class="form-control" [id]="field.field">
           <option *ngFor="let opt of field.options" [value]="opt.key">{{opt.label}}</option>
         </select>
       </div> 
@@ -1463,7 +1465,7 @@ CheckBoxComponent.decorators = [
         <div [formGroupName]="field.field" >
           <div *ngFor="let opt of field.options" class="form-check form-check">
           <label class="form-check-label">
-             <input [formControlName]="opt.key" class="form-check-input" type="checkbox" id="inlineCheckbox1" value="option1" />
+             <input class="form-check-input" type="checkbox" id="inlineCheckbox1" value="option1" />
              {{opt.label}}</label>
           </div>
         </div>
@@ -1502,7 +1504,7 @@ RadioComponent.decorators = [
       {{field.label}}
     </label>
         <div class="form-check" *ngFor="let opt of field.options">
-          <input class="form-check-input" type="radio" [formControlName]="field.field" [id]="field.field" [value]="opt.key" >
+          <input class="form-check-input" type="radio" [id]="field.field" [value]="opt.key">
           <label class="form-check-label">
             {{opt.label}}
           </label>
@@ -1548,11 +1550,12 @@ DateComponent.decorators = [
                 selector: 'date',
                 template: `
       <div [formGroup]="form">
-      <label class="col-md-12 form-control-label" [attr.for]="field.label">
+      <label class="col-md-8 form-control-label" [attr.for]="field.label">
       {{field.label}}
     </label>
-        <input *ngIf="!field.multiline" [attr.type]="field.type" class="form-control"  [id]="field.field" [name]="field.field" [formControlName]="field.field">
-        <textarea *ngIf="field.multiline" [class.is-invalid]="isDirty && !isValid" [formControlName]="field.field" [id]="field.field"
+        <input *ngIf="!field.multiline" [attr.type]="field.type" class="form-control" 
+         [id]="field.field" [name]="field.field">
+        <textarea *ngIf="field.multiline" [class.is-invalid]="isDirty && !isValid" [id]="field.field"
         rows="20" class="form-control" [placeholder]="field.placeholder"></textarea>
 
       </div> 
@@ -1598,10 +1601,10 @@ SliderComponent.decorators = [
                 selector: 'slider',
                 template: `
       <div [formGroup]="form" >
-      <label class="col-md-12 form-control-label" [attr.for]="field.label">
+      <label class="col-md-0 form-control-label" [attr.for]="field.label">
       {{field.label}}
     </label>
-        <input *ngIf="!field.multiline" type="hidden" class="form-control"  [id]="field.field" [name]="field.field" [formControlName]="field.field">
+        <input *ngIf="!field.multiline" type="hidden" class="form-control" [id]="field.field" [name]="field.field">
         
         <mat-slider
    class = "tp-margin"
@@ -1644,8 +1647,9 @@ class MultiSelectComponent {
         // console.log("form",this.form);
         this.cdr = cdr;
         this.field = {};
+        this.sendDataToParent = new EventEmitter();
         this.childrenDropEvent = new EventEmitter();
-        this.openEdit = false;
+        this.openEditChild = false;
     }
     /**
      * @return {?}
@@ -1667,23 +1671,100 @@ class MultiSelectComponent {
     }
     /**
      * @param {?} action
+     * @param {?=} data
      * @return {?}
      */
-    closeModel(action) {
+    closeModelChild(action, data = "") {
+        if (action == "save") {
+            debugger;
+            console.log("closeModel", this.field);
+            // this.modalReference.close();
+            // this.activeModelData.field = this.field.field;
+            // this.activeModelData.label = this.label;
+            // this.activeModelData.type = this.type;
+            // this.activeModelData.placeholder = this.placeholder;
+            // this.activeModelData.options = this.options;
+            /** @type {?} */
+            let obj = {
+                label: this.label,
+                type: this.type,
+                placeholder: this.placeholder,
+                options: this.options,
+                validations: this.validations,
+                field: this.field,
+                _id: this._id,
+                description: this.description
+            };
+            if (this.type == 'date') {
+                obj['minDate'] = this.minDate;
+                obj['maxDate'] = this.maxDate;
+            }
+            else if (this.type == 'slider') {
+                obj['min'] = this.min;
+                obj['max'] = this.max;
+            }
+            // console.log("obj",obj);
+            /** @type {?} */
+            var index = this.field.child.findIndex((/**
+             * @param {?} item
+             * @return {?}
+             */
+            item => item.field === this.currentItem.field));
+            this.field.child.splice(index, 1, obj);
+            // let newObj =  this.field.child.filter(item => {
+            //   if (item.field == this.currentItem.field) {
+            //     // this.field.child[this.currentItem.position] = obj;
+            //     return obj;
+            //   } else {
+            //     return item;
+            //   }
+            // });
+            console.log('aaaaaaaaaaa', this.field);
+            // this.sendDataToParent.emit(JSON.stringify(obj));
+            // this.field.label = this.label;
+            // this.field.label = this.label;
+            // this.field.type = this.type;
+            // this.field.placeholder = this.placeholder;
+            // this.field.options = this.options;
+            // this.field.description = this.description;
+            // if (this.type == 'date') {
+            //   this.field.validations.minDate = this.minDate;
+            //   this.field.validations.maxDate = this.maxDate;
+            //   this.field.validations.autoCollect = this.autoCollect;
+            // } else if (this.type == 'slider') {
+            //   this.field.validations.min = this.min;
+            //   this.field.validations.max = this.max;
+            // }
+            // this.field.validations
+            // console.log(" this.field.validations.required", this.field.validations.required, "sdds", this.required);
+            // this.field.validations.required = this.required;
+            // this.field.validations.autoCollect = this.autoCollect;
+            // console.log(" this.field", this.field);
+            this.openEditChild = false;
+            // this.sendDataToParent.emit(this.activeModelData);
+        }
+        else {
+            this.openEditChild = false;
+            // this.modalReference.close();
+        }
+        // this.modalService.close();
+        //  this.myModal.nativeElement.className = 'modal hide';
     }
     /**
      * @param {?} item
+     * @param {?} id
      * @return {?}
      */
-    loadFormElement(item) {
-        console.log("item ---", item);
+    loadFormElement(item, id) {
+        console.log("item ---", item, "id", id);
         this.activeModelData = "";
         this.label = item.label;
+        this.currentItem = item;
         this.type = item.type;
         this.placeholder = item.placeholder;
         this.options = item.options;
         this._id = item._id;
-        this.required = item.validations.required;
+        // this.required = item.validations.required;
         this.description = item.description;
         if (item.type == "date") {
             this.minDate = item.validations.minDate;
@@ -1694,10 +1775,11 @@ class MultiSelectComponent {
             this.min = item.validations.min;
             this.max = item.validations.max;
         }
-        this.required = this.field.validations.required;
-        console.log(item.validations.required, "item.validations.required", this.required, "label", this.label);
+        // this.required = this.field.validations.required;
+        // console.log(item.validations.required, "item.validations.required",
+        // this.required, "label", this.label);
         // console.log("label",this.label);
-        this.openEdit = this.openEdit ? false : true;
+        this.openEditChild = this.openEditChild ? false : true;
         this.cdr.detectChanges();
         // document.getElementById("openModalButton").click();
         // this.open(this.myModal);
@@ -1706,17 +1788,21 @@ class MultiSelectComponent {
     }
 }
 MultiSelectComponent.decorators = [
+    { type: NgModule, args: [{
+                imports: [ReactiveFormsModule, FormsModule],
+                declarations: []
+            },] },
     { type: Component, args: [{
                 selector: 'lib-multi-select',
                 template: `<div [formGroup]="form" dndDropzone  (dndDrop)="onDropNew($event,field)" class="card-body">
-  <label class="col-md-12 form-control-label" [attr.for]="field.label">
+  <label class="col-md-8 form-control-label" [attr.for]="field.label">
       {{field.label}}
     </label>
-  <textarea  rows="3" class="form-control">
+  <textarea  rows="2" class="form-control">
   
   </textarea>
-  <div class="row" *ngIf="openEdit" style="padding: 20px;
-  border: 1px solid #ccc;margin-top:10px;
+  <div class="row" *ngIf="openEditChild" style="padding: 20px;
+  border: 1px solid #ccc;margin-top:10px; margin:40px; margin-left: 20%;
   box-shadow: 1px 1px 4px 1px rgba(0,0,0,0.19);">
 
   <div class="col-sm-7 form-group">
@@ -1740,7 +1826,7 @@ MultiSelectComponent.decorators = [
   <div class="col-sm-7 form-group">
     <mat-form-field>
       <mat-label>Input Type</mat-label>
-      <mat-select [(ngModel)]="type">
+      <mat-select [(ngModel)]="type" [ngModelOptions]="{standalone: true}">
         <mat-option value="text">text</mat-option>
         <mat-option value="number">number</mat-option>
         <mat-option value="radio">radio</mat-option>
@@ -1752,7 +1838,7 @@ MultiSelectComponent.decorators = [
   <div class="col-sm-7 form-group">
     <mat-form-field>
       <mat-label>Pages</mat-label>
-      <mat-select [(ngModel)]="pageNumber">
+      <mat-select [(ngModel)]="pageNumber" [ngModelOptions]="{standalone: true}">
         <mat-option value="page_1">page 1</mat-option>
         <mat-option value="page_2">page 2</mat-option>
         <mat-option value="page_3">page 3</mat-option>
@@ -1762,25 +1848,25 @@ MultiSelectComponent.decorators = [
 
   <div class="col-sm-7 form-group" *ngIf="type=='slider'">
     <mat-form-field>
-      <input type="text" placeholder="Min" matInput [(ngModel)]="min" formControlName="min value">
+      <input type="text" placeholder="Min" matInput [(ngModel)]="min" [ngModelOptions]="{standalone: true}">
     </mat-form-field>
   </div>
 
   <div class="col-sm-7 form-group" *ngIf="type=='slider'">
     <mat-form-field>
-      <input type="text" placeholder="Max" matInput [(ngModel)]="max" formControlName="min value">
+      <input type="text" placeholder="Max" matInput [(ngModel)]="max" [ngModelOptions]="{standalone: true}">
     </mat-form-field>
   </div>
 
   <div class="col-sm-12 form-group" *ngIf="type=='date'">
     <mat-form-field>
-      <input matInput [matDatepicker]="picker" [(ngModel)]="minDate" placeholder="Choose a min date">
+      <input matInput [matDatepicker]="picker" [(ngModel)]="minDate" [ngModelOptions]="{standalone: true}" placeholder="Choose a min date">
       <mat-datepicker-toggle matSuffix [for]="picker"></mat-datepicker-toggle>
       <mat-datepicker #picker></mat-datepicker>
     </mat-form-field>
 
     <mat-form-field>
-      <input matInput [matDatepicker]="pickerMaxDate" [(ngModel)]="maxDate" placeholder="Choose a max date">
+      <input matInput [matDatepicker]="pickerMaxDate" [(ngModel)]="maxDate" [ngModelOptions]="{standalone: true}" placeholder="Choose a max date">
       <mat-datepicker-toggle matSuffix [for]="pickerMaxDate"></mat-datepicker-toggle>
       <mat-datepicker #pickerMaxDate></mat-datepicker>
     </mat-form-field>
@@ -1792,7 +1878,7 @@ MultiSelectComponent.decorators = [
 
     <div class="col-sm-7 form-group" *ngIf="type=='slider'">
       <mat-form-field>
-        <input type="text" placeholder="Max" matInput [(ngModel)]="max" formControlName="min value">
+        <input type="text" placeholder="Max" matInput [(ngModel)]="max" [ngModelOptions]="{standalone: true}">
       </mat-form-field>
     </div>
 
@@ -1801,7 +1887,7 @@ MultiSelectComponent.decorators = [
 
   <div class="col-sm-7">
     <label id="example-radio-group-label">is Reqired ?</label>
-    <mat-radio-group aria-labelledby="example-radio-group-label" class="example-radio-group" [(ngModel)]="required">
+    <mat-radio-group aria-labelledby="example-radio-group-label" class="example-radio-group" [ngModelOptions]="{standalone: true}" [(ngModel)]="required">
       <mat-radio-button class="example-radio-button" [value]=true>
         Yes
       </mat-radio-button>
@@ -1813,7 +1899,7 @@ MultiSelectComponent.decorators = [
 
   <div class="col-sm-7" *ngIf="type=='date'">
     <label id="example-radio-group-label">is autoCollect</label>
-    <mat-radio-group aria-labelledby="example-radio-group-label" class="example-radio-group" [(ngModel)]="autoCollect">
+    <mat-radio-group aria-labelledby="example-radio-group-label" class="example-radio-group" [(ngModel)]="autoCollect" [ngModelOptions]="{standalone: true}">
       <mat-radio-button class="example-radio-button" [value]=true>
         True
       </mat-radio-button>
@@ -1826,7 +1912,7 @@ MultiSelectComponent.decorators = [
 
   <div class="col-sm-12">
 
-    <button mat-flat-button color="primary" style="margin-right:10px;" (click)="closeModel('save')">
+    <button mat-flat-button color="primary" style="margin-right:10px;" (click)="closeModelChild('save')">
       Save
     </button>
 
@@ -1834,30 +1920,29 @@ MultiSelectComponent.decorators = [
 </div>
   <div *ngIf="field.child.length > 0">
 
-  <div *ngFor="let obj of field.child">
-  <div [ngSwitch]="obj.type">
-
+  <div *ngFor="let obj of field.child let i =index">
   <div style="float: right;right: -90px; cursor:pointer;
-  top: 20px;" class="col-sm-2 edit-icon" ><i class="fa fa-edit" (click)="loadFormElement(field)" ></i></div>
+  top: 20px;" class="col-sm-2 edit-icon"><i class="fa fa-edit" (click)="loadFormElement(obj, i)">{{i}}</i></div>
+  <div [ngSwitch]="obj.type" style="width:80%;margin-left:20%">
 
-  <textbox style ="padding-left:20px" *ngSwitchCase="'number'" [field]="obj" [form]="form"></textbox>
+  <textbox style ="padding-left:30px" *ngSwitchCase="'number'" [field]="obj" [form]="form"></textbox>
 
-  <textbox style ="padding-left:20px" *ngSwitchCase="'text'" [field]="obj" [form]="form"></textbox>
+  <textbox style ="padding-left:30px" *ngSwitchCase="'text'" [field]="obj" [form]="form"></textbox>
 
-  <date style ="padding-left:20px" *ngSwitchCase="'date'" [field]="obj" [form]="form"></date>
+  <date style ="padding-left:30px" *ngSwitchCase="'date'" [field]="obj" [form]="form"></date>
 
-  <slider style ="padding-left:20px" *ngSwitchCase="'slider'" [field]="obj" [form]="form"></slider>
+  <slider style ="padding-left:30px" *ngSwitchCase="'slider'" [field]="obj" [form]="form"></slider>
 
-    <dropdown style ="padding-left:20px" *ngSwitchCase="'dropdown'" [field]="obj" [form]="form"></dropdown>
+    <dropdown style ="padding-left:30px" *ngSwitchCase="'dropdown'" [field]="obj" [form]="form"></dropdown>
 
-    <checkbox style ="padding-left:20px" *ngSwitchCase="'checkbox'" [field]="obj" [form]="form"></checkbox>
+    <checkbox style ="padding-left:30px" *ngSwitchCase="'checkbox'" [field]="obj" [form]="form"></checkbox>
 
-   <radio style ="padding-left:20px" *ngSwitchCase="'radio'" [field]="obj" [form]="form"></radio>
+   <radio style ="padding-left:30px" *ngSwitchCase="'radio'" [field]="obj" [form]="form"></radio>
 
-    <file style ="padding-left:20px" *ngSwitchCase="'file'" [field]="obj" [form]="form"></file>
+    <file style ="padding-left:30px" *ngSwitchCase="'file'" [field]="obj" [form]="form"></file>
 
     
-     </div>
+  </div>
   </div>
   </div>
   </div>`,
@@ -1870,6 +1955,7 @@ MultiSelectComponent.ctorParameters = () => [
 MultiSelectComponent.propDecorators = {
     field: [{ type: Input }],
     form: [{ type: Input }],
+    sendDataToParent: [{ type: Output }],
     childrenDropEvent: [{ type: Output }]
 };
 if (false) {
@@ -1877,6 +1963,8 @@ if (false) {
     MultiSelectComponent.prototype.field;
     /** @type {?} */
     MultiSelectComponent.prototype.form;
+    /** @type {?} */
+    MultiSelectComponent.prototype.sendDataToParent;
     /** @type {?} */
     MultiSelectComponent.prototype.childrenDropEvent;
     /** @type {?} */
@@ -1888,7 +1976,7 @@ if (false) {
     /** @type {?} */
     MultiSelectComponent.prototype.autoCollect;
     /** @type {?} */
-    MultiSelectComponent.prototype.openEdit;
+    MultiSelectComponent.prototype.openEditChild;
     /** @type {?} */
     MultiSelectComponent.prototype._id;
     /** @type {?} */
@@ -1911,6 +1999,8 @@ if (false) {
     MultiSelectComponent.prototype.options;
     /** @type {?} */
     MultiSelectComponent.prototype.pageNumber;
+    /** @type {?} */
+    MultiSelectComponent.prototype.currentItem;
     /** @type {?} */
     MultiSelectComponent.prototype.cdr;
 }
