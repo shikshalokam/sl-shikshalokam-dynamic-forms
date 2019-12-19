@@ -1,8 +1,12 @@
 import { OnInit, ElementRef, EventEmitter } from '@angular/core';
+import { DynamicFormBuilderService } from '../../dynamic-form-builder.service';
+import { Subscription } from 'rxjs';
 export declare class FieldBuilderComponent implements OnInit {
+    private dynamicServe;
     field: any;
+    criteriaList: any;
     form: any;
-    sendDataToParent: EventEmitter<string>;
+    sendDataToParent: EventEmitter<any>;
     copyOrDeleteEvent: EventEmitter<string>;
     closeResult: string;
     modalReference: any;
@@ -25,10 +29,20 @@ export declare class FieldBuilderComponent implements OnInit {
     maxDate: any;
     min: any;
     max: any;
+    draftCriteriaId: any;
+    subscription: Subscription;
+    allData: any;
+    currentSelectedQtn: any;
+    selectedOption: any;
+    listOfRelation: any;
+    condition: any;
+    conditionMatchValue: any;
+    conditionArray: any;
     myModal: ElementRef;
     readonly isValid: any;
     readonly isDirty: any;
-    constructor();
+    constructor(dynamicServe: DynamicFormBuilderService);
+    parentMapping(): void;
     ngOnInit(): void;
     loadFormElement(item: any): void;
     saveEdit(): void;

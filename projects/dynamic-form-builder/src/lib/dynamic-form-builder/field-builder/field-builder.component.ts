@@ -1,6 +1,11 @@
 import { Component, Input, OnInit, ViewChild, ElementRef, EventEmitter, Output } from '@angular/core';
 // import { NgbModal, ModalDismissReasons } from '@ng-bootstrap/ng-bootstrap';
 import { THIS_EXPR } from '@angular/compiler/src/output/output_ast';
+import  { DynamicFormBuilderService } from '../../dynamic-form-builder.service';
+import { Subscription } from 'rxjs';
+import { isNgTemplate } from '@angular/compiler';
+
+
 
 
 @Component({
@@ -32,38 +37,48 @@ import { THIS_EXPR } from '@angular/compiler/src/output/output_ast';
   .example-radio-button {
     margin: 5px;
   }
-  .edit-icon {
-    position: relative;
-  width: 36px;
-  max-width: 57px;
-  right: 0px;
-  left: 94%;
-  top: 25px;cursor: pointer;z-index: 100;
+  .action-component {
+    padding:10px 10px 0px 0px;
+    right: 0px;
+    cursor: pointer;
+    float: right;
+  
 }
-  </style>
-  <div class="row"  *ngIf="openEdit" style="padding: 25px;
-  border: 1px solid #ccc;margin-top:10px; margin: 40px;
-  box-shadow: 1px 1px 4px 1px rgba(0,0,0,0.19);">
+span.cursor-pntr {
+  cursor: pointer;
+  padding: 2px;
+}
+.form-control {
+  display: block;
+  visibility: hidden;
 
-    <div class="col-sm-7 form-group">
+}
+.label.col-md-8.form-control-label {
+  text-decoration: underline;
+}
+
+  </style>
+  <div class="row"  *ngIf="openEdit" style="padding: 15px;
+  border: 1px solid #ccc;margin-top:10px;width:85%;margin-top:40px;margin: auto;
+  box-shadow: 1px 1px 1px 1px rgba(0,0,0,0.19);">
+    <div class="col-sm-6">
       <mat-form-field>
         <input matInput placeholder="Label" [(ngModel)]="label" name="label">
       </mat-form-field>
     </div>
-
-    <div class="col-sm-7 form-group">
+    <div class="col-sm-6">
       <mat-form-field>
         <input matInput placeholder="Input Place Holder" [(ngModel)]="placeholder" name="placeholder">
       </mat-form-field>
     </div>
 
-    <div class="col-sm-7 form-group">
+    <div class="col-sm-6">
       <mat-form-field>
-        <input matInput placeholder="Hint/Description" [(ngModel)]="description" name="placeholder">
+        <input matInput placeholder="Hint/Description" [(ngModel)]="description" name="Description">
       </mat-form-field>
     </div>
 
-<div class="col-sm-7 form-group">
+<div class="col-sm-6 " style="display:none">
   <mat-form-field>
   <mat-label>Input Type</mat-label>
     <mat-select  [(ngModel)]="type">
@@ -75,7 +90,7 @@ import { THIS_EXPR } from '@angular/compiler/src/output/output_ast';
   </mat-form-field>
 </div>
 
-<div class="col-sm-7 form-group">
+<div class="col-sm-6">
 <mat-form-field>
 <mat-label>Pages</mat-label>
   <mat-select  [(ngModel)]="pageNumber">
@@ -85,20 +100,31 @@ import { THIS_EXPR } from '@angular/compiler/src/output/output_ast';
   </mat-select>
 </mat-form-field>
 </div>
+ 
+<div class="col-sm-6">
+<mat-form-field>
+<mat-label>Criteria</mat-label>
+  <mat-select  [(ngModel)]="draftCriteriaId">
+    <mat-option *ngFor="let item of criteriaList" value="item._id">{{ item.name}}</mat-option>
+   </mat-select>
+</mat-form-field>
+</div>
 
-    <div class="col-sm-7 form-group" *ngIf="type=='slider'">
+
+
+    <div class="col-sm-6" *ngIf="type=='slider'">
     <mat-form-field>
     <input type="text" placeholder="Min" matInput  [(ngModel)]="min" name="min value">
     </mat-form-field>
     </div>
 
-    <div class="col-sm-7 form-group" *ngIf="type=='slider'">
+    <div class="col-sm-6" *ngIf="type=='slider'">
     <mat-form-field>
     <input type="text" placeholder="Max" matInput  [(ngModel)]="max" name="min value">
     </mat-form-field>
     </div>
     
-  <div class="col-sm-12 form-group" *ngIf="type=='date'">
+  <div class="col-sm-6" *ngIf="type=='date'">
     <mat-form-field>
       <input matInput [matDatepicker]="picker" [(ngModel)]="minDate" placeholder="Choose a min date">
       <mat-datepicker-toggle matSuffix [for]="picker"></mat-datepicker-toggle>
@@ -113,25 +139,18 @@ import { THIS_EXPR } from '@angular/compiler/src/output/output_ast';
 
 
     </div>
-    <div class="col-sm-12 form-group" *ngIf="type=='radio' || type=='checkbox' || type=='dropdown'">
+    <div class="col-sm-12" *ngIf="type=='radio' || type=='checkbox' || type=='dropdown'">
     <label for="label" class="col-sm-12">Options</label>
     
     <ul class="col" *ngFor="let opt of options;let index">
      <li class="">
       <span>{{opt.label}} </span><span style="
       margin-left: 30px;" (click)="deleteOption(opt,index)">
-      <i class="fa fa-close" style="font-size:36px;color:red"></i></span>
+      <i class="fa fa-trash"></i></span>
     </li>
-    
     </ul>
 
-    <div class="col-sm-7 form-group" *ngIf="type=='slider'">
-    <mat-form-field>
-    <input type="text" placeholder="Max" matInput  [(ngModel)]="max" name="min value">
-    </mat-form-field>
-    </div>
-
-    <div class="col-sm-7 form-group">
+    <div class="col-sm-6">
     <div class="input-group">
     <mat-form-field>
     <input type="text" placeholder="Label" matInput style="margin-bottom: 10px;" [(ngModel)]="newOptionLabel" name="newOption">
@@ -144,13 +163,61 @@ import { THIS_EXPR } from '@angular/compiler/src/output/output_ast';
       Add
       </button>
     </div>
-
-    
-    
     </div>
 
+        
+    <div class="col-sm-12">
+<label id="example-radio-group-label">Do you want to related the question based on below options ?</label>
+<mat-radio-group
+aria-labelledby="example-radio-group-label"
+class="example-radio-group"
+[(ngModel)]="selectedOption">
+<mat-radio-button class="example-radio-button" *ngFor="let ele of options"  [value]="ele">
+{{ ele.label }}
+</mat-radio-button>
+</mat-radio-group>
+</div>
+
+
+<div class="col-sm-6">
+<mat-form-field >
+<mat-label>Select Question to add </mat-label>
+<select matNativeControl [(ngModel)]="currentSelectedQtn" >
+<option *ngFor="let values of allData.questionList.questionList"  [ngValue]="values"> {{ values.label }} </option>
+</select>  
+</mat-form-field>
+</div>
+
+<div class="col-sm-6" *ngIf="type=='text' || type=='date' || type=='number'">
+<mat-form-field >
+<mat-label>Select Condition </mat-label>
+<select matNativeControl [(ngModel)]="condition" >
+<option *ngFor="let values of conditionArray"  [ngValue]="values.condition"> {{ values.label }} </option>
+</select>
+</mat-form-field>
+</div>
+
+<div class="col-sm-6" *ngIf="type=='text' || type=='date' || type=='number'">
+<mat-form-field>
+  <input type="tex" matInput name="conditionMatchValue" placeholder=""  [(ngModel)]="conditionMatchValue">
+  </mat-form-field> 
+</div>
+
+<div class="col-sm-2">
+<button mat-flat-button color="primary" style="margin-top: 10px;"  (click)="parentMapping()">
+Add
+</button>
+</div>
+<ul class="col-sm-12" *ngFor="let relate of listOfRelation;let index">
+ <li class="col-sm-12">
+  <span>{{relate.field}} </span><span style="
+  margin-left: 30px;" >
+  <i class="fa fa-trash"></i></span>
+</li>
+</ul>
+
     
-<div class="col-sm-7">
+<div class="col-sm-12">
 <label id="example-radio-group-label">is Reqired ?</label>
 <mat-radio-group
   aria-labelledby="example-radio-group-label"
@@ -165,7 +232,7 @@ import { THIS_EXPR } from '@angular/compiler/src/output/output_ast';
 </mat-radio-group>
 </div>
 
-<div class="col-sm-7" *ngIf="type=='date'">
+<div class="col-sm-12" *ngIf="type=='date'">
 <label id="example-radio-group-label">is autoCollect</label>
 <mat-radio-group
   aria-labelledby="example-radio-group-label"
@@ -189,8 +256,15 @@ Save
 
 </div>
   </div>
-  <div class="form-group row" [formGroup]="form" style="padding:10px;margin:0px;margin-top:10px;box-shadow: 1px 1px 4px 1px rgba(0,0,0,0.19)">
-  <div class="col-sm-2 edit-icon" ><i class="fa fa-edit" (click)="loadFormElement(field)" ></i></div>
+  <div class="form-group row" [formGroup]="form" style="padding:0px;margin:0px;margin-top:10px;box-shadow: 1px 1px 2px 1px rgba(0,0,0,0.19);padding-bottom:10px;">
+  <span class="qtn_position"><span class="">#{{ field.position }}</span></span>
+  <div class="action-component" >
+
+  <span class="cursor-pntr" (click)="copyElement(field)"><i class="fa fa-copy"></i></span>
+  <span class="cursor-pntr" (click)="deleteElement(field)"><i class="fa fa-trash"></i> </span>
+  <span class="cursor-pntr"><i class="fa fa-edit" (click)="loadFormElement(field)" ></i></span>
+  
+  </div>
     <div class="col-md-12" [ngSwitch]="field.type">
     <textbox *ngSwitchCase="'number'" [field]="field" [form]="form"></textbox>
     <textbox *ngSwitchCase="'text'" [field]="field" [form]="form"></textbox>
@@ -199,23 +273,30 @@ Save
       <dropdown *ngSwitchCase="'dropdown'" [field]="field" [form]="form"></dropdown>
       <checkbox *ngSwitchCase="'checkbox'" [field]="field" [form]="form"></checkbox>
       <radio *ngSwitchCase="'radio'" [field]="field" [form]="form"></radio>
-      <lib-multi-select *ngSwitchCase="'multiselect'" (childrenDropEvent)="childrenDropEvent($event)" [field]="field" [form]="form"></lib-multi-select>
+      <lib-multi-select *ngSwitchCase="'matrix'" (childrenDropEvent)="childrenDropEvent($event)" [field]="field" [form]="form"></lib-multi-select>
       <file *ngSwitchCase="'file'" [field]="field" [form]="form"></file>
       <div style="float:right">
-          <span class="cursor-pntr" (click)="copyElement(field)"><i class="fa fa-copy"></i></span>
-          <span class="cursor-pntr" (click)="deleteElement(field)"><i class="fa fa-trash"></i> </span>
        </div> 
        </div>`,
-  styleUrls: []
+  styles: [ `
+  .qtn_position {
+    float: left;
+    width: 40px;
+    padding: 5px 0px 0px 5px;
+    color: #ccc;
+  } `
+ ]
 })
 
 // <div class="alert alert-danger my-1 p-2 fadeInDown animated" *ngIf="!isValid && isDirty">{{field.label}} is required</div>
 
 export class FieldBuilderComponent implements OnInit {
   @Input() field: any;
+
+  @Input() criteriaList:any;
   @Input() form: any;
 
-  @Output() sendDataToParent = new EventEmitter<string>();
+  @Output() sendDataToParent = new EventEmitter<any>();
 
   @Output() copyOrDeleteEvent = new EventEmitter<string>();
   
@@ -240,6 +321,43 @@ export class FieldBuilderComponent implements OnInit {
   maxDate: any;
   min: any;
   max: any;
+  draftCriteriaId:any;
+  subscription: Subscription;
+  allData:any;
+  currentSelectedQtn:any;
+  selectedOption:any;
+
+  listOfRelation:any = [];
+  condition:any;
+
+  conditionMatchValue:any;
+
+  conditionArray:any = [
+    {
+    label:"equals",
+    condition:"==="
+    },
+    {
+      label:"Not Equal To",
+      condition:"!="
+    },
+    {
+      label:"Greater Than",
+      condition:">"
+    },
+    {
+      label:"Less Than",
+      condition:"<"
+    },
+    {
+      label:"Greater Than Or Equal",
+      condition:">="
+    },
+    {
+      label:"Less Than Or Equal",
+      condition:"<="
+    }
+  ]
 
 
   // private modalRef: NgbModalRef;
@@ -250,30 +368,158 @@ export class FieldBuilderComponent implements OnInit {
 
   constructor(
     // private modalService: NgbModal
-  ) { }
+    private dynamicServe: DynamicFormBuilderService
+    ) { 
 
-  ngOnInit() {
+     }
 
-    this.options = [];
-    this.validations = {}
+  // getAll(){
+  //   this.subscription = this.dynamicServe.getALl().subscribe(message => { 
+  //     console.log("get all info",message);
+
+  //    });
+
+  // }   
+
+
+  parentMapping(){
+
+
+    console.log(this.condition,"condition",this.currentSelectedQtn,"selectedOption",this.selectedOption);
+    let obj = {}
+
+    // option:this.selectedOption,
+    // question:this.currentSelectedQtn
+
+    // obj['visibleIf'] = [];
+
+    let condiObj = {
+      operator:this.condition,
+      value:this.conditionMatchValue,
+      field:this.field.field,
+      // parent:this.selectedOption.field
+
+    }
+
+
+    console.log("condiObj",condiObj);
+
+    let getSelectQuestion = this.allData['questionList']['questionList'].filter(ele =>{
+      if(ele.field == this.field.field){
+        return ele;
+      }
+    });
+
+
+
+    console.log("getSelectQuestion",getSelectQuestion);
+
+    let isAvailable = false;
+    if( getSelectQuestion['visibleIf'] && getSelectQuestion['visibleIf'].length > 0){
+      isAvailable = getSelectQuestion['visibleIf'].filter(item=>{
+            if(item.visibleIf.field==this.field.field){
+              return true
+            }
+      })
+    }
+
+
+
+    let allData = [];
+   
+     allData = this.allData['questionList']['questionList'].filter(ele =>{
+        if(ele.field == this.currentSelectedQtn.field){
+
+          if(ele.visibleIf && ele.visibleIf.length > 0 &&  isAvailable==false){
+            ele.visibleIf.push(condiObj);
+          }else{
+            ele.visibleIf = [];
+            ele.visibleIf.push(condiObj);
+          }
+          
+          return ele;
+        }else{
+          return ele
+        }
+      });
+    
+
+
+    console.log("all data in question",allData);
+
+    // this.sendDataToParent()
+   
+
+    if(!this.listOfRelation.includes(condiObj)){
+      this.listOfRelation.push(condiObj);
+    } 
+
+     
+
+    if(this.condition){
+
+      
+
+
+    }
+    
+
+
+    // 'option':this.selectedOption,
+    //       'question':this.currentSelectedQtn
+
+    // this.field.childQnt = this.currentSelectedQtn.field;
+
+    console.log("this.field.validations.relation",this.listOfRelation);
+
+
   }
 
+  ngOnInit() {
+    
 
 
+    // this.currentSelectedQtn = { };
+    
+    // this.dynamicServe.getALl();
+
+    this.options = [];
+    this.validations = {
+      'relation':[]
+    }
+
+    this.field.validations = {
+      'relation':[]
+  };
+
+  }
   loadFormElement(item) {
 
-    console.log("item ---", item);
+
+    this.allData =  this.dynamicServe.getALl();
+
+    console.log(this.allData," all questions ", this.allData['questionList']);
+
+    // this.dynamicServe.getALl()
+
+    // console.log("item ---", );
 
     this.activeModelData = "";
     this.label = item.label;
     this.type = item.type;
     this.placeholder = item.placeholder;
     this.options = item.options;
-    this._id = item._id;
+    this.draftCriteriaId = item.draftCriteriaId;
+
+    
 
     this.required = item.validations.required;
     
     this.description = item.description;
+
+    if(item.validations.relation){
+      this.listOfRelation = item.validations.relation;
+    }
 
     if (item.type == "date") {
       this.minDate = item.validations.minDate;
@@ -285,10 +531,9 @@ export class FieldBuilderComponent implements OnInit {
       this.max = item.validations.max;
     }
 
+
+  
     this.required = this.field.validations.required;
-    
-
-
     console.log(item.validations.required, "item.validations.required", this.required, "label", this.label);
     // console.log("label",this.label);
 
@@ -308,7 +553,7 @@ export class FieldBuilderComponent implements OnInit {
 
 
 
-      console.log("this.field", this.required);
+      console.log(this.validations,"this.field", this.required);
       // this.modalReference.close();
 
 
@@ -327,7 +572,9 @@ export class FieldBuilderComponent implements OnInit {
         validations: this.validations,
         field: this.field,
         _id: this._id,
-        description: this.description
+        description: this.description,
+        draftCriteriaId:this.draftCriteriaId,
+        
       }
 
       if (this.type == 'date') {
@@ -341,8 +588,7 @@ export class FieldBuilderComponent implements OnInit {
       // console.log("obj",obj);
 
 
-      this.sendDataToParent.emit(JSON.stringify(obj));
-
+    
 
       // this.field.label = this.label;
 
@@ -352,6 +598,7 @@ export class FieldBuilderComponent implements OnInit {
       this.field.placeholder = this.placeholder;
       this.field.options = this.options;
       this.field.description = this.description;
+      this.field.draftCriteriaId = this.draftCriteriaId;
 
       if (this.type == 'date') {
         this.field.validations.minDate = this.minDate;
@@ -362,12 +609,32 @@ export class FieldBuilderComponent implements OnInit {
         this.field.validations.max = this.max;
       }
 
+      // if(this.field.validations.relation){
+
+      if(this.listOfRelation){
+        obj.validations.relation = this.listOfRelation;
+        this.field.validations.relation = this.listOfRelation;
+      }
+        
+      // }
+
+      
+
       // this.field.validations
 
-      console.log(" this.field.validations.required", this.field.validations.required, "sdds", this.required);
+      // console.log(" this.field.validations.required", this.field.validations.required, "sdds", this.required);
       this.field.validations.required = this.required;
       this.field.validations.autoCollect = this.autoCollect;
-      
+
+
+      console.log(obj,"this.field.validations",this.field.validations);
+      let op = {
+        action:"save",
+        data:obj
+      }
+
+      this.sendDataToParent.emit(op);
+      // this.sendDataToParent.emit(JSON.stringify(obj));
 
       // console.log(" this.field", this.field);
       this.openEdit = false;

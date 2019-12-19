@@ -12,7 +12,13 @@ import { FormGroup } from '@angular/forms';
           <option *ngFor="let opt of field.options" [value]="opt.key">{{opt.label}}</option>
         </select>
       </div> 
-    `
+    `,
+    styles: [`
+    .form-control {
+      display: none;
+    }
+    
+  `]
 })
 export class DropDownComponent {
     @Input() field:any = {};

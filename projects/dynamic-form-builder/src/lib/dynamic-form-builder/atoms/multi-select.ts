@@ -20,27 +20,27 @@ import { ReactiveFormsModule, FormsModule } from '@angular/forms';
   </textarea>
   <div class="row" *ngIf="openEditChild" style="padding: 20px;
   border: 1px solid #ccc;margin-top:10px; margin:40px; margin-left: 20%;
-  box-shadow: 1px 1px 4px 1px rgba(0,0,0,0.19);">
-
-  <div class="col-sm-7 form-group">
+  box-shadow: 1px 1px 1px 1px rgba(0,0,0,0.19);">
+<div class="col-sm-12">
+  <div class="col-sm-6">
     <mat-form-field>
       <input matInput placeholder="Label" [(ngModel)]="label" [ngModelOptions]="{standalone: true}">
     </mat-form-field>
   </div>
 
-  <div class="col-sm-7 form-group">
+  <div class="col-sm-6">
     <mat-form-field>
       <input matInput placeholder="Input Place Holder" [(ngModel)]="placeholder" [ngModelOptions]="{standalone: true}">
     </mat-form-field>
   </div>
 
-  <div class="col-sm-7 form-group">
+  <div class="col-sm-6">
     <mat-form-field>
       <input matInput placeholder="Hint/Description" [(ngModel)]="description" [ngModelOptions]="{standalone: true}">
     </mat-form-field>
   </div>
 
-  <div class="col-sm-7 form-group">
+  <div class="col-sm-6">
     <mat-form-field>
       <mat-label>Input Type</mat-label>
       <mat-select [(ngModel)]="type" [ngModelOptions]="{standalone: true}">
@@ -52,7 +52,7 @@ import { ReactiveFormsModule, FormsModule } from '@angular/forms';
     </mat-form-field>
   </div>
 
-  <div class="col-sm-7 form-group">
+  <div class="col-sm-6">
     <mat-form-field>
       <mat-label>Pages</mat-label>
       <mat-select [(ngModel)]="pageNumber" [ngModelOptions]="{standalone: true}">
@@ -63,19 +63,19 @@ import { ReactiveFormsModule, FormsModule } from '@angular/forms';
     </mat-form-field>
   </div>
 
-  <div class="col-sm-7 form-group" *ngIf="type=='slider'">
+  <div class="col-sm-6" *ngIf="type=='slider'">
     <mat-form-field>
       <input type="text" placeholder="Min" matInput [(ngModel)]="min" [ngModelOptions]="{standalone: true}">
     </mat-form-field>
   </div>
 
-  <div class="col-sm-7 form-group" *ngIf="type=='slider'">
+  <div class="col-sm-6" *ngIf="type=='slider'">
     <mat-form-field>
       <input type="text" placeholder="Max" matInput [(ngModel)]="max" [ngModelOptions]="{standalone: true}">
     </mat-form-field>
   </div>
 
-  <div class="col-sm-12 form-group" *ngIf="type=='date'">
+  <div class="col-sm-12" *ngIf="type=='date'">
     <mat-form-field>
       <input matInput [matDatepicker]="picker" [(ngModel)]="minDate" [ngModelOptions]="{standalone: true}" placeholder="Choose a min date">
       <mat-datepicker-toggle matSuffix [for]="picker"></mat-datepicker-toggle>
@@ -93,7 +93,7 @@ import { ReactiveFormsModule, FormsModule } from '@angular/forms';
   <div class="col-sm-12 form-group" *ngIf="type=='radio' || type=='checkbox' || type=='dropdown'">
     <label for="label" class="col-sm-12">Options</label>
 
-    <div class="col-sm-7 form-group" *ngIf="type=='slider'">
+    <div class="col-sm-6" *ngIf="type=='slider'">
       <mat-form-field>
         <input type="text" placeholder="Max" matInput [(ngModel)]="max" [ngModelOptions]="{standalone: true}">
       </mat-form-field>
@@ -138,9 +138,10 @@ import { ReactiveFormsModule, FormsModule } from '@angular/forms';
   <div *ngIf="field.child.length > 0">
 
   <div *ngFor="let obj of field.child let i =index">
-  <div style="float: right;right: -90px; cursor:pointer;
-  top: 20px;" class="col-sm-2 edit-icon"><i class="fa fa-edit" (click)="loadFormElement(obj, i)">{{i}}</i></div>
-  <div [ngSwitch]="obj.type" style="width:80%;margin-left:20%">
+ 
+  <div [ngSwitch]="obj.type" style="width:80%;margin-left:20%;float:left:box-shadow: 1px 1px 1px 1px rgba(0,0,0,0.19);">
+  <div style="float: right; cursor:pointer;
+  top: 20px;" class="col-sm-2 edit-icon"><i class="fa fa-edit" (click)="loadFormElement(obj, i)"></i></div>
 
   <textbox style ="padding-left:30px" *ngSwitchCase="'number'" [field]="obj" [form]="form"></textbox>
 
@@ -163,6 +164,12 @@ import { ReactiveFormsModule, FormsModule } from '@angular/forms';
   </div>
   </div>
   </div>`,
+  styles: [`
+  .form-control {
+    display: none;
+  }
+  
+`]
 })
 export class MultiSelectComponent {
 
@@ -199,8 +206,14 @@ export class MultiSelectComponent {
   }
   onDropNew($event, field) {
     console.log("---- MultiSelectComponent -", $event);
+
+    if($event.responseType && $event.responseType =='matrix'){
+  
     $event.data.mutiSelect = field;
     this.childrenDropEvent.emit($event.data);
+  }else{
+    console.log("not allowed");
+  }
   }
 
 

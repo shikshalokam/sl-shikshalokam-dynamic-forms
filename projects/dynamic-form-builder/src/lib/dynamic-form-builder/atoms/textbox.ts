@@ -15,7 +15,13 @@ import { FormGroup } from '@angular/forms';
         rows="20" class="form-control" [placeholder]="field.placeholder"></textarea>
 
       </div> 
-    `
+    `,
+    styles: [`
+    .form-control {
+      display: none;
+    }
+    
+  `]
 })
 export class TextBoxComponent {
   @Input() field: any = {};

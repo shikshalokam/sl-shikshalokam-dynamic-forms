@@ -7,7 +7,7 @@ import {CdkDragDrop, moveItemInArray} from '@angular/cdk/drag-drop';
   template:`
    
      <div cdkDropList (cdkDropListDropped)="drop($event)"> <div *ngFor="let field of fields"  cdkDrag>
-          <field-builder *ngIf="!field.isDeleted" [field]="field" [form]="form"  
+          <field-builder [criteriaList]="criteriaList" *ngIf="!field.isDeleted" [field]="field" [form]="form"  
           (sendDataToParent)="eventFromChild($event)" (copyOrDeleteEvent)="copyOrDeleteEvent($event)">
           </field-builder>
       </div></div>`, 
@@ -15,6 +15,8 @@ import {CdkDragDrop, moveItemInArray} from '@angular/cdk/drag-drop';
 export class DynamicFormBuilderComponent implements OnInit {
   @Output() onFieldUpdate = new EventEmitter();
   @Input() fields: any[] = [];
+
+  @Input() criteriaList : any[] = [];
   // form: FormGroup;
   @Input() form:any;
   formData:any = [];
@@ -89,7 +91,7 @@ export class DynamicFormBuilderComponent implements OnInit {
     
   }
 
-  eventFromChild(data){
+  eventFromChild(data:any){
 
     this.onFieldUpdate.emit(data);
     console.log("data from child  ------- ",data);

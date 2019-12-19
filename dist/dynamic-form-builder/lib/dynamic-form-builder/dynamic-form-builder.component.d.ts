@@ -3,6 +3,7 @@ import { CdkDragDrop } from '@angular/cdk/drag-drop';
 export declare class DynamicFormBuilderComponent implements OnInit {
     onFieldUpdate: EventEmitter<{}>;
     fields: any[];
+    criteriaList: any[];
     form: any;
     formData: any;
     constructor();

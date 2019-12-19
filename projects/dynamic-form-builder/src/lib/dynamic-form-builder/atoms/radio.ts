@@ -15,7 +15,13 @@ import { FormGroup } from '@angular/forms';
           </label>
         </div>
       </div> 
-    `
+    `,
+    styles: [`
+    .form-control {
+      display: none;
+    }
+    
+  `]
 })
 export class RadioComponent {
     @Input() field:any = {};

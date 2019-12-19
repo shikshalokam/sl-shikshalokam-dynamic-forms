@@ -3,6 +3,9 @@ import { FormGroup, FormControl, FormBuilder, FormArray } from '@angular/forms';
 import { HttpClient, HttpHeaders } from '@angular/common/http';
 
 import { DndDropEvent } from 'ngx-drag-drop'
+// private dynamicServe: DynamicFormBuilderService
+
+import { DynamicFormBuilderService } from './dynamic-form-builder.service'
 
 // import  { } from './dynamic-form-builder.service'
 
@@ -33,8 +36,9 @@ import { Observable } from 'rxjs';
         margin-bottom: 0.5rem;
         border: 1px solid #ece7e7;
     }
-    .cursor-pntr {
+    span.cursor-pntr {
         cursor: pointer;
+        padding: 2px;
     }
     
     
@@ -43,44 +47,23 @@ import { Observable } from 'rxjs';
       
 
     <div class="col-sm-12 noPadding">
-    <mat-tab-group>
-    <mat-tab label="Page 1"> 
+   
     <div class="card">
-          <div dndDropzone class="card-body" (dndDrop)="onDrop($event)">
+          <div dndDropzone class="card-body" (dndDrop)="onDrop($event)" >
               <form (ngSubmit)="onSubmit(this.form.value)" [formGroup]="form" class="form-horizontal">
-            <dynamic-form-builder [fields]="getFields()" [form]="form"  (onFieldUpdate)="onFieldUpdate($event)" ></dynamic-form-builder>
+            <dynamic-form-builder [criteriaList]="getCriteria()" [fields]="getFields()" [form]="form"  (onFieldUpdate)="onFieldUpdate($event)" ></dynamic-form-builder>
             </form>
           </div>
         </div>
-    </mat-tab>
-    <mat-tab label="Page 2"> 
-    <div class="card">
-          <div dndDropzone class="card-body" (dndDrop)="onDrop($event)">
-              <form (ngSubmit)="onSubmit(this.form.value)" [formGroup]="form" class="form-horizontal">
-            <dynamic-form-builder [fields]="getFields()" [form]="form"  (onFieldUpdate)="onFieldUpdate($event)" ></dynamic-form-builder>
-            </form>
-          </div>
-        </div>
-     </mat-tab>
-    <mat-tab label="Page 3">
-    <div class="card">
-          <div dndDropzone class="card-body" (dndDrop)="onDrop($event)">
-              <form (ngSubmit)="onSubmit(this.form.value)" [formGroup]="form" class="form-horizontal">
-            <dynamic-form-builder [fields]="getFields()" [form]="form"  (onFieldUpdate)="onFieldUpdate($event)" ></dynamic-form-builder>
-            </form>
-          </div>
-        </div>
-     </mat-tab>
-    </mat-tab-group>
       </div>
 
       <div class="col-sm-4" style="padding-top:25px">
           
           <div  class="col-md-12">
-            <!-- <dynamic-form-builder [fields]="getFields()"></dynamic-form-builder> -->
+            <!-- <dynamic-form-builder [criteriaList]="getCriteria()" [fields]="getFields()"></dynamic-form-builder> -->
       
             <span *ngFor="let item of jsonData" style ="padding:5px">
-              <span [dndDraggable]="item"  class="element"  >{{ item.responseType }}</span>
+              <span [dndDraggable]="item"  class="element"  >{{ item.responseType=='multiselect'?'metrix':item.responseType }}</span>
               </span>
 
               <!-- <div class="col-sm-12 element" (click)="addFormElement(item.responseType)" >Number</div> -->
@@ -107,11 +90,25 @@ export class DynamicFormBuilderComponent implements OnInit {
   @Input() events: Observable<any>;
   // @Output() questionList = new EventEmitter();
   @Output() questionTrigger = new EventEmitter();
-  eventsSubscription: any
+  eventsSubscription: any;
+
+  criteriaList:any;
 
   public fields: any[] = [];
 
-  constructor(private http: HttpClient, private _formBuilder: FormBuilder, private fb: FormBuilder) {
+
+  sendToService(data): void {
+    // send message to subscribers via observable subject
+    this.dynamicServe.sendData(data);
+  }
+
+
+  constructor(
+    private http: HttpClient, 
+    private _formBuilder: FormBuilder, 
+    private fb: FormBuilder,
+    private dynamicServe: DynamicFormBuilderService
+    ) {
     // this.form = new FormGroup({
     //   fields: this.fb.array([]),
     // })
@@ -126,13 +123,20 @@ export class DynamicFormBuilderComponent implements OnInit {
   }
 
 
-
+  getCriteria(){
+    return this.criteriaList;
+  }
   ngOnInit() {
 
+    this.criteriaList = [];
     this.eventsSubscription = this.events.subscribe(data => {
-      console.log("calling from parent with data", data);
+      console.log("calling from parent with data === ", data);
       if (data) {
-        let dt = data;
+
+        console.log("criteria list",data.criteriaList);
+
+        this.criteriaList = data.criteriaList;
+        let dt = data['questionArray'];
         this.formBuild(dt);
       } else {
         let obj = {
@@ -164,7 +168,7 @@ export class DynamicFormBuilderComponent implements OnInit {
         "responseType": "slider"
       },
       {
-        "responseType": "multiselect"
+        "responseType": "matrix"
       }
     ]
   }
@@ -191,7 +195,7 @@ export class DynamicFormBuilderComponent implements OnInit {
         "position": len,
         "field": len + "question",
         "type": "text",
-        "label": len + ". question",
+        "label":  "Question",
         "placeholder": "Please enter your question here",
         "description": "",
         "validations": {
@@ -202,9 +206,10 @@ export class DynamicFormBuilderComponent implements OnInit {
       }
     } else if (ele == 'number') {
       obj = {
+        "position": len,
         "field": len + "question",
         "type": "number",
-        "label": len + ". question",
+        "label":  "Question",
         "placeholder": "Please enter your question here",
         "description": "",
         "validations": {
@@ -215,10 +220,11 @@ export class DynamicFormBuilderComponent implements OnInit {
       }
     } else if (ele == 'radio') {
       obj = {
+        "position": len,
         field: len + "question",
         type: 'radio',
         name: len + ". question",
-        label: len + ". question",
+        "label":  "Question",
         description: "",
         required: true,
         "validations": {
@@ -233,10 +239,11 @@ export class DynamicFormBuilderComponent implements OnInit {
       }
     } else if (ele == "checkbox") {
       obj = {
+        "position": len,
         field: len + "question",
         type: "checkbox",
         name: len + ". question",
-        label: len + ". question",
+        "label":  "Question",
         description: "",
         required: true,
         "validations": {
@@ -251,10 +258,11 @@ export class DynamicFormBuilderComponent implements OnInit {
       }
     } else if (ele == "dropdown") {
       obj = {
+        "position": len,
         field: len + "question",
         type: 'dropdown',
         name: len + ". question",
-        label: len + ". question",
+        "label":  "Question",
         value: 'option1',
         description: "",
         required: true,
@@ -271,10 +279,11 @@ export class DynamicFormBuilderComponent implements OnInit {
     }
     else if (ele == "date") {
       obj = {
+        "position": len,
         field: len + "question",
         type: 'date',
         name: len + ". question",
-        label: len + ". question",
+        "label":  "Question",
         description: "",
         required: true,
         "validations": {
@@ -289,12 +298,13 @@ export class DynamicFormBuilderComponent implements OnInit {
 
         ]
       }
-    } else if (ele == 'multiselect') {
+    } else if (ele == 'matrix') {
       if (ele == 'childDroped') {
         let childdata = {
+          "position": len,
           "field": len + "question",
           "type": ele.type,
-          "label": len + ". question",
+          "label":  "Question",
           "child": [],
           "placeholder": "Please add Child's here",
           "description": "",
@@ -311,9 +321,10 @@ export class DynamicFormBuilderComponent implements OnInit {
 
 
       obj = {
+        "position": len,
         "field": len + "question",
-        "type": "multiselect",
-        "label": len + ". question",
+        "type": "matrix",
+        "label":  "Question",
         "child": [],
         "placeholder": "Please add Child's here",
         "description": "",
@@ -328,7 +339,7 @@ export class DynamicFormBuilderComponent implements OnInit {
         field: len + "question",
         type: 'slider',
         name: len + ". question",
-        label: len + ". question",
+        "label":  "Question",
         description: "",
         required: true,
         "validations": {
@@ -384,6 +395,8 @@ export class DynamicFormBuilderComponent implements OnInit {
       data: obj
     }
     // console.log("transf", trnasformData);
+
+    
     this.questionTrigger.emit(trnasformData);
 
     this.formData.push(obj);
@@ -421,6 +434,14 @@ export class DynamicFormBuilderComponent implements OnInit {
     // this.fields
     // this.formBuild();
     this.fields.push(obj);
+
+    let completeData = {
+      criteriaList:this.criteriaList,
+      questionList:this.fields
+    }
+    console.log("completeData",completeData);
+    this.sendToService(completeData);
+    
     console.log("fields controls", this.form);
 
   }
@@ -501,6 +522,8 @@ export class DynamicFormBuilderComponent implements OnInit {
   ngOnDestroy() {
     this.eventsSubscription.unsubscribe()
   }
+
+
   onFieldUpdate($event) {
     console.log("eventData sssssss------", $event.data);
 
@@ -513,6 +536,9 @@ export class DynamicFormBuilderComponent implements OnInit {
         action: 'delete',
         data: $event
       }
+
+     
+
     } else if ($event.action == "childDroped") {
 
       console.log('this.fields', this.fields);
@@ -541,9 +567,18 @@ export class DynamicFormBuilderComponent implements OnInit {
     } else {
       trnasformData = {
         action: 'update',
-        data: JSON.parse($event)
+        data: $event
       }
     }
+
+    let completeData = {
+      questionList:this.fields,
+      criteriaList:this.criteriaList
+    }
+
+    console.log("completeData",completeData);
+    this.sendToService(completeData);
+
     this.questionTrigger.emit(trnasformData);
   }
 }
