@@ -155,7 +155,7 @@ class DynamicFormBuilderComponent {
                 "responseType": "slider"
             },
             {
-                "responseType": "multiselect"
+                "responseType": "matrix"
             }
         ];
     }
@@ -296,7 +296,7 @@ class DynamicFormBuilderComponent {
                 options: []
             };
         }
-        else if (ele == 'multiselect') {
+        else if (ele == 'matrix') {
             if (ele == 'childDroped') {
                 /** @type {?} */
                 let childdata = {
@@ -315,8 +315,9 @@ class DynamicFormBuilderComponent {
                 };
             }
             obj = {
+                "position": len,
                 "field": len + "question",
-                "type": "multiselect",
+                "type": "matrix",
                 "label": "Question",
                 "child": [],
                 "placeholder": "Please add Child's here",
@@ -521,7 +522,7 @@ class DynamicFormBuilderComponent {
             };
         }
         else if ($event.action == "childDroped") {
-            console.log('this.fields', this.fields);
+            console.log('this.fields  in child', this.fields);
             /** @type {?} */
             var final = this.fields.filter((/**
              * @param {?} item
@@ -1162,15 +1163,13 @@ span.cursor-pntr {
 
   </style>
   <div class="row"  *ngIf="openEdit" style="padding: 15px;
-  border: 1px solid #ccc;margin-top:10px;width:85%;margin: auto;
+  border: 1px solid #ccc;margin-top:10px;width:85%;margin-top:40px;margin: auto;
   box-shadow: 1px 1px 1px 1px rgba(0,0,0,0.19);">
-
     <div class="col-sm-6">
       <mat-form-field>
         <input matInput placeholder="Label" [(ngModel)]="label" name="label">
       </mat-form-field>
     </div>
-
     <div class="col-sm-6">
       <mat-form-field>
         <input matInput placeholder="Input Place Holder" [(ngModel)]="placeholder" name="placeholder">
@@ -1302,7 +1301,7 @@ class="example-radio-group"
 </mat-form-field>
 </div>
 
-<div class="col-sm-12" *ngIf="type=='text' || type=='date' || type=='number'">
+<div class="col-sm-6" *ngIf="type=='text' || type=='date' || type=='number'">
 <mat-form-field>
   <input type="tex" matInput name="conditionMatchValue" placeholder=""  [(ngModel)]="conditionMatchValue">
   </mat-form-field> 
@@ -1378,10 +1377,9 @@ Save
       <dropdown *ngSwitchCase="'dropdown'" [field]="field" [form]="form"></dropdown>
       <checkbox *ngSwitchCase="'checkbox'" [field]="field" [form]="form"></checkbox>
       <radio *ngSwitchCase="'radio'" [field]="field" [form]="form"></radio>
-      <lib-multi-select *ngSwitchCase="'multiselect'" (childrenDropEvent)="childrenDropEvent($event)" [field]="field" [form]="form"></lib-multi-select>
+      <lib-multi-select *ngSwitchCase="'matrix'" (childrenDropEvent)="childrenDropEvent($event)" [field]="field" [form]="form"></lib-multi-select>
       <file *ngSwitchCase="'file'" [field]="field" [form]="form"></file>
       <div style="float:right">
-         
        </div> 
        </div>`,
                 styles: [`
@@ -1822,8 +1820,10 @@ class MultiSelectComponent {
      */
     onDropNew($event, field) {
         console.log("---- MultiSelectComponent -", $event);
-        $event.data.mutiSelect = field;
-        this.childrenDropEvent.emit($event.data);
+        if ($event.data.responseType && $event.data.responseType != 'matrix') {
+            $event.data.mutiSelect = field;
+            this.childrenDropEvent.emit($event.data);
+        }
     }
     /**
      * @param {?} action
@@ -2077,9 +2077,10 @@ MultiSelectComponent.decorators = [
   <div *ngIf="field.child.length > 0">
 
   <div *ngFor="let obj of field.child let i =index">
+
+  <div [ngSwitch]="obj.type" style="float:left;width:80%;margin-left:20%;box-shadow: 1px 1px 1px 1px rgba(0,0,0,0.19);">
   <div style="float: right;right: -90px; cursor:pointer;
-  top: 20px;" class="col-sm-2 edit-icon"><i class="fa fa-edit" (click)="loadFormElement(obj, i)">{{i}}</i></div>
-  <div [ngSwitch]="obj.type" style="width:80%;margin-left:20%">
+  top: 20px;" class="col-sm-2 edit-icon"><i class="fa fa-edit" (click)="loadFormElement(obj,i)"></i></div>
 
   <textbox style ="padding-left:30px" *ngSwitchCase="'number'" [field]="obj" [form]="form"></textbox>
 
@@ -2102,12 +2103,6 @@ MultiSelectComponent.decorators = [
   </div>
   </div>
   </div>`,
-                styles: [`
-  .form-control {
-    display: none;
-  }
-  
-`]
             },] },
 ];
 /** @nocollapse */

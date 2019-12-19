@@ -541,7 +541,7 @@ export class DynamicFormBuilderComponent implements OnInit {
 
     } else if ($event.action == "childDroped") {
 
-      console.log('this.fields', this.fields);
+      console.log('this.fields  in child', this.fields);
 
       var final = this.fields.filter(
         item => {
