@@ -3,6 +3,7 @@ import { FormGroup, FormControl, FormBuilder, FormArray } from '@angular/forms';
 import { HttpClient, HttpHeaders } from '@angular/common/http';
 
 import { DndDropEvent } from 'ngx-drag-drop'
+import { DynamicFormBuilderService } from './dynamic-form-builder.service';
 
 // import  { } from './dynamic-form-builder.service'
 
@@ -43,37 +44,15 @@ import { Observable } from 'rxjs';
       
 
     <div class="col-sm-12 noPadding">
-    <mat-tab-group>
-    <mat-tab label="Page 1"> 
-    <div class="card">
+  
+    <div class="card" >
           <div dndDropzone class="card-body" (dndDrop)="onDrop($event)">
               <form (ngSubmit)="onSubmit(this.form.value)" [formGroup]="form" class="form-horizontal">
             <dynamic-form-builder [fields]="getFields()" [form]="form"  (onFieldUpdate)="onFieldUpdate($event)" ></dynamic-form-builder>
             </form>
           </div>
         </div>
-    </mat-tab>
-    <mat-tab label="Page 2"> 
-    <div class="card">
-          <div dndDropzone class="card-body" (dndDrop)="onDrop($event)">
-              <form (ngSubmit)="onSubmit(this.form.value)" [formGroup]="form" class="form-horizontal">
-            <dynamic-form-builder [fields]="getFields()" [form]="form"  (onFieldUpdate)="onFieldUpdate($event)" ></dynamic-form-builder>
-            </form>
-          </div>
-        </div>
-     </mat-tab>
-    <mat-tab label="Page 3">
-    <div class="card">
-          <div dndDropzone class="card-body" (dndDrop)="onDrop($event)">
-              <form (ngSubmit)="onSubmit(this.form.value)" [formGroup]="form" class="form-horizontal">
-            <dynamic-form-builder [fields]="getFields()" [form]="form"  (onFieldUpdate)="onFieldUpdate($event)" ></dynamic-form-builder>
-            </form>
-          </div>
-        </div>
-     </mat-tab>
-    </mat-tab-group>
       </div>
-
       <div class="col-sm-4" style="padding-top:25px">
           
           <div  class="col-md-12">
@@ -107,11 +86,17 @@ export class DynamicFormBuilderComponent implements OnInit {
   @Input() events: Observable<any>;
   // @Output() questionList = new EventEmitter();
   @Output() questionTrigger = new EventEmitter();
-  eventsSubscription: any
+  eventsSubscription: any;
+  criteriaList:any;
 
   public fields: any[] = [];
+  showQuestionBlock:any;
 
-  constructor(private http: HttpClient, private _formBuilder: FormBuilder, private fb: FormBuilder) {
+  constructor(private http: HttpClient, 
+    private _formBuilder: FormBuilder, 
+    private fb: FormBuilder,
+    private dynamicServe: DynamicFormBuilderService
+    ) {
     // this.form = new FormGroup({
     //   fields: this.fb.array([]),
     // })
@@ -127,13 +112,35 @@ export class DynamicFormBuilderComponent implements OnInit {
 
 
 
+  showQBlock(){
+    this.showQuestionBlock;
+  }
+
+  getCriteria(){
+    return this.criteriaList;
+  }
   ngOnInit() {
+    this.criteriaList = [];
 
     this.eventsSubscription = this.events.subscribe(data => {
       console.log("calling from parent with data", data);
       if (data) {
-        let dt = data;
+        // let dt = data;
+        // this.formBuild(dt);
+        this.criteriaList = data.criteriaList;
+        let dt = data['questionArray'];
+
+        console.log("")
         this.formBuild(dt);
+
+        let completeData = {
+          questionList:data['questionArray'],
+          criteriaList:data.criteriaList
+        }
+    
+        console.log("completeData",completeData);
+        this.sendToService(completeData);
+
       } else {
         let obj = {
           action: "all",
@@ -164,7 +171,7 @@ export class DynamicFormBuilderComponent implements OnInit {
         "responseType": "slider"
       },
       {
-        "responseType": "multiselect"
+        "responseType": "matrix"
       }
     ]
   }
@@ -180,6 +187,10 @@ export class DynamicFormBuilderComponent implements OnInit {
     this.unsubcribe();
   }
 
+  sendToService(data): void {
+    // send message to subscribers via observable subject
+    this.dynamicServe.sendData(data);
+  }
 
   getToolObj(ele, len) {
 
@@ -289,7 +300,7 @@ export class DynamicFormBuilderComponent implements OnInit {
 
         ]
       }
-    } else if (ele == 'multiselect') {
+    } else if (ele == 'matrix') {
       if (ele == 'childDroped') {
         let childdata = {
           "field": len + "question",
@@ -312,7 +323,7 @@ export class DynamicFormBuilderComponent implements OnInit {
 
       obj = {
         "field": len + "question",
-        "type": "multiselect",
+        "type": "matrix",
         "label": len + ". question",
         "child": [],
         "placeholder": "Please add Child's here",
@@ -383,14 +394,14 @@ export class DynamicFormBuilderComponent implements OnInit {
       action: 'add',
       data: obj
     }
-    // console.log("transf", trnasformData);
+    console.log("transf", trnasformData);
     this.questionTrigger.emit(trnasformData);
 
     this.formData.push(obj);
     let fieldsCtrls = {};
 
     this.form = new FormGroup(fieldsCtrls);
-    // console.log("------", obj);
+    console.log("------", obj);
     for (let f of this.formData) {
 
 
@@ -421,6 +432,16 @@ export class DynamicFormBuilderComponent implements OnInit {
     // this.fields
     // this.formBuild();
     this.fields.push(obj);
+    let completeData = {
+      questionList:this.fields,
+      criteriaList:this.criteriaList
+    }
+
+    console.log("completeData",completeData);
+    this.sendToService(completeData);
+
+    this.questionTrigger.emit(trnasformData);
+
     console.log("fields controls", this.form);
 
   }
@@ -521,7 +542,13 @@ export class DynamicFormBuilderComponent implements OnInit {
         item => {
           if (item.field === eventObj.data.mutiSelect.field) {
 
-            let obj = this.getToolObj($event.data.responseType, item.child.length + 1);
+            console.log("");
+            console.log(eventObj.data.mutiSelect.field,'====== this.fields  =====',item);
+
+            // if(item.child){
+               let obj = this.getToolObj($event.data.responseType, item.child.length + 1);
+            // }
+           
             item.child.push(obj);
             return item;
           } else {

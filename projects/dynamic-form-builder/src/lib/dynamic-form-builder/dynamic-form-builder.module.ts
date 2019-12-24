@@ -31,6 +31,7 @@ import { DragDropModule } from "@angular/cdk/drag-drop";
 import { MultiSelectComponent } from './atoms/multi-select';
 import { DndModule } from 'ngx-drag-drop';
 
+import {  DynamicFormBuilderService } from '../dynamic-form-builder.service'
 // import {  } from '@angular/cdk/'
 
 
@@ -65,6 +66,6 @@ import { DndModule } from 'ngx-drag-drop';
     
   ],
   exports: [DynamicFormBuilderComponent],
-  providers: []
+  providers: [DynamicFormBuilderService]
 })
 export class DynamicFormBuilderModule { }

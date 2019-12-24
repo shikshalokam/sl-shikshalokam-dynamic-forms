@@ -10,6 +10,12 @@ import { FormGroup } from '@angular/forms';
         </div>
       </div> 
     `
+    ,
+    styles:[`
+     .form-control {
+      display:none
+    } `
+  ]
 })
 export class CheckBoxComponent {
     @Input() field:any = {};

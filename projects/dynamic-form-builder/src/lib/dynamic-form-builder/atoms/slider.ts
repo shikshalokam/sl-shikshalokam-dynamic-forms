@@ -23,6 +23,12 @@ import { FormGroup } from '@angular/forms';
 
       </div> 
     `
+    ,
+    styles:[`
+     .form-control {
+      display:none
+    } `
+  ]
 })
 export class SliderComponent {
     @Input() field:any = {};

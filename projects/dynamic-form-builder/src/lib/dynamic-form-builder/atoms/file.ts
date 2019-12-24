@@ -26,6 +26,9 @@ import { FormGroup } from '@angular/forms';
     `,
     styles:[
       `
+      .form-control {
+        display:none;
+      }
       .drop-container {
         background: #fff;
         border-radius: 6px;

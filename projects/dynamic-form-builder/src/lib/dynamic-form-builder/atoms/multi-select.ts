@@ -139,7 +139,7 @@ import { ReactiveFormsModule, FormsModule } from '@angular/forms';
 
   <div *ngFor="let obj of field.child let i =index">
   <div style="float: right;right: -90px; cursor:pointer;
-  top: 20px;" class="col-sm-2 edit-icon"><i class="fa fa-edit" (click)="loadFormElement(obj, i)">{{i}}</i></div>
+  top: 20px;" class="col-sm-2 edit-icon"><i class="fa fa-edit" (click)="loadFormElement(obj, i)"></i></div>
   <div [ngSwitch]="obj.type" style="width:80%;margin-left:20%">
 
   <textbox style ="padding-left:30px" *ngSwitchCase="'number'" [field]="obj" [form]="form"></textbox>
@@ -163,6 +163,11 @@ import { ReactiveFormsModule, FormsModule } from '@angular/forms';
   </div>
   </div>
   </div>`,
+    styles:[`
+     .form-control {
+      display:none
+    } `
+  ]
 })
 export class MultiSelectComponent {
 
@@ -199,8 +204,14 @@ export class MultiSelectComponent {
   }
   onDropNew($event, field) {
     console.log("---- MultiSelectComponent -", $event);
+
+    if($event.data.responseType && $event.data.responseType !='matrix'){
+  
     $event.data.mutiSelect = field;
     this.childrenDropEvent.emit($event.data);
+  }else{
+    console.log("not allowed");
+  }
   }
 
 
