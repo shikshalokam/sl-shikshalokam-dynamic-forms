@@ -1,7 +1,8 @@
 import { Component, Input, Output, EventEmitter, NgModule, ChangeDetectorRef } from '@angular/core';
 import { FormGroup } from '@angular/forms';
 import { ReactiveFormsModule, FormsModule } from '@angular/forms';
-
+import { DynamicFormBuilderService } from '../../dynamic-form-builder.service';
+import {CdkDragDrop, moveItemInArray} from '@angular/cdk/drag-drop';
 
 @NgModule({
   imports: [ReactiveFormsModule, FormsModule],
@@ -101,6 +102,58 @@ import { ReactiveFormsModule, FormsModule } from '@angular/forms';
 
   </div>
 
+  <div *ngIf="filtereddata && filtereddata.length > 0">
+    <div class="col-sm-12">
+      <label id="example-radio-group-label">Do you want to related the question based on below options ?</label>
+      <mat-radio-group aria-labelledby="example-radio-group-label" class="example-radio-group"
+        [(ngModel)]="selectedOption" [ngModelOptions]="{standalone: true}">
+        <mat-radio-button class="example-radio-button" *ngFor="let ele of options" [value]="ele">
+          {{ ele.label }}
+        </mat-radio-button>
+      </mat-radio-group>
+    </div>
+
+
+    <div class="col-sm-6">
+      <mat-form-field>
+        <mat-label>Select Question to add </mat-label>
+        <select matNativeControl [(ngModel)]="currentSelectedQtn" [ngModelOptions]="{standalone: true}">
+          <option *ngFor="let values of filtereddata" [ngValue]="values"> {{ values.label }} </option>
+        </select>
+      </mat-form-field>
+    </div>
+
+    <div class="col-sm-6" *ngIf="type=='text' || type=='date' || type=='number'">
+      <mat-form-field>
+        <mat-label>Select Condition </mat-label>
+        <select matNativeControl [(ngModel)]="condition" [ngModelOptions]="{standalone: true}">
+          <option *ngFor="let values of conditionArray" [ngValue]="values.condition"> {{ values.label }} </option>
+        </select>
+      </mat-form-field>
+    </div>
+
+    <div class="col-sm-6" *ngIf="type=='text' || type=='date' || type=='number'">
+      <mat-form-field>
+        <input type="tex" matInput name="conditionMatchValue"
+         placeholder="" [(ngModel)]="conditionMatchValue" [ngModelOptions]="{standalone: true}">
+      </mat-form-field>
+    </div>
+
+    <div class="col-sm-2">
+      <button mat-flat-button color="primary" style="margin-top: 10px;" (click)="parentMapping()">
+        Add
+      </button>
+    </div>
+  </div>
+
+  <ul class="col-sm-12" *ngFor="let relate of listOfRelation;let i = index">
+    <li class="col-sm-12">
+      <span>{{relate.label}} </span><span style="
+  margin-left: 30px;" (click)="deleteCondition(relate,i)">
+        <i class="fa fa-trash"></i></span>
+    </li>
+  </ul>
+
 
   <div class="col-sm-7">
     <label id="example-radio-group-label">is Reqired ?</label>
@@ -135,16 +188,22 @@ import { ReactiveFormsModule, FormsModule } from '@angular/forms';
 
   </div>
 </div>
-  <div *ngIf="field.child.length > 0">
+<div >
+  <div *ngIf="field.child.length > 0" cdkDropList (cdkDropListDropped)="drop($event)">
 
-  <div *ngFor="let obj of field.child let i =index">
-  <div style="float: right;right: -90px; cursor:pointer;
-  top: 20px;" class="col-sm-2 edit-icon"><i class="fa fa-edit" (click)="loadFormElement(obj, i)"></i></div>
-  <div [ngSwitch]="obj.type" style="width:80%;margin-left:20%">
+  <div *ngFor="let obj of field.child let i =index" cdkDrag>
+  <div style="float: right;right: -90px; cursor:pointer; top: 30px;" class="col-sm-2 edit-icon">
+  <i class="fa fa-trash" (click)="deleteElement(obj, i)"></i>
+  <i class="fa fa-copy" (click)="copyElement(obj, i)"></i>
+  <i class="fa fa-edit" (click)="loadFormElement(obj, i)"></i>
+  </div>
 
-  <textbox style ="padding-left:30px" *ngSwitchCase="'number'" [field]="obj" [form]="form"></textbox>
 
-  <textbox style ="padding-left:30px" *ngSwitchCase="'text'" [field]="obj" [form]="form"></textbox>
+  <div class="col-md-12" [ngSwitch]="obj.type" style="width:80%;margin-left:20%;border:1px solid #ccc;">
+
+  <textbox  style ="padding-left:30px" *ngSwitchCase="'number'" [field]="obj" [form]="form"></textbox>
+
+  <textbox  style ="padding-left:30px" *ngSwitchCase="'text'" [field]="obj" [form]="form"></textbox>
 
   <date style ="padding-left:30px" *ngSwitchCase="'date'" [field]="obj" [form]="form"></date>
 
@@ -162,12 +221,16 @@ import { ReactiveFormsModule, FormsModule } from '@angular/forms';
   </div>
   </div>
   </div>
+  </div>
   </div>`,
     styles:[`
-     .form-control {
-      display:none
-    } `
-  ]
+    .form-control {
+      display: none;
+    }
+    .fa {
+      padding: 2px;
+    }
+    `]
 })
 export class MultiSelectComponent {
 
@@ -178,6 +241,7 @@ export class MultiSelectComponent {
 
   @Output() sendDataToParent = new EventEmitter<string>();
   @Output() childrenDropEvent = new EventEmitter<string>();
+  @Output() copyOrDeleteEvent = new EventEmitter<string>();
 
   activeModelData: any;
   validations: any;
@@ -195,8 +259,43 @@ export class MultiSelectComponent {
   placeholder: any;
   options: any;
   pageNumber: any;
+  allData: any;
+  filtereddata: any;
+  conditionMatchValue: any;
+  selectedOption: any;
+  currentSelectedQtn: any;
+  listOfRelation: any = [];
+  condition: any;
+  getSelectQuestion: any;
+  conditionArray: any = [
+    {
+      label: "equals",
+      condition: "==="
+    },
+    {
+      label: "Not Equal To",
+      condition: "!="
+    },
+    {
+      label: "Greater Than",
+      condition: ">"
+    },
+    {
+      label: "Less Than",
+      condition: "<"
+    },
+    {
+      label: "Greater Than Or Equal",
+      condition: ">="
+    },
+    {
+      label: "Less Than Or Equal",
+      condition: "<="
+    }
+  ]
 
-  constructor(public cdr: ChangeDetectorRef) {
+  constructor(public cdr: ChangeDetectorRef,
+    private dynamicServe: DynamicFormBuilderService) {
 
     // this.form.controls = this.field.name;
     // console.log("form",this.form);
@@ -205,19 +304,108 @@ export class MultiSelectComponent {
   onDropNew($event, field) {
     console.log("---- MultiSelectComponent -", $event);
 
-    if($event.data.responseType && $event.data.responseType !='matrix'){
-  
-    $event.data.mutiSelect = field;
-    this.childrenDropEvent.emit($event.data);
-  }else{
-    console.log("not allowed");
-  }
+    if ($event.data.responseType && $event.data.responseType != 'matrix') {
+
+      $event.data.mutiSelect = field;
+      this.childrenDropEvent.emit($event.data);
+    } else {
+      console.log("not allowed");
+    }
   }
 
+
+  parentMapping() {
+    console.log(this.condition, "condition", this.currentSelectedQtn, "selectedOption", this.selectedOption);
+    let obj = {}
+    // option:this.selectedOption,
+    // question:this.currentSelectedQtn
+    // obj['visibleIf'] = [];
+    let condiObj = {
+      operator: this.condition,
+      value: this.conditionMatchValue,
+      field: this.field.field,
+      label: this.field.label
+      // parent:this.selectedOption.field
+    }
+
+    // if (this.currentSelectedQtn.parentChildren) {
+    //   this.currentSelectedQtn.parentChildren.push(condiObj);
+    // } else {
+    //   this.currentSelectedQtn.parentChildren = [];
+    //   this.currentSelectedQtn.parentChildren.push(condiObj);
+    // }
+    console.log('this.currentSelectedQtn', this.currentSelectedQtn);
+
+    console.log("condiObj", condiObj);
+    this.getSelectQuestion = this.allData['questionList']['questionList'].filter(ele => {
+      if (ele.field == this.field.field) {
+        return ele;
+      }
+    });
+
+    console.log("getSelectQuestion", this.getSelectQuestion);
+
+    let isAvailable = false;
+    if (this.getSelectQuestion['visibleIf'] && this.getSelectQuestion['visibleIf'].length > 0) {
+      isAvailable = this.getSelectQuestion['visibleIf'].filter(item => {
+        if (item.visibleIf.field == this.field.field) {
+          return true
+        }
+      })
+    }
+    console.log("after getSelectQuestion", this.getSelectQuestion);
+    let allData = [];
+    let addObj = false;
+    for (let i = 0; i < this.getSelectQuestion.length; i++) {
+      debugger
+      if (this.getSelectQuestion[i].parentChildren) {
+        if (this.getSelectQuestion[i].parentChildren.indexOf(this.currentSelectedQtn.field) !== -1) {
+          alert("Value exists!")
+
+          addObj = false;
+
+        } else {
+
+          addObj = true;
+          this.getSelectQuestion[i].parentChildren.push(this.currentSelectedQtn.field);
+        }
+
+      } else {
+        addObj = true;
+        this.getSelectQuestion[i].parentChildren = [];
+        this.getSelectQuestion[i].parentChildren.push(this.currentSelectedQtn.field);
+      }
+    }
+    if (addObj) {
+      allData = this.allData['questionList']['questionList'].filter(ele => {
+        if (ele.field == this.currentSelectedQtn.field) {
+          if (ele.visibleIf && ele.visibleIf.length > 0 && isAvailable == false) {
+            ele.visibleIf.push(condiObj);
+          } else {
+            ele.visibleIf = [];
+            ele.visibleIf.push(condiObj);
+          }
+          return ele;
+        } else {
+          return ele
+        }
+      });
+      console.log("all data in question", allData);
+      // this.sendDataToParent()
+      if (!this.listOfRelation.includes(condiObj)) {
+        this.listOfRelation.push(condiObj);
+      }
+    }
+    if (this.condition) {
+    }
+    // 'option':this.selectedOption,
+    //       'question':this.currentSelectedQtn
+    // this.field.childQnt = this.currentSelectedQtn.field;
+    console.log("this.field.validations.relation", this.listOfRelation);
+  }
 
   closeModelChild(action, data = "") {
     if (action == "save") {
-      debugger
       console.log("closeModel", this.field);
       // this.modalReference.close();
       // this.activeModelData.field = this.field.field;
@@ -313,10 +501,19 @@ export class MultiSelectComponent {
     console.log("item ---", item, "id", id);
     this.activeModelData = "";
     this.label = item.label;
-
     this.currentItem = item;
+    this.allData = this.dynamicServe.getALl();
+    console.log('this.field', this.field);
+    debugger
+
+    // for(let i = 0; i < this.allData['questionList']['questionList'][0].child.length; i++) {
+      this.filtereddata = this.field.child.filter(t => t.field !== item.field);
+    // }
 
 
+
+    console.log('multi select', this.allData);
+    console.log('this.filtereddata', this.filtereddata)
     this.type = item.type;
     this.placeholder = item.placeholder;
     this.options = item.options;
@@ -336,7 +533,7 @@ export class MultiSelectComponent {
     // this.required = this.field.validations.required;
 
     // console.log(item.validations.required, "item.validations.required",
-      // this.required, "label", this.label);
+    // this.required, "label", this.label);
     // console.log("label",this.label);
     this.openEditChild = this.openEditChild ? false : true;
     this.cdr.detectChanges();
@@ -344,6 +541,39 @@ export class MultiSelectComponent {
     // this.open(this.myModal);
     // this.myModal.show();
     // this.myModal.nativeElement.className = 'modal fade show';
+  }
+
+  deleteCondition(data, value) {
+    // var index = this.listOfRelation.indexOf(value);
+    // if (index > -1) {
+    this.listOfRelation.splice(value, 1);
+    this.getSelectQuestion[0].child.splice(value, 1);
+    // }
+
+    console.log('after delete data', this.listOfRelation);
+  }
+
+  deleteElement(item, index) {
+    item.action = 'delete';
+    this.field.isDelete = true;
+    this.field.child.splice(index, 1);
+    this.copyOrDeleteEvent.emit(item);
+    console.log("field delete", this.field, 'index', index);
+    console.log('after delete', this.allData);
+
+  }
+
+  copyElement(item, index) {
+    // this.field.push(item);
+    item.action = 'copy';
+    console.log("copy field ----------", item, 'index', index);
+    this.field.child.push(item);
+    this.copyOrDeleteEvent.emit(item);
+
+  }
+
+  drop(event: CdkDragDrop<string[]>) {
+    moveItemInArray(this.field.child, event.previousIndex, event.currentIndex);
   }
 
 }

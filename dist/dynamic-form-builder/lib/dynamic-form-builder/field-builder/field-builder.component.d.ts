@@ -7,7 +7,7 @@ export declare class FieldBuilderComponent implements OnInit {
     criteriaList: any;
     form: any;
     sendDataToParent: EventEmitter<any>;
-    copyOrDeleteEvent: EventEmitter<string>;
+    copyOrDeleteEvent: EventEmitter<any>;
     filtereddata: any;
     getSelectQuestion: any;
     closeResult: string;

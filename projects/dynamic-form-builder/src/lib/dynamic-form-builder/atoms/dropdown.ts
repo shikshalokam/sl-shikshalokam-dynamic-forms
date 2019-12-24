@@ -5,7 +5,7 @@ import { FormGroup } from '@angular/forms';
     selector: 'dropdown',
     template: `
       <div [formGroup]="form">
-      <label class="col-md-8 form-control-label" [attr.for]="field.label">
+      <label class="col-sm-12 form-control-label" [attr.for]="field.label">
       {{field.label}}
     </label>
         <select class="form-control" [id]="field.field">
@@ -14,10 +14,10 @@ import { FormGroup } from '@angular/forms';
       </div> 
     `,
     styles:[`
-     .form-control {
-      display:none
-    } `
-  ]
+    .form-control {
+      display: none;
+    }
+    `]
 })
 export class DropDownComponent {
     @Input() field:any = {};

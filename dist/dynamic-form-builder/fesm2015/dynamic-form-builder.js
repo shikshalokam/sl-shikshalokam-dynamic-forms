@@ -1,9 +1,9 @@
 import { Subject } from 'rxjs';
 import { CommonModule } from '@angular/common';
 import { AngularFontAwesomeModule } from 'angular-font-awesome';
-import { moveItemInArray, DragDropModule } from '@angular/cdk/drag-drop';
 import { Component, EventEmitter, Output, Input, ViewChild, NgModule, ChangeDetectorRef } from '@angular/core';
 import { FormGroup, FormControl, FormBuilder, ReactiveFormsModule, FormsModule } from '@angular/forms';
+import { moveItemInArray, DragDropModule } from '@angular/cdk/drag-drop';
 import { HttpClient, HttpClientModule } from '@angular/common/http';
 import { MatButtonModule, MatRadioModule, MatDatepickerModule, MatFormFieldModule, MatInputModule, MatSliderModule, MatSelectModule, MatTabsModule } from '@angular/material';
 import { DndModule } from 'ngx-drag-drop';
@@ -784,10 +784,10 @@ class DynamicFormBuilderComponent$1 {
      * @return {?}
      */
     copyOrDeleteEvent(data) {
-        console.log('data type', typeof (data));
+        console.log('data type', data);
+        console.log('this.fields', this.fields);
         if (typeof (data) === 'string') {
             data = JSON.parse(data);
-            console.log('inside string');
         }
         // let childdata = data;
         // let finaldata = JSON.parse(childdata);
@@ -821,7 +821,7 @@ class DynamicFormBuilderComponent$1 {
             var index = this.fields.indexOf(data);
             console.log("ind", index);
             this.onFieldUpdate.emit(data);
-            // this.fields.splice(index, 1);
+            this.fields.splice(index, 1);
             // this.fields = this.fields.filter(function(value, index, arr){
             //   return value!=data;
             // });
@@ -1333,7 +1333,7 @@ class FieldBuilderComponent {
             action: 'childDroped',
             data: $event
         };
-        this.copyOrDeleteEvent.emit(JSON.stringify(newObj));
+        this.copyOrDeleteEvent.emit(newObj);
         console.log("field delete", this.field);
     }
     /**
@@ -1345,6 +1345,7 @@ class FieldBuilderComponent {
         // var index = this.listOfRelation.indexOf(value);
         // if (index > -1) {
         this.listOfRelation.splice(value, 1);
+        this.getSelectQuestion[0].parentChildren.splice(value, 1);
         // }
         console.log('after delete data', this.listOfRelation);
     }
@@ -1616,7 +1617,7 @@ Save
       <dropdown *ngSwitchCase="'dropdown'" [field]="field" [form]="form"></dropdown>
       <checkbox *ngSwitchCase="'checkbox'" [field]="field" [form]="form"></checkbox>
       <radio *ngSwitchCase="'radio'" [field]="field" [form]="form"></radio>
-      <lib-multi-select *ngSwitchCase="'matrix'" (childrenDropEvent)="childrenDropEvent($event)" [field]="field" [form]="form"></lib-multi-select>
+      <lib-multi-select *ngSwitchCase="'matrix'"  cdkDrag (childrenDropEvent)="childrenDropEvent($event)" [field]="field" [form]="form"></lib-multi-select>
       <file *ngSwitchCase="'file'" [field]="field" [form]="form"></file>
       <div style="float:right">
        </div> 
@@ -1678,12 +1679,7 @@ TextBoxComponent.decorators = [
         rows="20" class="form-control" [placeholder]="field.placeholder"></textarea>
 
       </div> 
-    `,
-                styles: [`
-     .form-control {
-      display:none
-    } `
-                ]
+    `
             },] },
 ];
 /** @nocollapse */
@@ -1714,12 +1710,7 @@ DropDownComponent.decorators = [
           <option *ngFor="let opt of field.options" [value]="opt.key">{{opt.label}}</option>
         </select>
       </div> 
-    `,
-                styles: [`
-     .form-control {
-      display:none
-    } `
-                ]
+    `
             },] },
 ];
 /** @nocollapse */
@@ -1857,7 +1848,7 @@ CheckBoxComponent.decorators = [
                 selector: 'checkbox',
                 template: `
       <div [formGroup]="form">
-      <label class="col-md-12 form-control-label" [attr.for]="field.label">
+      <label class="form-control-label" [attr.for]="field.label">
       {{field.label}}
     </label>
         <div [formGroupName]="field.field" >
@@ -1869,12 +1860,7 @@ CheckBoxComponent.decorators = [
         </div>
 
       </div> 
-    `,
-                styles: [`
-     .form-control {
-      display:none
-    } `
-                ]
+    `
             },] },
 ];
 CheckBoxComponent.propDecorators = {
@@ -1896,7 +1882,7 @@ RadioComponent.decorators = [
                 selector: 'radio',
                 template: `
       <div [formGroup]="form">
-      <label class="col-md-12 form-control-label" [attr.for]="field.label">
+      <label class="form-control-label" [attr.for]="field.label">
       {{field.label}}
     </label>
         <div class="form-check" *ngFor="let opt of field.options">
@@ -1906,12 +1892,7 @@ RadioComponent.decorators = [
           </label>
         </div>
       </div> 
-    `,
-                styles: [`
-     .form-control {
-      display:none
-    } `
-                ]
+    `
             },] },
 ];
 RadioComponent.propDecorators = {
@@ -1953,12 +1934,7 @@ DateComponent.decorators = [
         rows="20" class="form-control" [placeholder]="field.placeholder"></textarea>
 
       </div> 
-    `,
-                styles: [`
-     .form-control {
-      display:none
-    } `
-                ]
+    `
             },] },
 ];
 /** @nocollapse */
@@ -2009,12 +1985,7 @@ SliderComponent.decorators = [
 </mat-slider>
 
       </div> 
-    `,
-                styles: [`
-     .form-control {
-      display:none
-    } `
-                ]
+    `
             },] },
 ];
 /** @nocollapse */
@@ -2031,15 +2002,45 @@ SliderComponent.propDecorators = {
 class MultiSelectComponent {
     /**
      * @param {?} cdr
+     * @param {?} dynamicServe
      */
-    constructor(cdr) {
+    constructor(cdr, dynamicServe) {
         // this.form.controls = this.field.name;
         // console.log("form",this.form);
         this.cdr = cdr;
+        this.dynamicServe = dynamicServe;
         this.field = {};
         this.sendDataToParent = new EventEmitter();
         this.childrenDropEvent = new EventEmitter();
+        this.copyOrDeleteEvent = new EventEmitter();
         this.openEditChild = false;
+        this.listOfRelation = [];
+        this.conditionArray = [
+            {
+                label: "equals",
+                condition: "==="
+            },
+            {
+                label: "Not Equal To",
+                condition: "!="
+            },
+            {
+                label: "Greater Than",
+                condition: ">"
+            },
+            {
+                label: "Less Than",
+                condition: "<"
+            },
+            {
+                label: "Greater Than Or Equal",
+                condition: ">="
+            },
+            {
+                label: "Less Than Or Equal",
+                condition: "<="
+            }
+        ];
     }
     /**
      * @return {?}
@@ -2065,13 +2066,121 @@ class MultiSelectComponent {
         }
     }
     /**
+     * @return {?}
+     */
+    parentMapping() {
+        console.log(this.condition, "condition", this.currentSelectedQtn, "selectedOption", this.selectedOption);
+        // option:this.selectedOption,
+        // question:this.currentSelectedQtn
+        // obj['visibleIf'] = [];
+        /** @type {?} */
+        let condiObj = {
+            operator: this.condition,
+            value: this.conditionMatchValue,
+            field: this.field.field,
+            label: this.field.label
+            // parent:this.selectedOption.field
+        }
+        // if (this.currentSelectedQtn.parentChildren) {
+        //   this.currentSelectedQtn.parentChildren.push(condiObj);
+        // } else {
+        //   this.currentSelectedQtn.parentChildren = [];
+        //   this.currentSelectedQtn.parentChildren.push(condiObj);
+        // }
+        ;
+        // if (this.currentSelectedQtn.parentChildren) {
+        //   this.currentSelectedQtn.parentChildren.push(condiObj);
+        // } else {
+        //   this.currentSelectedQtn.parentChildren = [];
+        //   this.currentSelectedQtn.parentChildren.push(condiObj);
+        // }
+        console.log('this.currentSelectedQtn', this.currentSelectedQtn);
+        console.log("condiObj", condiObj);
+        this.getSelectQuestion = this.allData['questionList']['questionList'].filter((/**
+         * @param {?} ele
+         * @return {?}
+         */
+        ele => {
+            if (ele.field == this.field.field) {
+                return ele;
+            }
+        }));
+        console.log("getSelectQuestion", this.getSelectQuestion);
+        /** @type {?} */
+        let isAvailable = false;
+        if (this.getSelectQuestion['visibleIf'] && this.getSelectQuestion['visibleIf'].length > 0) {
+            isAvailable = this.getSelectQuestion['visibleIf'].filter((/**
+             * @param {?} item
+             * @return {?}
+             */
+            item => {
+                if (item.visibleIf.field == this.field.field) {
+                    return true;
+                }
+            }));
+        }
+        console.log("after getSelectQuestion", this.getSelectQuestion);
+        /** @type {?} */
+        let allData = [];
+        /** @type {?} */
+        let addObj = false;
+        for (let i = 0; i < this.getSelectQuestion.length; i++) {
+            debugger;
+            if (this.getSelectQuestion[i].parentChildren) {
+                if (this.getSelectQuestion[i].parentChildren.indexOf(this.currentSelectedQtn.field) !== -1) {
+                    alert("Value exists!");
+                    addObj = false;
+                }
+                else {
+                    addObj = true;
+                    this.getSelectQuestion[i].parentChildren.push(this.currentSelectedQtn.field);
+                }
+            }
+            else {
+                addObj = true;
+                this.getSelectQuestion[i].parentChildren = [];
+                this.getSelectQuestion[i].parentChildren.push(this.currentSelectedQtn.field);
+            }
+        }
+        if (addObj) {
+            allData = this.allData['questionList']['questionList'].filter((/**
+             * @param {?} ele
+             * @return {?}
+             */
+            ele => {
+                if (ele.field == this.currentSelectedQtn.field) {
+                    if (ele.visibleIf && ele.visibleIf.length > 0 && isAvailable == false) {
+                        ele.visibleIf.push(condiObj);
+                    }
+                    else {
+                        ele.visibleIf = [];
+                        ele.visibleIf.push(condiObj);
+                    }
+                    return ele;
+                }
+                else {
+                    return ele;
+                }
+            }));
+            console.log("all data in question", allData);
+            // this.sendDataToParent()
+            if (!this.listOfRelation.includes(condiObj)) {
+                this.listOfRelation.push(condiObj);
+            }
+        }
+        if (this.condition) ;
+        // 'option':this.selectedOption,
+        //       'question':this.currentSelectedQtn
+        // this.field.childQnt = this.currentSelectedQtn.field;
+        console.log("this.field.validations.relation", this.listOfRelation);
+    }
+    /**
      * @param {?} action
      * @param {?=} data
      * @return {?}
      */
     closeModelChild(action, data = "") {
         if (action == "save") {
-            debugger;
             console.log("closeModel", this.field);
             // this.modalReference.close();
             // this.activeModelData.field = this.field.field;
@@ -2155,6 +2264,18 @@ class MultiSelectComponent {
         this.activeModelData = "";
         this.label = item.label;
         this.currentItem = item;
+        this.allData = this.dynamicServe.getALl();
+        console.log('this.field', this.field);
+        debugger;
+        // for(let i = 0; i < this.allData['questionList']['questionList'][0].child.length; i++) {
+        this.filtereddata = this.field.child.filter((/**
+         * @param {?} t
+         * @return {?}
+         */
+        t => t.field !== item.field));
+        // }
+        console.log('multi select', this.allData);
+        console.log('this.filtereddata', this.filtereddata);
         this.type = item.type;
         this.placeholder = item.placeholder;
         this.options = item.options;
@@ -2180,6 +2301,51 @@ class MultiSelectComponent {
         // this.open(this.myModal);
         // this.myModal.show();
         // this.myModal.nativeElement.className = 'modal fade show';
+    }
+    /**
+     * @param {?} data
+     * @param {?} value
+     * @return {?}
+     */
+    deleteCondition(data, value) {
+        // var index = this.listOfRelation.indexOf(value);
+        // if (index > -1) {
+        this.listOfRelation.splice(value, 1);
+        this.getSelectQuestion[0].child.splice(value, 1);
+        // }
+        console.log('after delete data', this.listOfRelation);
+    }
+    /**
+     * @param {?} item
+     * @param {?} index
+     * @return {?}
+     */
+    deleteElement(item, index) {
+        item.action = 'delete';
+        this.field.isDelete = true;
+        this.field.child.splice(index, 1);
+        this.copyOrDeleteEvent.emit(item);
+        console.log("field delete", this.field, 'index', index);
+        console.log('after delete', this.allData);
+    }
+    /**
+     * @param {?} item
+     * @param {?} index
+     * @return {?}
+     */
+    copyElement(item, index) {
+        // this.field.push(item);
+        item.action = 'copy';
+        console.log("copy field ----------", item, 'index', index);
+        this.field.child.push(item);
+        this.copyOrDeleteEvent.emit(item);
+    }
+    /**
+     * @param {?} event
+     * @return {?}
+     */
+    drop(event) {
+        moveItemInArray(this.field.child, event.previousIndex, event.currentIndex);
     }
 }
 MultiSelectComponent.decorators = [
@@ -2279,6 +2445,58 @@ MultiSelectComponent.decorators = [
 
   </div>
 
+  <div *ngIf="filtereddata && filtereddata.length > 0">
+    <div class="col-sm-12">
+      <label id="example-radio-group-label">Do you want to related the question based on below options ?</label>
+      <mat-radio-group aria-labelledby="example-radio-group-label" class="example-radio-group"
+        [(ngModel)]="selectedOption" [ngModelOptions]="{standalone: true}">
+        <mat-radio-button class="example-radio-button" *ngFor="let ele of options" [value]="ele">
+          {{ ele.label }}
+        </mat-radio-button>
+      </mat-radio-group>
+    </div>
+
+
+    <div class="col-sm-6">
+      <mat-form-field>
+        <mat-label>Select Question to add </mat-label>
+        <select matNativeControl [(ngModel)]="currentSelectedQtn" [ngModelOptions]="{standalone: true}">
+          <option *ngFor="let values of filtereddata" [ngValue]="values"> {{ values.label }} </option>
+        </select>
+      </mat-form-field>
+    </div>
+
+    <div class="col-sm-6" *ngIf="type=='text' || type=='date' || type=='number'">
+      <mat-form-field>
+        <mat-label>Select Condition </mat-label>
+        <select matNativeControl [(ngModel)]="condition" [ngModelOptions]="{standalone: true}">
+          <option *ngFor="let values of conditionArray" [ngValue]="values.condition"> {{ values.label }} </option>
+        </select>
+      </mat-form-field>
+    </div>
+
+    <div class="col-sm-6" *ngIf="type=='text' || type=='date' || type=='number'">
+      <mat-form-field>
+        <input type="tex" matInput name="conditionMatchValue"
+         placeholder="" [(ngModel)]="conditionMatchValue" [ngModelOptions]="{standalone: true}">
+      </mat-form-field>
+    </div>
+
+    <div class="col-sm-2">
+      <button mat-flat-button color="primary" style="margin-top: 10px;" (click)="parentMapping()">
+        Add
+      </button>
+    </div>
+  </div>
+
+  <ul class="col-sm-12" *ngFor="let relate of listOfRelation;let i = index">
+    <li class="col-sm-12">
+      <span>{{relate.label}} </span><span style="
+  margin-left: 30px;" (click)="deleteCondition(relate,i)">
+        <i class="fa fa-trash"></i></span>
+    </li>
+  </ul>
+
 
   <div class="col-sm-7">
     <label id="example-radio-group-label">is Reqired ?</label>
@@ -2313,16 +2531,22 @@ MultiSelectComponent.decorators = [
 
   </div>
 </div>
-  <div *ngIf="field.child.length > 0">
+<div >
+  <div *ngIf="field.child.length > 0" cdkDropList (cdkDropListDropped)="drop($event)">
 
-  <div *ngFor="let obj of field.child let i =index">
-  <div style="float: right;right: -90px; cursor:pointer;
-  top: 20px;" class="col-sm-2 edit-icon"><i class="fa fa-edit" (click)="loadFormElement(obj, i)"></i></div>
-  <div [ngSwitch]="obj.type" style="width:80%;margin-left:20%">
+  <div *ngFor="let obj of field.child let i =index" cdkDrag>
+  <div style="float: right;right: -90px; cursor:pointer; top: 20px;" class="col-sm-2 edit-icon">
+  <i class="fa fa-trash" (click)="deleteElement(obj, i)"></i>
+  <i class="fa fa-copy" (click)="copyElement(obj, i)"></i>
+  <i class="fa fa-edit" (click)="loadFormElement(obj, i)"></i>
+  </div>
 
-  <textbox style ="padding-left:30px" *ngSwitchCase="'number'" [field]="obj" [form]="form"></textbox>
 
-  <textbox style ="padding-left:30px" *ngSwitchCase="'text'" [field]="obj" [form]="form"></textbox>
+  <div class="col-md-12" [ngSwitch]="obj.type" style="width:80%;margin-left:20%">
+
+  <textbox  style ="padding-left:30px" *ngSwitchCase="'number'" [field]="obj" [form]="form"></textbox>
+
+  <textbox  style ="padding-left:30px" *ngSwitchCase="'text'" [field]="obj" [form]="form"></textbox>
 
   <date style ="padding-left:30px" *ngSwitchCase="'date'" [field]="obj" [form]="form"></date>
 
@@ -2340,23 +2564,21 @@ MultiSelectComponent.decorators = [
   </div>
   </div>
   </div>
-  </div>`,
-                styles: [`
-     .form-control {
-      display:none
-    } `
-                ]
+  </div>
+  </div>`
             },] },
 ];
 /** @nocollapse */
 MultiSelectComponent.ctorParameters = () => [
-    { type: ChangeDetectorRef }
+    { type: ChangeDetectorRef },
+    { type: DynamicFormBuilderService }
 ];
 MultiSelectComponent.propDecorators = {
     field: [{ type: Input }],
     form: [{ type: Input }],
     sendDataToParent: [{ type: Output }],
-    childrenDropEvent: [{ type: Output }]
+    childrenDropEvent: [{ type: Output }],
+    copyOrDeleteEvent: [{ type: Output }]
 };
 
 /**

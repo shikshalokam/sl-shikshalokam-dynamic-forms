@@ -1,12 +1,16 @@
 import { EventEmitter, ChangeDetectorRef } from '@angular/core';
+import { DynamicFormBuilderService } from '../../dynamic-form-builder.service';
+import { CdkDragDrop } from '@angular/cdk/drag-drop';
 export declare class MultiSelectComponent {
     cdr: ChangeDetectorRef;
+    private dynamicServe;
     field: any;
     form: any;
     readonly isValid: any;
     readonly isDirty: any;
     sendDataToParent: EventEmitter<string>;
     childrenDropEvent: EventEmitter<string>;
+    copyOrDeleteEvent: EventEmitter<string>;
     activeModelData: any;
     validations: any;
     required: any;
@@ -23,9 +27,23 @@ export declare class MultiSelectComponent {
     placeholder: any;
     options: any;
     pageNumber: any;
-    constructor(cdr: ChangeDetectorRef);
+    allData: any;
+    filtereddata: any;
+    conditionMatchValue: any;
+    selectedOption: any;
+    currentSelectedQtn: any;
+    listOfRelation: any;
+    condition: any;
+    getSelectQuestion: any;
+    conditionArray: any;
+    constructor(cdr: ChangeDetectorRef, dynamicServe: DynamicFormBuilderService);
     onDropNew($event: any, field: any): void;
+    parentMapping(): void;
     closeModelChild(action: any, data?: string): void;
     currentItem: any;
     loadFormElement(item: any, id: any): void;
+    deleteCondition(data: any, value: any): void;
+    deleteElement(item: any, index: any): void;
+    copyElement(item: any, index: any): void;
+    drop(event: CdkDragDrop<string[]>): void;
 }
