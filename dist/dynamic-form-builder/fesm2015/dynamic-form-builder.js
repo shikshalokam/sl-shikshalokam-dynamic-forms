@@ -1652,7 +1652,7 @@ TextBoxComponent.decorators = [
                 selector: 'textbox',
                 template: `
       <div [formGroup]="form">
-      <label class="col-md-8 form-control-label" [attr.for]="field.label">
+      <label class="col-md-12 form-control-label" [attr.for]="field.label">
       {{field.label}}
       </label>
     
