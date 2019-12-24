@@ -5,7 +5,7 @@ import { FormGroup } from '@angular/forms';
     selector: 'radio',
     template: `
       <div [formGroup]="form">
-      <label class="col-md-12 form-control-label" [attr.for]="field.label">
+      <label class="form-control-label" [attr.for]="field.label">
       {{field.label}}
     </label>
         <div class="form-check" *ngFor="let opt of field.options">
@@ -15,12 +15,7 @@ import { FormGroup } from '@angular/forms';
           </label>
         </div>
       </div> 
-    `,
-    styles:[`
-     .form-control {
-      display:none
-    } `
-  ]
+    `
 })
 export class RadioComponent {
     @Input() field:any = {};

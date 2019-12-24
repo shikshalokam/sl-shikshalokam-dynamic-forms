@@ -27,11 +27,12 @@ export class DynamicFormBuilderComponent implements OnInit {
 
   copyOrDeleteEvent(data){
 
-    console.log('data type', typeof(data));
+    console.log('data type', data);
+    console.log('this.fields', this.fields);
 
     if(typeof(data) === 'string') {
       data  = JSON.parse(data);
-      console.log('inside string');
+   
     }
 
     // let childdata = data;
@@ -68,7 +69,7 @@ export class DynamicFormBuilderComponent implements OnInit {
       
       this.onFieldUpdate.emit(data);
 
-      // this.fields.splice(index, 1);
+      this.fields.splice(index, 1);
 
       
 

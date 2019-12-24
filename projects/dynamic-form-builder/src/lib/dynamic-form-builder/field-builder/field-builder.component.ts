@@ -274,7 +274,7 @@ Save
       <dropdown *ngSwitchCase="'dropdown'" [field]="field" [form]="form"></dropdown>
       <checkbox *ngSwitchCase="'checkbox'" [field]="field" [form]="form"></checkbox>
       <radio *ngSwitchCase="'radio'" [field]="field" [form]="form"></radio>
-      <lib-multi-select *ngSwitchCase="'matrix'" (childrenDropEvent)="childrenDropEvent($event)" [field]="field" [form]="form"></lib-multi-select>
+      <lib-multi-select *ngSwitchCase="'matrix'"  cdkDrag (childrenDropEvent)="childrenDropEvent($event)" [field]="field" [form]="form"></lib-multi-select>
       <file *ngSwitchCase="'file'" [field]="field" [form]="form"></file>
       <div style="float:right">
        </div> 
@@ -299,7 +299,7 @@ export class FieldBuilderComponent implements OnInit {
 
   @Output() sendDataToParent = new EventEmitter<any>();
 
-  @Output() copyOrDeleteEvent = new EventEmitter<string>();
+  @Output() copyOrDeleteEvent = new EventEmitter<any>();
   filtereddata: any;
   getSelectQuestion: any;
   closeResult: string;
@@ -791,8 +791,7 @@ export class FieldBuilderComponent implements OnInit {
       action: 'childDroped',
       data: $event
     }
-
-    this.copyOrDeleteEvent.emit(JSON.stringify(newObj));
+    this.copyOrDeleteEvent.emit(newObj);
     console.log("field delete", this.field);
   }
 
@@ -800,6 +799,7 @@ export class FieldBuilderComponent implements OnInit {
     // var index = this.listOfRelation.indexOf(value);
     // if (index > -1) {
     this.listOfRelation.splice(value, 1);
+    this.getSelectQuestion[0].parentChildren.splice(value, 1);
     // }
 
     console.log('after delete data', this.listOfRelation);
