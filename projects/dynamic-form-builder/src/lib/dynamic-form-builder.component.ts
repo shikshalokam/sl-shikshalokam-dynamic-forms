@@ -22,14 +22,27 @@ import { Observable } from 'rxjs';
         margin-top:5%;
     }
     .element {
-      border: 1px solid #ccc;
-      padding: 10px;
-      margin-bottom: 10px;
-      color: #333;
-      text-align: left;
-      text-transform: capitalize;
-      box-shadow: 1px 1px 4px 1px rgba(0,0,0,0.19);
+      border: 1px solid midnightblue;
+    list-style: none;
+    padding: 10px;
+    margin-bottom: 10px;
+    color: midnightblue;
+    width: 100%;
+    text-align: left;
+    text-transform: capitalize;
   }
+  .element-old {
+    border: 1px solid #ccc;
+    padding: 10px;
+    margin-bottom: 10px;
+    color: #333;
+    text-align: left;
+    text-transform: capitalize;
+  }
+
+    .element span {
+      text-transform: uppercase !important;
+    }
     .form-group {
         margin-bottom: 0.5rem;
         border: 1px solid #ece7e7;
@@ -37,15 +50,64 @@ import { Observable } from 'rxjs';
     .cursor-pntr {
         cursor: pointer;
     }
+
+    .showQBlock {
+      background: #a5f1d7;
+      padding: 50px;
+      opacity: 0.75;
+      min-height: 390px;
+    }
     
+    .start-create {
+      width: 50%;
+      margin:auto;
+    }
+    .start-create:hover .add-qicons{
+      display:block;
+    }
+    .element i.material-icons {
+      vertical-align: middle;
+      float: right;
+    }
+    .add-qicons{
+     
+      // background: #d9d9f9;
+      padding: 5px;
+      text-align: center;
+      width:100%
+      margin: auto;
+      // box-shadow: 1px 1px 4px 1px rgba(0,0,0,0.19);
+    }
     
   </style>
   <div class="col-sm-12">
       
 
     <div class="col-sm-12 noPadding">
-  
-    <div class="card" >
+    <div class="card showQBlock" *ngIf="showQuestionBlock">
+
+      <div>
+        <div class="start-create">
+         <h2 class="text-center" ><a class="start-create">Start Creating a Question</a></h2>
+         <div class="add-qicons">
+              <div class="col-sm-6"  *ngFor="let item of jsonData;let i = index">
+                <div *ngIf="i <= 4" class="element"   (click)="onDrop(item.responseType)">
+                  <span  >
+                  <i class="material-icons">{{ item.icon }}</i>{{ item.responseType }}
+                  </span>
+                </div>
+                <div *ngIf="i > 4" class="element" (click)="onDrop(item.responseType)">
+                  <span   >
+                  <i class="material-icons">{{ item.icon }}</i>{{ item.responseType }}
+                  </span>
+                </div>
+              </div>
+              </div>
+         </div>
+      </div>
+
+    </div>
+    <div class="card" *ngIf="fields.length > 0 || !showQuestionBlock">
           <div dndDropzone class="card-body" (dndDrop)="onDrop($event)">
               <form (ngSubmit)="onSubmit(this.form.value)" [formGroup]="form" class="form-horizontal">
             <dynamic-form-builder [fields]="getFields()" [form]="form"  (onFieldUpdate)="onFieldUpdate($event)" ></dynamic-form-builder>
@@ -53,7 +115,7 @@ import { Observable } from 'rxjs';
           </div>
         </div>
       </div>
-      <div class="col-sm-4" style="padding-top:25px">
+      <div class="col-sm-4" style="padding-top:25px" *ngIf="!showQuestionBlock">
           
           <div  class="col-md-12">
             <!-- <dynamic-form-builder [fields]="getFields()"></dynamic-form-builder> -->
@@ -87,16 +149,16 @@ export class DynamicFormBuilderComponent implements OnInit {
   // @Output() questionList = new EventEmitter();
   @Output() questionTrigger = new EventEmitter();
   eventsSubscription: any;
-  criteriaList:any;
+  criteriaList: any;
 
   public fields: any[] = [];
-  showQuestionBlock:any;
+  showQuestionBlock = true;
 
-  constructor(private http: HttpClient, 
-    private _formBuilder: FormBuilder, 
+  constructor(private http: HttpClient,
+    private _formBuilder: FormBuilder,
     private fb: FormBuilder,
     private dynamicServe: DynamicFormBuilderService
-    ) {
+  ) {
     // this.form = new FormGroup({
     //   fields: this.fb.array([]),
     // })
@@ -112,11 +174,11 @@ export class DynamicFormBuilderComponent implements OnInit {
 
 
 
-  showQBlock(){
-    this.showQuestionBlock;
+  showQBlock() {
+    this.showQuestionBlock = false;
   }
 
-  getCriteria(){
+  getCriteria() {
     return this.criteriaList;
   }
   ngOnInit() {
@@ -134,11 +196,11 @@ export class DynamicFormBuilderComponent implements OnInit {
         this.formBuild(dt);
 
         let completeData = {
-          questionList:data['questionArray'],
-          criteriaList:data.criteriaList
+          questionList: data['questionArray'],
+          criteriaList: data.criteriaList
         }
-    
-        console.log("completeData",completeData);
+
+        console.log("completeData", completeData);
         this.sendToService(completeData);
 
       } else {
@@ -154,24 +216,31 @@ export class DynamicFormBuilderComponent implements OnInit {
     this.jsonData = [
       {
         "responseType": "text",
-
+        "icon": "text_format"
       }, {
         "responseType": "number",
+        "icon": "indeterminate_check_box"
       }, {
         "responseType": "radio",
+        "icon": "radio_button_checked"
       },
       {
         "responseType": "checkbox",
+        "icon": "check_box"
       },
       {
-        "responseType": "dropdown"
+        "responseType": "dropdown",
+        "icon": "arrow_drop_down_circle"
       }, {
-        "responseType": "date"
+        "responseType": "date",
+        "icon": "date_range"
       }, {
-        "responseType": "slider"
+        "responseType": "slider",
+        "icon": "date_range"
       },
       {
-        "responseType": "matrix"
+        "responseType": "matrix",
+        "icon": "date_range"
       }
     ]
   }
@@ -360,6 +429,8 @@ export class DynamicFormBuilderComponent implements OnInit {
   }
 
   onDrop(ele, action = "") {
+
+    this.showQuestionBlock =false;
     console.log("drop ele", ele);
     if (ele.data) {
       ele = ele.data.responseType
@@ -433,11 +504,11 @@ export class DynamicFormBuilderComponent implements OnInit {
     // this.formBuild();
     this.fields.push(obj);
     let completeData = {
-      questionList:this.fields,
-      criteriaList:this.criteriaList
+      questionList: this.fields,
+      criteriaList: this.criteriaList
     }
 
-    console.log("completeData",completeData);
+    console.log("completeData", completeData);
     this.sendToService(completeData);
 
     this.questionTrigger.emit(trnasformData);
@@ -527,6 +598,9 @@ export class DynamicFormBuilderComponent implements OnInit {
 
     let eventObj = $event
     let trnasformData = {};
+    if($event.action=="addnew"){
+      this.onDrop($event.data.element);
+    }
     if ($event.action == "copy") {
       this.onDrop($event.data, "copy");
     } else if ($event.action == "delete") {
@@ -543,12 +617,12 @@ export class DynamicFormBuilderComponent implements OnInit {
           if (item.field === eventObj.data.mutiSelect.field) {
 
             console.log("");
-            console.log(eventObj.data.mutiSelect.field,'====== this.fields  =====',item);
+            console.log(eventObj.data.mutiSelect.field, '====== this.fields  =====', item);
 
             // if(item.child){
-               let obj = this.getToolObj($event.data.responseType, item.child.length + 1);
+            let obj = this.getToolObj($event.data.responseType, item.child.length + 1);
             // }
-           
+
             item.child.push(obj);
             return item;
           } else {

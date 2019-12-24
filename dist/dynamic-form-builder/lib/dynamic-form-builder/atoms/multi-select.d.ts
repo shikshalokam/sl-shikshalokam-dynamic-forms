@@ -1,0 +1,31 @@
+import { EventEmitter, ChangeDetectorRef } from '@angular/core';
+export declare class MultiSelectComponent {
+    cdr: ChangeDetectorRef;
+    field: any;
+    form: any;
+    readonly isValid: any;
+    readonly isDirty: any;
+    sendDataToParent: EventEmitter<string>;
+    childrenDropEvent: EventEmitter<string>;
+    activeModelData: any;
+    validations: any;
+    required: any;
+    autoCollect: any;
+    openEditChild: boolean;
+    _id: any;
+    description: any;
+    minDate: any;
+    maxDate: any;
+    min: any;
+    max: any;
+    label: any;
+    type: any;
+    placeholder: any;
+    options: any;
+    pageNumber: any;
+    constructor(cdr: ChangeDetectorRef);
+    onDropNew($event: any, field: any): void;
+    closeModelChild(action: any, data?: string): void;
+    currentItem: any;
+    loadFormElement(item: any, id: any): void;
+}
