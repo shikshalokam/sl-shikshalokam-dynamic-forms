@@ -16,6 +16,7 @@ export class DynamicFormBuilderService {
   list:any=[];
 
   all:any =[];
+  criteriaList:any = [];
 
   constructor() { }
 
@@ -45,10 +46,16 @@ export class DynamicFormBuilderService {
     //   questionList:[]
     // }
     this.all = {
+      criteriaList:this.criteriaList,
       questionList:this.list
     }
     // return this.communicateSubject.asObservable();
     return this.all;
+  }
+  setCriteria(list){
+
+    this.criteriaList = list;
+
   }
 
   
