@@ -6,7 +6,7 @@ import { FormGroup } from '@angular/forms';
   selector: 'textbox',
   template: `
       <div [formGroup]="form">
-      <label class="form-control-label" [attr.for]="field.label">
+      <label class="col-md-0 form-control-label" [attr.for]="field.label">
       {{field.label}}
       </label>
     

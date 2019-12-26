@@ -13,7 +13,7 @@ import {CdkDragDrop, moveItemInArray} from '@angular/cdk/drag-drop';
 @Component({
   selector: 'lib-multi-select',
   template: `<div [formGroup]="form" dndDropzone  (dndDrop)="onDropNew($event,field)" class="card-body">
-  <label class="col-md-8 form-control-label" [attr.for]="field.label">
+  <label class="col-md-0 form-control-label" [attr.for]="field.label">
       {{field.label}}
     </label>
   <textarea  rows="2" class="form-control">
@@ -21,27 +21,27 @@ import {CdkDragDrop, moveItemInArray} from '@angular/cdk/drag-drop';
   </textarea>
   <div class="row" *ngIf="openEditChild" style="padding: 20px;
   border: 1px solid #ccc;margin-top:10px; margin:40px; margin-left: 20%;
-  box-shadow: 1px 1px 4px 1px rgba(0,0,0,0.19);">
+  box-shadow: 1px 1px 4px 1px rgba(0,0,0,0.19); margin-top:20px;">
 
-  <div class="col-sm-7 form-group">
+    <div class="col-sm-6 form-group">
     <mat-form-field>
       <input matInput placeholder="Label" [(ngModel)]="label" [ngModelOptions]="{standalone: true}">
     </mat-form-field>
   </div>
 
-  <div class="col-sm-7 form-group">
+  <div class="col-sm-6 form-group">
     <mat-form-field>
       <input matInput placeholder="Input Place Holder" [(ngModel)]="placeholder" [ngModelOptions]="{standalone: true}">
     </mat-form-field>
   </div>
 
-  <div class="col-sm-7 form-group">
+  <div class="col-sm-6 form-group">
     <mat-form-field>
       <input matInput placeholder="Hint/Description" [(ngModel)]="description" [ngModelOptions]="{standalone: true}">
     </mat-form-field>
   </div>
 
-  <div class="col-sm-7 form-group">
+  <div class="col-sm-6 form-group">
     <mat-form-field>
       <mat-label>Input Type</mat-label>
       <mat-select [(ngModel)]="type" [ngModelOptions]="{standalone: true}">
@@ -53,7 +53,7 @@ import {CdkDragDrop, moveItemInArray} from '@angular/cdk/drag-drop';
     </mat-form-field>
   </div>
 
-  <div class="col-sm-7 form-group">
+  <div class="col-sm-6 form-group">
     <mat-form-field>
       <mat-label>Pages</mat-label>
       <mat-select [(ngModel)]="pageNumber" [ngModelOptions]="{standalone: true}">
@@ -64,19 +64,19 @@ import {CdkDragDrop, moveItemInArray} from '@angular/cdk/drag-drop';
     </mat-form-field>
   </div>
 
-  <div class="col-sm-7 form-group" *ngIf="type=='slider'">
+  <div class="col-sm-6 form-group" *ngIf="type=='slider'">
     <mat-form-field>
       <input type="text" placeholder="Min" matInput [(ngModel)]="min" [ngModelOptions]="{standalone: true}">
     </mat-form-field>
   </div>
 
-  <div class="col-sm-7 form-group" *ngIf="type=='slider'">
+  <div class="col-sm-6 form-group" *ngIf="type=='slider'">
     <mat-form-field>
       <input type="text" placeholder="Max" matInput [(ngModel)]="max" [ngModelOptions]="{standalone: true}">
     </mat-form-field>
   </div>
 
-  <div class="col-sm-12 form-group" *ngIf="type=='date'">
+  <div class="col-sm-6 form-group" *ngIf="type=='date'">
     <mat-form-field>
       <input matInput [matDatepicker]="picker" [(ngModel)]="minDate" [ngModelOptions]="{standalone: true}" placeholder="Choose a min date">
       <mat-datepicker-toggle matSuffix [for]="picker"></mat-datepicker-toggle>
@@ -192,14 +192,14 @@ import {CdkDragDrop, moveItemInArray} from '@angular/cdk/drag-drop';
   <div *ngIf="field.child.length > 0" cdkDropList (cdkDropListDropped)="drop($event)">
 
   <div *ngFor="let obj of field.child let i =index" cdkDrag>
-  <div style="float: right;right: -90px; cursor:pointer; top: 30px;" class="col-sm-2 edit-icon">
+  <div style="float: right;right: -90px; cursor:pointer;" class="col-sm-2 edit-icon">
   <i class="fa fa-trash" (click)="deleteElement(obj, i)"></i>
   <i class="fa fa-copy" (click)="copyElement(obj, i)"></i>
   <i class="fa fa-edit" (click)="loadFormElement(obj, i)"></i>
   </div>
 
 
-  <div class="col-md-12" [ngSwitch]="obj.type" style="width:80%;margin-left:20%;border:1px solid #ccc;">
+  <div class="col-md-0" [ngSwitch]="obj.type" style="width:80%;margin-left:20%;border:1px solid #ccc;">
 
   <textbox  style ="padding-left:30px" *ngSwitchCase="'number'" [field]="obj" [form]="form"></textbox>
 
@@ -226,6 +226,9 @@ import {CdkDragDrop, moveItemInArray} from '@angular/cdk/drag-drop';
     styles:[`
     .form-control {
       display: none;
+    }
+    .mat-form-field {
+      display: block;
     }
     .fa {
       padding: 2px;

@@ -200,7 +200,8 @@ export class DynamicFormBuilderComponent implements OnInit {
   }
   ngOnInit() {
     this.criteriaList = [];
-
+    this.getCriteria();
+  debugger
     this.eventsSubscription = this.events.subscribe(data => {
       console.log("calling from parent with data", data);
       if (data) {
@@ -217,7 +218,7 @@ export class DynamicFormBuilderComponent implements OnInit {
           criteriaList: data.criteriaList
         }
 
-        console.log("completeData", completeData);
+        console.log(" eventsSubscription completeData", completeData);
         this.sendToService(completeData);
 
       } else {
@@ -301,6 +302,7 @@ export class DynamicFormBuilderComponent implements OnInit {
       obj = {
         "field": len + "question",
         "type": "number",
+        "position": len,
         "label": "Question",
         "placeholder": "Please enter your question here",
         "description": "",
@@ -313,6 +315,7 @@ export class DynamicFormBuilderComponent implements OnInit {
     } else if (ele == 'radio') {
       obj = {
         field: len + "question",
+        "position": len,
         type: 'radio',
         name: len + ". question",
         label: "Question",
@@ -332,6 +335,7 @@ export class DynamicFormBuilderComponent implements OnInit {
       obj = {
         field: len + "question",
         type: "checkbox",
+        "position": len,
         name: len + ". question",
         label: "Question",
         description: "",
@@ -350,6 +354,7 @@ export class DynamicFormBuilderComponent implements OnInit {
       obj = {
         field: len + "question",
         type: 'dropdown',
+        "position": len,
         name: len + ". question",
         label: "Question",
         value: 'option1',
@@ -370,6 +375,7 @@ export class DynamicFormBuilderComponent implements OnInit {
       obj = {
         field: len + "question",
         type: 'date',
+        "position": len,
         name: len + ". question",
         label: "Question",
         description: "",
@@ -391,6 +397,7 @@ export class DynamicFormBuilderComponent implements OnInit {
         let childdata = {
           "field": len + "question",
           "type": ele.type,
+          "position": len,
           "label": "Question",
           "child": [],
           "placeholder": "Please add Child's here",
@@ -424,6 +431,7 @@ export class DynamicFormBuilderComponent implements OnInit {
       obj = {
         field: len + "question",
         type: 'slider',
+        "position": len,
         name: len + ". question",
         label: len + ". question",
         description: "",
@@ -447,7 +455,7 @@ export class DynamicFormBuilderComponent implements OnInit {
 
   onDrop(ele, action = "") {
 
-    this.showQuestionBlock =false;
+    this.showQuestionBlock = false;
     console.log("drop ele", ele);
     if (ele.data) {
       ele = ele.data.responseType
@@ -611,11 +619,11 @@ export class DynamicFormBuilderComponent implements OnInit {
     this.eventsSubscription.unsubscribe()
   }
   onFieldUpdate($event) {
-    console.log("eventData sssssss------", $event.data);
+    console.log("eventData sssssss------", $event);
 
     let eventObj = $event
     let trnasformData = {};
-    if($event.action=="addnew"){
+    if ($event.action == "addnew") {
       this.onDrop($event.data.element);
     }
     if ($event.action == "copy") {

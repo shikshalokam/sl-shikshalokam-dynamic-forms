@@ -6,7 +6,7 @@ import { FormGroup } from '@angular/forms';
     selector: 'date',
     template: `
       <div [formGroup]="form">
-      <label class="col-md-12 form-control-label" [attr.for]="field.label">
+      <label class="col-md-8 form-control-label" [attr.for]="field.label">
       {{field.label}}
     </label>
         <input *ngIf="!field.multiline" [attr.type]="field.type" class="form-control" 
