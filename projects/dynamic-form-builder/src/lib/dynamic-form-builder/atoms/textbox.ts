@@ -6,7 +6,7 @@ import { FormGroup } from '@angular/forms';
   selector: 'textbox',
   template: `
       <div [formGroup]="form">
-      <label class="col-md-8 form-control-label" [attr.for]="field.label">
+      <label class="col-md-0 form-control-label" [attr.for]="field.label">
       {{field.label}}
       </label>
     
@@ -15,7 +15,12 @@ import { FormGroup } from '@angular/forms';
         rows="20" class="form-control" [placeholder]="field.placeholder"></textarea>
 
       </div> 
-    `
+    `,
+    styles:[`
+    .form-control {
+      display: none;
+    }
+    `]
 })
 export class TextBoxComponent {
   @Input() field: any = {};

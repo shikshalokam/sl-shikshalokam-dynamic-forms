@@ -22,7 +22,12 @@ import { FormGroup } from '@angular/forms';
 </mat-slider>
 
       </div> 
-    `
+    `,
+    styles:[`
+    .form-control {
+      display: none;
+    }
+    `]
 })
 export class SliderComponent {
     @Input() field:any = {};

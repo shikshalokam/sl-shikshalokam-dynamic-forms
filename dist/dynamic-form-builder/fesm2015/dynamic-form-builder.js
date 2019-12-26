@@ -88,6 +88,7 @@ class DynamicFormBuilderComponent {
         // @Output() questionList = new EventEmitter();
         this.questionTrigger = new EventEmitter();
         this.fields = [];
+        this.showQuestionBlock = true;
         // this.form = new FormGroup({
         //   fields: this.fb.array([]),
         // })
@@ -107,7 +108,7 @@ class DynamicFormBuilderComponent {
      * @return {?}
      */
     showQBlock() {
-        this.showQuestionBlock;
+        this.showQuestionBlock = false;
     }
     /**
      * @return {?}
@@ -120,6 +121,8 @@ class DynamicFormBuilderComponent {
      */
     ngOnInit() {
         this.criteriaList = [];
+        this.getCriteria();
+        debugger;
         this.eventsSubscription = this.events.subscribe((/**
          * @param {?} data
          * @return {?}
@@ -139,7 +142,7 @@ class DynamicFormBuilderComponent {
                     questionList: data['questionArray'],
                     criteriaList: data.criteriaList
                 };
-                console.log("completeData", completeData);
+                console.log(" eventsSubscription completeData", completeData);
                 this.sendToService(completeData);
             }
             else {
@@ -156,23 +159,31 @@ class DynamicFormBuilderComponent {
         this.jsonData = [
             {
                 "responseType": "text",
+                "icon": "text_format"
             }, {
                 "responseType": "number",
+                "icon": "indeterminate_check_box"
             }, {
                 "responseType": "radio",
+                "icon": "radio_button_checked"
             },
             {
                 "responseType": "checkbox",
+                "icon": "check_box"
             },
             {
-                "responseType": "dropdown"
+                "responseType": "dropdown",
+                "icon": "arrow_drop_down_circle"
             }, {
-                "responseType": "date"
+                "responseType": "date",
+                "icon": "date_range"
             }, {
-                "responseType": "slider"
+                "responseType": "slider",
+                "icon": "date_range"
             },
             {
-                "responseType": "matrix"
+                "responseType": "matrix",
+                "icon": "date_range"
             }
         ];
     }
@@ -230,6 +241,7 @@ class DynamicFormBuilderComponent {
             obj = {
                 "field": len + "question",
                 "type": "number",
+                "position": len,
                 "label": len + ". question",
                 "placeholder": "Please enter your question here",
                 "description": "",
@@ -243,6 +255,7 @@ class DynamicFormBuilderComponent {
         else if (ele == 'radio') {
             obj = {
                 field: len + "question",
+                "position": len,
                 type: 'radio',
                 name: len + ". question",
                 label: len + ". question",
@@ -263,6 +276,7 @@ class DynamicFormBuilderComponent {
             obj = {
                 field: len + "question",
                 type: "checkbox",
+                "position": len,
                 name: len + ". question",
                 label: len + ". question",
                 description: "",
@@ -282,6 +296,7 @@ class DynamicFormBuilderComponent {
             obj = {
                 field: len + "question",
                 type: 'dropdown',
+                "position": len,
                 name: len + ". question",
                 label: len + ". question",
                 value: 'option1',
@@ -302,6 +317,7 @@ class DynamicFormBuilderComponent {
             obj = {
                 field: len + "question",
                 type: 'date',
+                "position": len,
                 name: len + ". question",
                 label: len + ". question",
                 description: "",
@@ -322,6 +338,7 @@ class DynamicFormBuilderComponent {
                 let childdata = {
                     "field": len + "question",
                     "type": ele.type,
+                    "position": len,
                     "label": len + ". question",
                     "child": [],
                     "placeholder": "Please add Child's here",
@@ -354,6 +371,7 @@ class DynamicFormBuilderComponent {
             obj = {
                 field: len + "question",
                 type: 'slider',
+                "position": len,
                 name: len + ". question",
                 label: len + ". question",
                 description: "",
@@ -376,6 +394,7 @@ class DynamicFormBuilderComponent {
      * @return {?}
      */
     onDrop(ele, action = "") {
+        this.showQuestionBlock = false;
         console.log("drop ele", ele);
         if (ele.data) {
             ele = ele.data.responseType;
@@ -527,11 +546,14 @@ class DynamicFormBuilderComponent {
      * @return {?}
      */
     onFieldUpdate($event) {
-        console.log("eventData sssssss------", $event.data);
+        console.log("eventData sssssss------", $event);
         /** @type {?} */
         let eventObj = $event;
         /** @type {?} */
         let trnasformData = {};
+        if ($event.action == "addnew") {
+            this.onDrop($event.data.element);
+        }
         if ($event.action == "copy") {
             this.onDrop($event.data, "copy");
         }
@@ -591,14 +613,27 @@ DynamicFormBuilderComponent.decorators = [
         margin-top:5%;
     }
     .element {
-      border: 1px solid #ccc;
-      padding: 10px;
-      margin-bottom: 10px;
-      color: #333;
-      text-align: left;
-      text-transform: capitalize;
-      box-shadow: 1px 1px 4px 1px rgba(0,0,0,0.19);
+      border: 1px solid midnightblue;
+    list-style: none;
+    padding: 10px;
+    margin-bottom: 10px;
+    color: midnightblue;
+    width: 100%;
+    text-align: left;
+    text-transform: capitalize;
   }
+  .element-old {
+    border: 1px solid #ccc;
+    padding: 10px;
+    margin-bottom: 10px;
+    color: #333;
+    text-align: left;
+    text-transform: capitalize;
+  }
+
+    .element span {
+      text-transform: uppercase !important;
+    }
     .form-group {
         margin-bottom: 0.5rem;
         border: 1px solid #ece7e7;
@@ -606,15 +641,64 @@ DynamicFormBuilderComponent.decorators = [
     .cursor-pntr {
         cursor: pointer;
     }
+
+    .showQBlock {
+      background: #a5f1d7;
+      padding: 50px;
+      opacity: 0.75;
+      min-height: 390px;
+    }
     
+    .start-create {
+      width: 50%;
+      margin:auto;
+    }
+    .start-create:hover .add-qicons{
+      display:block;
+    }
+    .element i.material-icons {
+      vertical-align: middle;
+      float: right;
+    }
+    .add-qicons{
+     
+      // background: #d9d9f9;
+      padding: 5px;
+      text-align: center;
+      width:100%
+      margin: auto;
+      // box-shadow: 1px 1px 4px 1px rgba(0,0,0,0.19);
+    }
     
   </style>
   <div class="col-sm-12">
       
 
     <div class="col-sm-12 noPadding">
-  
-    <div class="card" >
+    <div class="card showQBlock" *ngIf="showQuestionBlock">
+
+      <div>
+        <div class="start-create">
+         <h2 class="text-center" ><a class="start-create">Start Creating a Question</a></h2>
+         <div class="add-qicons">
+              <div class="col-sm-6"  *ngFor="let item of jsonData;let i = index">
+                <div *ngIf="i <= 4" class="element"   (click)="onDrop(item.responseType)">
+                  <span  >
+                  <i class="material-icons">{{ item.icon }}</i>{{ item.responseType }}
+                  </span>
+                </div>
+                <div *ngIf="i > 4" class="element" (click)="onDrop(item.responseType)">
+                  <span   >
+                  <i class="material-icons">{{ item.icon }}</i>{{ item.responseType }}
+                  </span>
+                </div>
+              </div>
+              </div>
+         </div>
+      </div>
+
+    </div>
+    <div class="card" *ngIf="fields.length > 0 || !showQuestionBlock">
           <div dndDropzone class="card-body" (dndDrop)="onDrop($event)">
               <form (ngSubmit)="onSubmit(this.form.value)" [formGroup]="form" class="form-horizontal">
             <dynamic-form-builder [fields]="getFields()" [form]="form"  (onFieldUpdate)="onFieldUpdate($event)" ></dynamic-form-builder>
@@ -622,7 +706,7 @@ DynamicFormBuilderComponent.decorators = [
           </div>
         </div>
       </div>
-      <div class="col-sm-4" style="padding-top:25px">
+      <div class="col-sm-4" style="padding-top:25px" *ngIf="!showQuestionBlock">
           
           <div  class="col-md-12">
             <!-- <dynamic-form-builder [fields]="getFields()"></dynamic-form-builder> -->
@@ -711,6 +795,49 @@ class DynamicFormBuilderComponent$1 {
         this.onFieldUpdate = new EventEmitter();
         this.fields = [];
         this.formData = [];
+        this.jsonData = [
+            {
+                "responseType": "text",
+                "icon": "text_format"
+            }, {
+                "responseType": "number",
+                "icon": "indeterminate_check_box"
+            }, {
+                "responseType": "radio",
+                "icon": "radio_button_checked"
+            },
+            {
+                "responseType": "checkbox",
+                "icon": "check_box"
+            },
+            {
+                "responseType": "dropdown",
+                "icon": "arrow_drop_down_circle"
+            }, {
+                "responseType": "date",
+                "icon": "date_range"
+            }, {
+                "responseType": "slider",
+                "icon": "date_range"
+            },
+            {
+                "responseType": "matrix",
+                "icon": "date_range"
+            }
+        ];
+    }
+    ;
+    /**
+     * @param {?} element
+     * @return {?}
+     */
+    addElement(element) {
+        /** @type {?} */
+        let obj = {
+            action: "addnew",
+            element: element
+        };
+        this.copyOrDeleteEvent(obj);
     }
     /**
      * @param {?} event
@@ -736,7 +863,15 @@ class DynamicFormBuilderComponent$1 {
         console.log(data, "copyEvent occured");
         // data.field =(this.fields.length+1)+"question";
         // data.label = (this.fields.length+1)+" question";
-        if (data.action == "copy") {
+        if (data.action == "addnew") {
+            /** @type {?} */
+            let transferData = {
+                action: "addnew",
+                data: data
+            };
+            this.onFieldUpdate.emit(transferData);
+        }
+        else if (data.action == "copy") {
             console.log(data, "this.form before");
             /** @type {?} */
             let transferData = {
@@ -787,13 +922,66 @@ class DynamicFormBuilderComponent$1 {
 DynamicFormBuilderComponent$1.decorators = [
     { type: Component, args: [{
                 selector: 'dynamic-form-builder',
+                styles: [`
+      
+  .addElement {
+    display:none;
+  }
+  .add-qicons {
+    display:none;
+    font-size: 17px;
+    width: 60%;
+    margin-left: 40%;
+    background: #a5f1d7;
+    float: left;
+    padding: 0px;
+  }
+  .element {
+    line-height: 26px;
+    font-size: 17px;
+    padding: 6px;
+    margin: 8px;
+    border: 1px solid midnightblue;
+    font-weight: bold;
+    color: midnightblue;
+  }
+  .element i.material-icons {
+    vertical-align: middle;
+    float: right;
+  }
+  .addElement:hover .add-qicons {
+    display:block;
+  }
+  `],
                 template: `
    
      <div cdkDropList (cdkDropListDropped)="drop($event)"> <div *ngFor="let field of fields"  cdkDrag>
           <field-builder *ngIf="!field.isDeleted" [field]="field" [form]="form"  
           (sendDataToParent)="eventFromChild($event)" (copyOrDeleteEvent)="copyOrDeleteEvent($event)">
           </field-builder>
-      </div></div>`,
+          <div class="addElement">
+          <div style="float: right;
+          font-size: 4.5em;
+          color: midnightblue;
+          line-height: 46px;">+</div>
+
+          <div class="col add-qicons">
+              <div class="col-sm-6"  *ngFor="let item of jsonData;let i = index">
+                <div *ngIf="i <= 4" class="element" (click)="addElement(item.responseType)"  >
+                  <span  >
+                  <i class="material-icons">{{ item.icon }}</i>{{ item.responseType }}
+                  </span>
+                </div>
+                <div *ngIf="i > 4" class="element" (click)="addElement(item.responseType)" >
+                  <span   >
+                  <i class="material-icons">{{ item.icon }}</i>{{ item.responseType }}
+                  </span>
+                </div>
+              </div>
+              </div>
+         
+          </div>
+      </div></div>`
             },] },
 ];
 /** @nocollapse */
@@ -812,6 +1000,9 @@ if (false) {
     DynamicFormBuilderComponent$1.prototype.form;
     /** @type {?} */
     DynamicFormBuilderComponent$1.prototype.formData;
+    /** @type {?} */
+    DynamicFormBuilderComponent$1.prototype.jsonData;
+    /* Skipping unhandled member: ;*/
 }
 
 /**
@@ -828,6 +1019,16 @@ class FieldBuilderComponent {
         this.dynamicServe = dynamicServe;
         this.sendDataToParent = new EventEmitter();
         this.copyOrDeleteEvent = new EventEmitter();
+        this.pages = [{
+                label: 'page 1',
+                value: 'page 1'
+            }, {
+                label: 'page 2',
+                value: 'page 2'
+            }, {
+                label: 'page 3',
+                value: 'page 3'
+            }];
         this.openEdit = false;
         this.listOfRelation = [];
         this.conditionArray = [
@@ -1161,29 +1362,26 @@ class FieldBuilderComponent {
     deleteOption(opt, index) {
         console.log("delete", this.options);
         // let newArr = [];
-        /** @type {?} */
-        let optionsArr = this.options.filter((/**
-         * @param {?} item
-         * @return {?}
-         */
-        item => {
-            // if(item.lable==opt.label && item.key==opt.key){
-            // }else{
-            // }
-            return (item.label != opt.label && item.key != opt.key);
-            // if(item.lable==opt.label && item.key==opt.key){
-            // }else{
-            //   return true;
-            // }
-        }));
-        this.options = optionsArr;
-        console.log("delete new ", optionsArr);
+        // let optionsArr = this.options.filter(item => {
+        // if(item.lable==opt.label && item.key==opt.key){
+        // }else{
+        // }
+        // return (item.label != opt.label && item.key != opt.key)
+        // if(item.lable==opt.label && item.key==opt.key){
+        // }else{
+        //   return true;
+        // }
+        // })
+        this.options.splice(index, 1);
+        // this.options = optionsArr;
+        console.log("delete new ", this.options);
     }
     /**
      * @return {?}
      */
     AddNewOptions() {
-        if (this.newOptionKey != "" && this.newOptionLabel != "") {
+        if (this.newOptionLabel != "") {
+            this.newOptionKey = 'R' + this.options.length;
             console.log("this.newOption", this.newOptionLabel);
             if (Array.isArray(this.options)) {
             }
@@ -1246,6 +1444,19 @@ class FieldBuilderComponent {
         this.getSelectQuestion[0].parentChildren.splice(value, 1);
         // }
         console.log('after delete data', this.listOfRelation);
+    }
+    /**
+     * @param {?} data
+     * @return {?}
+     */
+    add(data) {
+        console.log(' add data', data);
+        /** @type {?} */
+        let page = {
+            label: 'page' + ' ' + data.length + 1,
+            value: 'page' + ' ' + data.length + 1,
+        };
+        this.pages.push(page);
     }
 }
 FieldBuilderComponent.decorators = [
@@ -1334,11 +1545,11 @@ span.cursor-pntr {
 <div class="col-sm-6">
 <mat-form-field>
 <mat-label>Pages</mat-label>
+
   <mat-select  [(ngModel)]="pageNumber">
-    <mat-option value="page_1">page 1</mat-option>
-    <mat-option value="page_2">page 2</mat-option>
-    <mat-option value="page_3">page 3</mat-option>
+    <mat-option  *ngFor = "let page of pages; let i = index" value="page.value">{{page.label}}</mat-option>
   </mat-select>
+  <span style = "float:right" class="cursor-pntr"><i class="fa fa-plus" (click)="add(pages)" ></i></span>
 </mat-form-field>
 </div>
  
@@ -1383,10 +1594,10 @@ span.cursor-pntr {
     <div class="col-sm-12" *ngIf="type=='radio' || type=='checkbox' || type=='dropdown'">
     <label for="label" class="col-sm-12">Options</label>
     
-    <ul class="col" *ngFor="let opt of options;let index">
+    <ul class="col" *ngFor="let opt of options;let i = index">
      <li class="">
       <span>{{opt.label}} </span><span style="
-      margin-left: 30px;" (click)="deleteOption(opt,index)">
+      margin-left: 30px;" (click)="deleteOption(opt,i)">
       <i class="fa fa-trash"></i></span>
     </li>
     </ul>
@@ -1397,7 +1608,7 @@ span.cursor-pntr {
     <input type="text" placeholder="Label" matInput style="margin-bottom: 10px;" [(ngModel)]="newOptionLabel" name="newOption">
     </mat-form-field>
     <mat-form-field>
-    <input type="tex" matInput name="newOption" placeholder="key"  [(ngModel)]="newOptionKey">
+    <input type="tex" disabled matInput name="newOption" placeholder="key"  [(ngModel)]="newOptionKey">
     </mat-form-field>  
     </div>
       <button mat-flat-button color="primary" style="margin-top: 10px;"  (click)="AddNewOptions()">
@@ -1578,6 +1789,8 @@ if (false) {
     /** @type {?} */
     FieldBuilderComponent.prototype.newOptionLabel;
     /** @type {?} */
+    FieldBuilderComponent.prototype.pages;
+    /** @type {?} */
     FieldBuilderComponent.prototype.activeModelData;
     /** @type {?} */
     FieldBuilderComponent.prototype.validations;
@@ -1652,7 +1865,7 @@ TextBoxComponent.decorators = [
                 selector: 'textbox',
                 template: `
       <div [formGroup]="form">
-      <label class="col-md-12 form-control-label" [attr.for]="field.label">
+      <label class="col-md-0 form-control-label" [attr.for]="field.label">
       {{field.label}}
       </label>
     
@@ -1661,7 +1874,12 @@ TextBoxComponent.decorators = [
         rows="20" class="form-control" [placeholder]="field.placeholder"></textarea>
 
       </div> 
-    `
+    `,
+                styles: [`
+    .form-control {
+      display: none;
+    }
+    `]
             },] },
 ];
 /** @nocollapse */
@@ -1692,14 +1910,19 @@ DropDownComponent.decorators = [
                 selector: 'dropdown',
                 template: `
       <div [formGroup]="form">
-      <label class="col-md-8 form-control-label" [attr.for]="field.label">
+      <label class="col-sm-8 form-control-label" [attr.for]="field.label">
       {{field.label}}
     </label>
         <select class="form-control" [id]="field.field">
           <option *ngFor="let opt of field.options" [value]="opt.key">{{opt.label}}</option>
         </select>
       </div> 
-    `
+    `,
+                styles: [`
+    .form-control {
+      display: none;
+    }
+    `]
             },] },
 ];
 /** @nocollapse */
@@ -1851,7 +2074,7 @@ CheckBoxComponent.decorators = [
                 selector: 'checkbox',
                 template: `
       <div [formGroup]="form">
-      <label class="form-control-label" [attr.for]="field.label">
+      <label class="col-sm -12 form-control-label" [attr.for]="field.label">
       {{field.label}}
     </label>
         <div [formGroupName]="field.field" >
@@ -1863,7 +2086,12 @@ CheckBoxComponent.decorators = [
         </div>
 
       </div> 
-    `
+    `,
+                styles: [`
+    .form-control {
+      display: none;
+    }
+    `]
             },] },
 ];
 CheckBoxComponent.propDecorators = {
@@ -1892,7 +2120,7 @@ RadioComponent.decorators = [
                 selector: 'radio',
                 template: `
       <div [formGroup]="form">
-      <label class="form-control-label" [attr.for]="field.label">
+      <label class="col-sm-12 form-control-label" [attr.for]="field.label">
       {{field.label}}
     </label>
         <div class="form-check" *ngFor="let opt of field.options">
@@ -1902,7 +2130,12 @@ RadioComponent.decorators = [
           </label>
         </div>
       </div> 
-    `
+    `,
+                styles: [`
+    .form-control {
+      display: none;
+    }
+    `]
             },] },
 ];
 RadioComponent.propDecorators = {
@@ -1951,7 +2184,12 @@ DateComponent.decorators = [
         rows="20" class="form-control" [placeholder]="field.placeholder"></textarea>
 
       </div> 
-    `
+    `,
+                styles: [`
+    .form-control {
+      display: none;
+    }
+    `]
             },] },
 ];
 /** @nocollapse */
@@ -2009,7 +2247,12 @@ SliderComponent.decorators = [
 </mat-slider>
 
       </div> 
-    `
+    `,
+                styles: [`
+    .form-control {
+      display: none;
+    }
+    `]
             },] },
 ];
 /** @nocollapse */
@@ -2394,7 +2637,7 @@ MultiSelectComponent.decorators = [
     { type: Component, args: [{
                 selector: 'lib-multi-select',
                 template: `<div [formGroup]="form" dndDropzone  (dndDrop)="onDropNew($event,field)" class="card-body">
-  <label class="col-md-8 form-control-label" [attr.for]="field.label">
+  <label class="col-md-0 form-control-label" [attr.for]="field.label">
       {{field.label}}
     </label>
   <textarea  rows="2" class="form-control">
@@ -2402,27 +2645,27 @@ MultiSelectComponent.decorators = [
   </textarea>
   <div class="row" *ngIf="openEditChild" style="padding: 20px;
   border: 1px solid #ccc;margin-top:10px; margin:40px; margin-left: 20%;
-  box-shadow: 1px 1px 4px 1px rgba(0,0,0,0.19);">
+  box-shadow: 1px 1px 4px 1px rgba(0,0,0,0.19); margin-top:20px;">
 
-  <div class="col-sm-7 form-group">
+    <div class="col-sm-6 form-group">
     <mat-form-field>
       <input matInput placeholder="Label" [(ngModel)]="label" [ngModelOptions]="{standalone: true}">
     </mat-form-field>
   </div>
 
-  <div class="col-sm-7 form-group">
+  <div class="col-sm-6 form-group">
     <mat-form-field>
       <input matInput placeholder="Input Place Holder" [(ngModel)]="placeholder" [ngModelOptions]="{standalone: true}">
     </mat-form-field>
   </div>
 
-  <div class="col-sm-7 form-group">
+  <div class="col-sm-6 form-group">
     <mat-form-field>
       <input matInput placeholder="Hint/Description" [(ngModel)]="description" [ngModelOptions]="{standalone: true}">
     </mat-form-field>
   </div>
 
-  <div class="col-sm-7 form-group">
+  <div class="col-sm-6 form-group">
     <mat-form-field>
       <mat-label>Input Type</mat-label>
       <mat-select [(ngModel)]="type" [ngModelOptions]="{standalone: true}">
@@ -2434,7 +2677,7 @@ MultiSelectComponent.decorators = [
     </mat-form-field>
   </div>
 
-  <div class="col-sm-7 form-group">
+  <div class="col-sm-6 form-group">
     <mat-form-field>
       <mat-label>Pages</mat-label>
       <mat-select [(ngModel)]="pageNumber" [ngModelOptions]="{standalone: true}">
@@ -2445,19 +2688,19 @@ MultiSelectComponent.decorators = [
     </mat-form-field>
   </div>
 
-  <div class="col-sm-7 form-group" *ngIf="type=='slider'">
+  <div class="col-sm-6 form-group" *ngIf="type=='slider'">
     <mat-form-field>
       <input type="text" placeholder="Min" matInput [(ngModel)]="min" [ngModelOptions]="{standalone: true}">
     </mat-form-field>
   </div>
 
-  <div class="col-sm-7 form-group" *ngIf="type=='slider'">
+  <div class="col-sm-6 form-group" *ngIf="type=='slider'">
     <mat-form-field>
       <input type="text" placeholder="Max" matInput [(ngModel)]="max" [ngModelOptions]="{standalone: true}">
     </mat-form-field>
   </div>
 
-  <div class="col-sm-12 form-group" *ngIf="type=='date'">
+  <div class="col-sm-6 form-group" *ngIf="type=='date'">
     <mat-form-field>
       <input matInput [matDatepicker]="picker" [(ngModel)]="minDate" [ngModelOptions]="{standalone: true}" placeholder="Choose a min date">
       <mat-datepicker-toggle matSuffix [for]="picker"></mat-datepicker-toggle>
@@ -2573,14 +2816,14 @@ MultiSelectComponent.decorators = [
   <div *ngIf="field.child.length > 0" cdkDropList (cdkDropListDropped)="drop($event)">
 
   <div *ngFor="let obj of field.child let i =index" cdkDrag>
-  <div style="float: right;right: -90px; cursor:pointer; top: 20px;" class="col-sm-2 edit-icon">
+  <div style="float: right;right: -90px; cursor:pointer;" class="col-sm-2 edit-icon">
   <i class="fa fa-trash" (click)="deleteElement(obj, i)"></i>
   <i class="fa fa-copy" (click)="copyElement(obj, i)"></i>
   <i class="fa fa-edit" (click)="loadFormElement(obj, i)"></i>
   </div>
 
 
-  <div class="col-md-12" [ngSwitch]="obj.type" style="width:80%;margin-left:20%">
+  <div class="col-md-0" [ngSwitch]="obj.type" style="width:80%;margin-left:20%;border:1px solid #ccc;">
 
   <textbox  style ="padding-left:30px" *ngSwitchCase="'number'" [field]="obj" [form]="form"></textbox>
 
@@ -2603,7 +2846,18 @@ MultiSelectComponent.decorators = [
   </div>
   </div>
   </div>
-  </div>`
+  </div>`,
+                styles: [`
+    .form-control {
+      display: none;
+    }
+    .mat-form-field {
+      display: block;
+    }
+    .fa {
+      padding: 2px;
+    }
+    `]
             },] },
 ];
 /** @nocollapse */

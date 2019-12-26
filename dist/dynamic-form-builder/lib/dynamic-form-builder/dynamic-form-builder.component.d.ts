@@ -6,6 +6,11 @@ export declare class DynamicFormBuilderComponent implements OnInit {
     form: any;
     formData: any;
     constructor();
+    jsonData: {
+        "responseType": string;
+        "icon": string;
+    }[];
+    addElement(element: any): void;
     drop(event: CdkDragDrop<string[]>): void;
     copyOrDeleteEvent(data: any): void;
     eventFromChild(data: any): void;

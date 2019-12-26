@@ -20,6 +20,10 @@ export declare class FieldBuilderComponent implements OnInit {
     options: any;
     newOptionKey: any;
     newOptionLabel: any;
+    pages: {
+        label: string;
+        value: string;
+    }[];
     activeModelData: any;
     validations: any;
     required: any;
@@ -56,4 +60,5 @@ export declare class FieldBuilderComponent implements OnInit {
     deleteElement(item: any): void;
     childrenDropEvent($event: any): void;
     deleteCondition(data: any, value: any): void;
+    add(data: any): void;
 }

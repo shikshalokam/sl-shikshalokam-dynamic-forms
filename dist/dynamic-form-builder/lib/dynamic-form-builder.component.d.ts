@@ -18,7 +18,7 @@ export declare class DynamicFormBuilderComponent implements OnInit {
     eventsSubscription: any;
     criteriaList: any;
     fields: any[];
-    showQuestionBlock: any;
+    showQuestionBlock: boolean;
     constructor(http: HttpClient, _formBuilder: FormBuilder, fb: FormBuilder, dynamicServe: DynamicFormBuilderService);
     showQBlock(): void;
     getCriteria(): any;

@@ -93,11 +93,11 @@ span.cursor-pntr {
 <div class="col-sm-6">
 <mat-form-field>
 <mat-label>Pages</mat-label>
+
   <mat-select  [(ngModel)]="pageNumber">
-    <mat-option value="page_1">page 1</mat-option>
-    <mat-option value="page_2">page 2</mat-option>
-    <mat-option value="page_3">page 3</mat-option>
+    <mat-option  *ngFor = "let page of pages; let i = index" value="page.value">{{page.label}}</mat-option>
   </mat-select>
+  <span style = "float:right" class="cursor-pntr"><i class="fa fa-plus" (click)="add(pages)" ></i></span>
 </mat-form-field>
 </div>
  
@@ -142,10 +142,10 @@ span.cursor-pntr {
     <div class="col-sm-12" *ngIf="type=='radio' || type=='checkbox' || type=='dropdown'">
     <label for="label" class="col-sm-12">Options</label>
     
-    <ul class="col" *ngFor="let opt of options;let index">
+    <ul class="col" *ngFor="let opt of options;let i = index">
      <li class="">
       <span>{{opt.label}} </span><span style="
-      margin-left: 30px;" (click)="deleteOption(opt,index)">
+      margin-left: 30px;" (click)="deleteOption(opt,i)">
       <i class="fa fa-trash"></i></span>
     </li>
     </ul>
@@ -156,7 +156,7 @@ span.cursor-pntr {
     <input type="text" placeholder="Label" matInput style="margin-bottom: 10px;" [(ngModel)]="newOptionLabel" name="newOption">
     </mat-form-field>
     <mat-form-field>
-    <input type="tex" matInput name="newOption" placeholder="key"  [(ngModel)]="newOptionKey">
+    <input type="tex" disabled matInput name="newOption" placeholder="key"  [(ngModel)]="newOptionKey">
     </mat-form-field>  
     </div>
       <button mat-flat-button color="primary" style="margin-top: 10px;"  (click)="AddNewOptions()">
@@ -311,6 +311,17 @@ export class FieldBuilderComponent implements OnInit {
   options: any;
   newOptionKey: any;
   newOptionLabel: any;
+
+  pages = [{
+    label: 'page 1',
+    value: 'page 1'
+  },{
+    label: 'page 2',
+    value: 'page 2'
+  },{
+    label: 'page 3',
+    value: 'page 3'
+  }]
 
   activeModelData: any;
   validations: any;
@@ -727,29 +738,31 @@ export class FieldBuilderComponent implements OnInit {
     console.log("delete", this.options);
 
     // let newArr = [];
-    let optionsArr = this.options.filter(item => {
+    // let optionsArr = this.options.filter(item => {
       // if(item.lable==opt.label && item.key==opt.key){
 
       // }else{
 
       // }
 
-      return (item.label != opt.label && item.key != opt.key)
+      // return (item.label != opt.label && item.key != opt.key)
 
       // if(item.lable==opt.label && item.key==opt.key){
 
       // }else{
       //   return true;
       // }
-    })
+    // })
+    this.options.splice(index, 1);
 
-    this.options = optionsArr;
-    console.log("delete new ", optionsArr);
+    // this.options = optionsArr;
+    console.log("delete new ", this.options);
   }
   AddNewOptions() {
 
-    if (this.newOptionKey != "" && this.newOptionLabel != "") {
+    if (this.newOptionLabel != "") {
 
+      this.newOptionKey = 'R'+ this.options.length;
       console.log("this.newOption", this.newOptionLabel);
 
       if (Array.isArray(this.options)) {
@@ -803,5 +816,15 @@ export class FieldBuilderComponent implements OnInit {
     // }
 
     console.log('after delete data', this.listOfRelation);
+  }
+
+
+  add(data){
+    console.log(' add data', data);
+    let page = {
+    label: 'page'+' '+ data.length + 1,
+    value: 'page'+' '+ data.length + 1  ,
+    }
+    this.pages.push(page);
   }
 }
