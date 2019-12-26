@@ -201,8 +201,7 @@ export class DynamicFormBuilderComponent implements OnInit {
   ngOnInit() {
     this.criteriaList = [];
     this.getCriteria();
-  debugger
-    this.eventsSubscription = this.events.subscribe(data => {
+     this.eventsSubscription = this.events.subscribe(data => {
       console.log("calling from parent with data", data);
       if (data) {
         // let dt = data;

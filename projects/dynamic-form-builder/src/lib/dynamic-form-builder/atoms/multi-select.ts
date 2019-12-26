@@ -53,17 +53,6 @@ import {CdkDragDrop, moveItemInArray} from '@angular/cdk/drag-drop';
     </mat-form-field>
   </div>
 
-  <div class="col-sm-6 form-group">
-    <mat-form-field>
-      <mat-label>Pages</mat-label>
-      <mat-select [(ngModel)]="pageNumber" [ngModelOptions]="{standalone: true}">
-        <mat-option value="page_1">page 1</mat-option>
-        <mat-option value="page_2">page 2</mat-option>
-        <mat-option value="page_3">page 3</mat-option>
-      </mat-select>
-    </mat-form-field>
-  </div>
-
   <div class="col-sm-6 form-group" *ngIf="type=='slider'">
     <mat-form-field>
       <input type="text" placeholder="Min" matInput [(ngModel)]="min" [ngModelOptions]="{standalone: true}">
@@ -199,7 +188,12 @@ import {CdkDragDrop, moveItemInArray} from '@angular/cdk/drag-drop';
   </div>
 
 
-  <div class="col-md-0" [ngSwitch]="obj.type" style="width:80%;margin-left:20%;border:1px solid #ccc;">
+  <div class="col-md-0" [ngSwitch]="obj.type" style="width: 80%;
+  margin-left: 20%;
+  padding-left: 10px;
+  margin-top: 10px;
+  box-shadow: 1px 1px 2px 1px rgba(0,0,0,0.19);
+  padding-bottom: 10px;">
 
   <textbox  style ="padding-left:30px" *ngSwitchCase="'number'" [field]="obj" [form]="form"></textbox>
 

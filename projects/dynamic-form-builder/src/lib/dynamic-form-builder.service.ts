@@ -1,6 +1,6 @@
 import { Injectable } from '@angular/core';
 // import { Injectable } from '@angular/core';
-import { BehaviorSubject,Subject,Observable } from 'rxjs';
+import { BehaviorSubject, Subject, Observable } from 'rxjs';
 
 
 // @Injectable({
@@ -13,25 +13,36 @@ export class DynamicFormBuilderService {
   // private messageSource = new BehaviorSubject('default message');
   // currentMessage = this.messageSource.asObservable();
 
-  list:any=[];
+  list: any = [];
+  pagelist: any;
 
-  all:any =[];
-  criteriaList:any = [];
+  all: any = [];
+  criteriaList: any = [];
 
   constructor() { }
 
-  currentMessage(){
+  currentMessage() {
     return this.list;
   }
 
   sendData(obj) {
 
-    console.log("obj",obj);
+    console.log("obj", obj);
 
     this.list = obj;
     this.communicateSubject.next();
   }
 
+  setPageNumber(data) {
+    this.pagelist = data;
+    this.communicateSubject.next();
+  }
+
+
+  getPageNumbers(): Observable<any> {
+    return this.pagelist;
+
+  }
   // setQuestionList(list){
   //   this.list = list;
   // }
@@ -40,23 +51,23 @@ export class DynamicFormBuilderService {
   //   this.messageSource.next(message);
   // }
 
-  getALl(): Observable<any>{
+  getALl(): Observable<any> {
 
     // let all = {
     //   questionList:[]
     // }
     this.all = {
-      criteriaList:this.criteriaList,
-      questionList:this.list
+      criteriaList: this.criteriaList,
+      questionList: this.list
     }
     // return this.communicateSubject.asObservable();
     return this.all;
   }
-  setCriteria(list){
+  setCriteria(list) {
 
     this.criteriaList = list;
 
   }
 
-  
+
 }

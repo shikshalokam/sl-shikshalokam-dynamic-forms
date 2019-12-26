@@ -23,6 +23,7 @@ class DynamicFormBuilderService {
         // currentMessage = this.messageSource.asObservable();
         this.list = [];
         this.all = [];
+        this.criteriaList = [];
     }
     /**
      * @return {?}
@@ -53,10 +54,18 @@ class DynamicFormBuilderService {
         //   questionList:[]
         // }
         this.all = {
+            criteriaList: this.criteriaList,
             questionList: this.list
         };
         // return this.communicateSubject.asObservable();
         return this.all;
+    }
+    /**
+     * @param {?} list
+     * @return {?}
+     */
+    setCriteria(list) {
+        this.criteriaList = list;
     }
 }
 if (false) {
@@ -66,6 +75,8 @@ if (false) {
     DynamicFormBuilderService.prototype.list;
     /** @type {?} */
     DynamicFormBuilderService.prototype.all;
+    /** @type {?} */
+    DynamicFormBuilderService.prototype.criteriaList;
 }
 
 /**
@@ -227,7 +238,7 @@ class DynamicFormBuilderComponent {
                 "position": len,
                 "field": len + "question",
                 "type": "text",
-                "label": len + ". question",
+                "label": "Question",
                 "placeholder": "Please enter your question here",
                 "description": "",
                 "validations": {
@@ -242,7 +253,7 @@ class DynamicFormBuilderComponent {
                 "field": len + "question",
                 "type": "number",
                 "position": len,
-                "label": len + ". question",
+                "label": "Question",
                 "placeholder": "Please enter your question here",
                 "description": "",
                 "validations": {
@@ -258,7 +269,7 @@ class DynamicFormBuilderComponent {
                 "position": len,
                 type: 'radio',
                 name: len + ". question",
-                label: len + ". question",
+                label: "Question",
                 description: "",
                 required: true,
                 "validations": {
@@ -278,7 +289,7 @@ class DynamicFormBuilderComponent {
                 type: "checkbox",
                 "position": len,
                 name: len + ". question",
-                label: len + ". question",
+                label: "Question",
                 description: "",
                 required: true,
                 "validations": {
@@ -298,7 +309,7 @@ class DynamicFormBuilderComponent {
                 type: 'dropdown',
                 "position": len,
                 name: len + ". question",
-                label: len + ". question",
+                label: "Question",
                 value: 'option1',
                 description: "",
                 required: true,
@@ -319,7 +330,7 @@ class DynamicFormBuilderComponent {
                 type: 'date',
                 "position": len,
                 name: len + ". question",
-                label: len + ". question",
+                label: "Question",
                 description: "",
                 required: true,
                 "validations": {
@@ -339,7 +350,7 @@ class DynamicFormBuilderComponent {
                     "field": len + "question",
                     "type": ele.type,
                     "position": len,
-                    "label": len + ". question",
+                    "label": "Question",
                     "child": [],
                     "placeholder": "Please add Child's here",
                     "description": "",
@@ -356,7 +367,7 @@ class DynamicFormBuilderComponent {
             obj = {
                 "field": len + "question",
                 "type": "matrix",
-                "label": len + ". question",
+                "label": "Question",
                 "child": [],
                 "placeholder": "Please add Child's here",
                 "description": "",
@@ -631,6 +642,16 @@ DynamicFormBuilderComponent.decorators = [
     text-transform: capitalize;
   }
 
+   .toolbar {
+    border: 1px solid midnightblue;
+    list-style: none;
+    padding: 10px;
+    margin-bottom: 10px;
+    color: midnightblue;
+    width: 100%;
+    text-align: left;
+    text-transform: capitalize;
+   }
     .element span {
       text-transform: uppercase !important;
     }
@@ -652,9 +673,14 @@ DynamicFormBuilderComponent.decorators = [
     .start-create {
       width: 50%;
       margin:auto;
+      padding:20px;
     }
     .start-create:hover .add-qicons{
       display:block;
+    }
+    .toolbar i.material-icons {
+      vertical-align: middle;
+      padding: 6px;
     }
     .element i.material-icons {
       vertical-align: middle;
@@ -675,7 +701,7 @@ DynamicFormBuilderComponent.decorators = [
       
 
     <div class="col-sm-12 noPadding">
-    <div class="card showQBlock" *ngIf="showQuestionBlock">
+    <div class="card showQBlock" *ngIf="fields.length <= 0 && showQuestionBlock">
 
       <div>
         <div class="start-create">
@@ -706,13 +732,15 @@ DynamicFormBuilderComponent.decorators = [
           </div>
         </div>
       </div>
-      <div class="col-sm-4" style="padding-top:25px" *ngIf="!showQuestionBlock">
+      <div class="col-sm-12" style="padding-top:25px" *ngIf="fields.length > 0  || !showQuestionBlock">
           
           <div  class="col-md-12">
             <!-- <dynamic-form-builder [fields]="getFields()"></dynamic-form-builder> -->
       
-            <span *ngFor="let item of jsonData" style ="padding:5px">
-              <span [dndDraggable]="item"  class="element"  >{{ item.responseType }}</span>
+            <span *ngFor="let item of jsonData" >
+              <span [dndDraggable]="item"  class="toolbar"  >
+            {{ item.responseType }}   <i class="material-icons">{{ item.icon }}</i>
+             </span>
               </span>
 
               <!-- <div class="col-sm-12 element" (click)="addFormElement(item.responseType)" >Number</div> -->
@@ -1215,6 +1243,7 @@ class FieldBuilderComponent {
          */
         t => t.field !== item.field));
         this.allData['questionList']['questionList'];
+        this.criteriaList = this.allData['criteriaList'];
         console.log('const filtereddata', this.filtereddata);
         // console.log('length', this.filtereddata['questionList'].length);
         // this.dynamicServe.getALl()
@@ -1549,18 +1578,17 @@ span.cursor-pntr {
   <mat-select  [(ngModel)]="pageNumber">
     <mat-option  *ngFor = "let page of pages; let i = index" value="page.value">{{page.label}}</mat-option>
   </mat-select>
-  <span style = "float:right" class="cursor-pntr"><i class="fa fa-plus" (click)="add(pages)" ></i></span>
 </mat-form-field>
 </div>
 <div class="col-sm-1">
-<span style = "float:right" class="cursor-pntr"><i class="fa fa-plus" (click)="add(pages)" ></i></span>
+<span style = "float:right;padding-top:15px" class="cursor-pntr"><i title="Add Page" class="fa fa-plus" (click)="add(pages)" ></i></span>
 </div>
  
 <div class="col-sm-6">
 <mat-form-field>
 <mat-label>Criteria</mat-label>
   <mat-select  [(ngModel)]="draftCriteriaId">
-    <mat-option *ngFor="let item of criteriaList" value="item._id">{{ item.name}}</mat-option>
+    <mat-option *ngFor="let item of criteriaList" [value]="item._id">{{ item.name}}</mat-option>
    </mat-select>
 </mat-form-field>
 </div>
@@ -1913,7 +1941,7 @@ DropDownComponent.decorators = [
                 selector: 'dropdown',
                 template: `
       <div [formGroup]="form">
-      <label class="col-sm-8 form-control-label" [attr.for]="field.label">
+      <label class="col-sm-0 form-control-label" [attr.for]="field.label">
       {{field.label}}
     </label>
         <select class="form-control" [id]="field.field">
@@ -2680,17 +2708,6 @@ MultiSelectComponent.decorators = [
     </mat-form-field>
   </div>
 
-  <div class="col-sm-6 form-group">
-    <mat-form-field>
-      <mat-label>Pages</mat-label>
-      <mat-select [(ngModel)]="pageNumber" [ngModelOptions]="{standalone: true}">
-        <mat-option value="page_1">page 1</mat-option>
-        <mat-option value="page_2">page 2</mat-option>
-        <mat-option value="page_3">page 3</mat-option>
-      </mat-select>
-    </mat-form-field>
-  </div>
-
   <div class="col-sm-6 form-group" *ngIf="type=='slider'">
     <mat-form-field>
       <input type="text" placeholder="Min" matInput [(ngModel)]="min" [ngModelOptions]="{standalone: true}">
@@ -2826,7 +2843,12 @@ MultiSelectComponent.decorators = [
   </div>
 
 
-  <div class="col-md-0" [ngSwitch]="obj.type" style="width:80%;margin-left:20%;border:1px solid #ccc;">
+  <div class="col-md-0" [ngSwitch]="obj.type" style="width: 80%;
+  margin-left: 20%;
+  padding-left: 10px;
+  margin-top: 10px;
+  box-shadow: 1px 1px 2px 1px rgba(0,0,0,0.19);
+  padding-bottom: 10px;">
 
   <textbox  style ="padding-left:30px" *ngSwitchCase="'number'" [field]="obj" [form]="form"></textbox>
 

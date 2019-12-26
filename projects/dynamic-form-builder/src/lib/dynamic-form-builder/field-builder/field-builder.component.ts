@@ -100,7 +100,7 @@ span.cursor-pntr {
 </mat-form-field>
 </div>
 <div class="col-sm-1">
-<span style = "float:right;padding-top:25px" class="cursor-pntr"><i title="Add Page" class="fa fa-plus" (click)="add(pages)" ></i></span>
+<span style = "float:right;padding-top:15px" class="cursor-pntr"><i title="Add Page" class="fa fa-plus" (click)="add(pages)" ></i></span>
 </div>
  
 <div class="col-sm-6">
@@ -576,9 +576,7 @@ export class FieldBuilderComponent implements OnInit {
     this.placeholder = item.placeholder;
     this.options = item.options;
     this.draftCriteriaId = item.draftCriteriaId;
-
-
-
+    // this.pages = this.pages
     this.required = item.validations.required;
 
     this.description = item.description;
@@ -832,5 +830,6 @@ export class FieldBuilderComponent implements OnInit {
     value: 'page'+' '+ (data.length + 1)  ,
     }
     this.pages.push(page);
+    this.dynamicServe.setPageNumber(this.pages);
   }
 }
