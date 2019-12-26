@@ -40,6 +40,16 @@ import { Observable } from 'rxjs';
     text-transform: capitalize;
   }
 
+   .toolbar {
+    border: 1px solid midnightblue;
+    list-style: none;
+    padding: 10px;
+    margin-bottom: 10px;
+    color: midnightblue;
+    width: 100%;
+    text-align: left;
+    text-transform: capitalize;
+   }
     .element span {
       text-transform: uppercase !important;
     }
@@ -61,9 +71,14 @@ import { Observable } from 'rxjs';
     .start-create {
       width: 50%;
       margin:auto;
+      padding:20px;
     }
     .start-create:hover .add-qicons{
       display:block;
+    }
+    .toolbar i.material-icons {
+      vertical-align: middle;
+      padding: 6px;
     }
     .element i.material-icons {
       vertical-align: middle;
@@ -84,7 +99,7 @@ import { Observable } from 'rxjs';
       
 
     <div class="col-sm-12 noPadding">
-    <div class="card showQBlock" *ngIf="showQuestionBlock">
+    <div class="card showQBlock" *ngIf="fields.length <= 0 && showQuestionBlock">
 
       <div>
         <div class="start-create">
@@ -115,13 +130,15 @@ import { Observable } from 'rxjs';
           </div>
         </div>
       </div>
-      <div class="col-sm-4" style="padding-top:25px" *ngIf="!showQuestionBlock">
+      <div class="col-sm-12" style="padding-top:25px" *ngIf="fields.length > 0  || !showQuestionBlock">
           
           <div  class="col-md-12">
             <!-- <dynamic-form-builder [fields]="getFields()"></dynamic-form-builder> -->
       
-            <span *ngFor="let item of jsonData" style ="padding:5px">
-              <span [dndDraggable]="item"  class="element"  >{{ item.responseType }}</span>
+            <span *ngFor="let item of jsonData" >
+              <span [dndDraggable]="item"  class="toolbar"  >
+            {{ item.responseType }}   <i class="material-icons">{{ item.icon }}</i>
+             </span>
               </span>
 
               <!-- <div class="col-sm-12 element" (click)="addFormElement(item.responseType)" >Number</div> -->
@@ -271,7 +288,7 @@ export class DynamicFormBuilderComponent implements OnInit {
         "position": len,
         "field": len + "question",
         "type": "text",
-        "label": len + ". question",
+        "label": "Question",
         "placeholder": "Please enter your question here",
         "description": "",
         "validations": {
@@ -284,7 +301,7 @@ export class DynamicFormBuilderComponent implements OnInit {
       obj = {
         "field": len + "question",
         "type": "number",
-        "label": len + ". question",
+        "label": "Question",
         "placeholder": "Please enter your question here",
         "description": "",
         "validations": {
@@ -298,7 +315,7 @@ export class DynamicFormBuilderComponent implements OnInit {
         field: len + "question",
         type: 'radio',
         name: len + ". question",
-        label: len + ". question",
+        label: "Question",
         description: "",
         required: true,
         "validations": {
@@ -316,7 +333,7 @@ export class DynamicFormBuilderComponent implements OnInit {
         field: len + "question",
         type: "checkbox",
         name: len + ". question",
-        label: len + ". question",
+        label: "Question",
         description: "",
         required: true,
         "validations": {
@@ -334,7 +351,7 @@ export class DynamicFormBuilderComponent implements OnInit {
         field: len + "question",
         type: 'dropdown',
         name: len + ". question",
-        label: len + ". question",
+        label: "Question",
         value: 'option1',
         description: "",
         required: true,
@@ -354,7 +371,7 @@ export class DynamicFormBuilderComponent implements OnInit {
         field: len + "question",
         type: 'date',
         name: len + ". question",
-        label: len + ". question",
+        label: "Question",
         description: "",
         required: true,
         "validations": {
@@ -374,7 +391,7 @@ export class DynamicFormBuilderComponent implements OnInit {
         let childdata = {
           "field": len + "question",
           "type": ele.type,
-          "label": len + ". question",
+          "label": "Question",
           "child": [],
           "placeholder": "Please add Child's here",
           "description": "",
@@ -393,7 +410,7 @@ export class DynamicFormBuilderComponent implements OnInit {
       obj = {
         "field": len + "question",
         "type": "matrix",
-        "label": len + ". question",
+        "label":  "Question",
         "child": [],
         "placeholder": "Please add Child's here",
         "description": "",

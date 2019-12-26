@@ -105,7 +105,7 @@ span.cursor-pntr {
 <mat-form-field>
 <mat-label>Criteria</mat-label>
   <mat-select  [(ngModel)]="draftCriteriaId">
-    <mat-option *ngFor="let item of criteriaList" value="item._id">{{ item.name}}</mat-option>
+    <mat-option *ngFor="let item of criteriaList" [value]="item._id">{{ item.name}}</mat-option>
    </mat-select>
 </mat-form-field>
 </div>
@@ -543,9 +543,13 @@ export class FieldBuilderComponent implements OnInit {
 
     console.log(this.allData, " all questions ", this.allData['questionList']);
 
+
+
     this.filtereddata = this.allData['questionList']['questionList'].filter(t => t.field !== item.field);
 
-    this.allData['questionList']['questionList']
+    this.allData['questionList']['questionList'];
+
+    this.criteriaList = this.allData['criteriaList'];
     console.log('const filtereddata', this.filtereddata);
     // console.log('length', this.filtereddata['questionList'].length);
 
