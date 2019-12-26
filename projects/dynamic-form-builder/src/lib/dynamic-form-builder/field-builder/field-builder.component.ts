@@ -90,15 +90,17 @@ span.cursor-pntr {
   </mat-form-field>
 </div>
 
-<div class="col-sm-6">
+<div class="col-sm-5">
 <mat-form-field>
 <mat-label>Pages</mat-label>
 
   <mat-select  [(ngModel)]="pageNumber">
     <mat-option  *ngFor = "let page of pages; let i = index" value="page.value">{{page.label}}</mat-option>
   </mat-select>
-  <span style = "float:right" class="cursor-pntr"><i class="fa fa-plus" (click)="add(pages)" ></i></span>
 </mat-form-field>
+</div>
+<div class="col-sm-1">
+<span style = "float:right;padding-top:25px" class="cursor-pntr"><i title="Add Page" class="fa fa-plus" (click)="add(pages)" ></i></span>
 </div>
  
 <div class="col-sm-6">
@@ -822,8 +824,8 @@ export class FieldBuilderComponent implements OnInit {
   add(data){
     console.log(' add data', data);
     let page = {
-    label: 'page'+' '+ data.length + 1,
-    value: 'page'+' '+ data.length + 1  ,
+    label: 'page'+' '+ (data.length + 1),
+    value: 'page'+' '+ (data.length + 1)  ,
     }
     this.pages.push(page);
   }

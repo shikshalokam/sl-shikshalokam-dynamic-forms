@@ -1453,8 +1453,8 @@ class FieldBuilderComponent {
         console.log(' add data', data);
         /** @type {?} */
         let page = {
-            label: 'page' + ' ' + data.length + 1,
-            value: 'page' + ' ' + data.length + 1,
+            label: 'page' + ' ' + (data.length + 1),
+            value: 'page' + ' ' + (data.length + 1),
         };
         this.pages.push(page);
     }
@@ -1542,7 +1542,7 @@ span.cursor-pntr {
   </mat-form-field>
 </div>
 
-<div class="col-sm-6">
+<div class="col-sm-5">
 <mat-form-field>
 <mat-label>Pages</mat-label>
 
@@ -1551,6 +1551,9 @@ span.cursor-pntr {
   </mat-select>
   <span style = "float:right" class="cursor-pntr"><i class="fa fa-plus" (click)="add(pages)" ></i></span>
 </mat-form-field>
+</div>
+<div class="col-sm-1">
+<span style = "float:right" class="cursor-pntr"><i class="fa fa-plus" (click)="add(pages)" ></i></span>
 </div>
  
 <div class="col-sm-6">
