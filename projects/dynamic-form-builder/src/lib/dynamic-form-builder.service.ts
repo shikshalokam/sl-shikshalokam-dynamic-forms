@@ -38,7 +38,6 @@ export class DynamicFormBuilderService {
     this.communicateSubject.next();
   }
 
-
   getPageNumbers(): Observable<any> {
     return this.pagelist;
 

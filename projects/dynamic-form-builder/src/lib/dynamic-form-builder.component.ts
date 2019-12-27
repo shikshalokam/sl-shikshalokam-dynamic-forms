@@ -48,6 +48,7 @@ import { Observable } from 'rxjs';
     color: midnightblue;
     width: 100%;
     text-align: left;
+    cursor: pointer;
     text-transform: capitalize;
    }
     .element span {

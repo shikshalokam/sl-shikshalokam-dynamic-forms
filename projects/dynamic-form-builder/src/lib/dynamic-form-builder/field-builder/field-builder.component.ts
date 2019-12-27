@@ -58,7 +58,7 @@ span.cursor-pntr {
 }
 
   </style>
-  <div class="row"  *ngIf="openEdit" style="padding: 15px;
+  <div class="row" *ngIf="openEdit" style="padding: 15px;
   border: 1px solid #ccc;margin-top:10px;width:85%;margin-top:40px;margin: auto;
   box-shadow: 1px 1px 1px 1px rgba(0,0,0,0.19);margin-top:20px;">
     <div class="col-sm-6">
@@ -66,221 +66,222 @@ span.cursor-pntr {
         <input matInput placeholder="Label" [(ngModel)]="label" name="label">
       </mat-form-field>
     </div>
+  
     <div class="col-sm-6">
       <mat-form-field>
         <input matInput placeholder="Input Place Holder" [(ngModel)]="placeholder" name="placeholder">
       </mat-form-field>
     </div>
-
+  
     <div class="col-sm-6">
       <mat-form-field>
         <input matInput placeholder="Hint/Description" [(ngModel)]="description" name="Description">
       </mat-form-field>
     </div>
-
-<div class="col-sm-6 " style="display:none">
-  <mat-form-field>
-  <mat-label>Input Type</mat-label>
-    <mat-select  [(ngModel)]="type">
-      <mat-option value="text">text</mat-option>
-      <mat-option value="number">number</mat-option>
-      <mat-option value="radio">radio</mat-option>
-      <mat-option value="date">date</mat-option>
-    </mat-select>
-  </mat-form-field>
-</div>
-
-<div class="col-sm-5">
-<mat-form-field>
-<mat-label>Pages</mat-label>
-
-  <mat-select  [(ngModel)]="pageNumber">
-    <mat-option  *ngFor = "let page of pages; let i = index" value="page.value">{{page.label}}</mat-option>
-  </mat-select>
-</mat-form-field>
-</div>
-<div class="col-sm-1">
-<span style = "float:right;padding-top:15px" class="cursor-pntr"><i title="Add Page" class="fa fa-plus" (click)="add(pages)" ></i></span>
-</div>
- 
-<div class="col-sm-6">
-<mat-form-field>
-<mat-label>Criteria</mat-label>
-  <mat-select  [(ngModel)]="draftCriteriaId">
-    <mat-option *ngFor="let item of criteriaList" [value]="item._id">{{ item.name}}</mat-option>
-   </mat-select>
-</mat-form-field>
-</div>
-
-
-
-    <div class="col-sm-6" *ngIf="type=='slider'">
-    <mat-form-field>
-    <input type="text" placeholder="Min" matInput  [(ngModel)]="min" name="min value">
-    </mat-form-field>
+  
+    <div class="col-sm-6 " style="display:none">
+      <mat-form-field>
+        <mat-label>Input Type</mat-label>
+        <mat-select [(ngModel)]="type">
+          <mat-option value="text">text</mat-option>
+          <mat-option value="number">number</mat-option>
+          <mat-option value="radio">radio</mat-option>
+          <mat-option value="date">date</mat-option>
+        </mat-select>
+      </mat-form-field>
     </div>
-
-    <div class="col-sm-6" *ngIf="type=='slider'">
-    <mat-form-field>
-    <input type="text" placeholder="Max" matInput  [(ngModel)]="max" name="min value">
-    </mat-form-field>
+  
+    <div class="col-sm-5">
+      <mat-form-field>
+        <mat-label>Pages</mat-label>
+  
+        <mat-select [(ngModel)]="pageNumber">
+          <mat-option *ngFor="let page of pages; let i = index" value="page.value">{{page.label}}</mat-option>
+        </mat-select>
+      </mat-form-field>
     </div>
-    
-  <div class="col-sm-6" *ngIf="type=='date'">
-    <mat-form-field>
-      <input matInput [matDatepicker]="picker" [(ngModel)]="minDate" placeholder="Choose a min date">
-      <mat-datepicker-toggle matSuffix [for]="picker"></mat-datepicker-toggle>
-      <mat-datepicker #picker></mat-datepicker>
-    </mat-form-field>
-
-    <mat-form-field>
-      <input matInput [matDatepicker]="pickerMaxDate" [(ngModel)]="maxDate" placeholder="Choose a max date">
-      <mat-datepicker-toggle matSuffix [for]="pickerMaxDate"></mat-datepicker-toggle>
-      <mat-datepicker #pickerMaxDate></mat-datepicker>
-    </mat-form-field>
-
-
+    <div class="col-sm-1">
+      <span style="float:right;padding-top:15px" class="cursor-pntr"><i title="Add Page" class="fa fa-plus"
+          (click)="add(pages)"></i></span>
+    </div>
+  
+    <div class="col-sm-6">
+      <mat-form-field>
+        <mat-label>Criteria</mat-label>
+        <mat-select [(ngModel)]="draftCriteriaId">
+          <mat-option *ngFor="let item of criteriaList" [value]="item._id">{{ item.name}}</mat-option>
+        </mat-select>
+      </mat-form-field>
+    </div>
+  
+  
+  
+    <div class="col-sm-6" *ngIf="type=='slider'">
+      <mat-form-field>
+        <input type="text" placeholder="Min" matInput [(ngModel)]="min" name="min value">
+      </mat-form-field>
+    </div>
+  
+    <div class="col-sm-6" *ngIf="type=='slider'">
+      <mat-form-field>
+        <input type="text" placeholder="Max" matInput [(ngModel)]="max" name="min value">
+      </mat-form-field>
+    </div>
+  
+    <div class="col-sm-6" *ngIf="type=='date'">
+      <mat-form-field>
+        <input matInput [matDatepicker]="picker" [(ngModel)]="minDate" placeholder="Choose a min date">
+        <mat-datepicker-toggle matSuffix [for]="picker"></mat-datepicker-toggle>
+        <mat-datepicker #picker></mat-datepicker>
+      </mat-form-field>
+  
+      <mat-form-field>
+        <input matInput [matDatepicker]="pickerMaxDate" [(ngModel)]="maxDate" placeholder="Choose a max date">
+        <mat-datepicker-toggle matSuffix [for]="pickerMaxDate"></mat-datepicker-toggle>
+        <mat-datepicker #pickerMaxDate></mat-datepicker>
+      </mat-form-field>
+  
+  
     </div>
     <div class="col-sm-12" *ngIf="type=='radio' || type=='checkbox' || type=='dropdown'">
-    <label for="label" class="col-sm-12">Options</label>
-    
-    <ul class="col" *ngFor="let opt of options;let i = index">
-     <li class="">
-      <span>{{opt.label}} </span><span style="
+      <label for="label" class="col-sm-12">Options</label>
+  
+      <ul class="col" *ngFor="let opt of options;let i = index">
+        <li class="">
+          <span>{{opt.label}} </span><span style="
       margin-left: 30px;" (click)="deleteOption(opt,i)">
-      <i class="fa fa-trash"></i></span>
-    </li>
-    </ul>
-
-    <div class="col-sm-6">
-    <div class="input-group">
-    <mat-form-field>
-    <input type="text" placeholder="Label" matInput style="margin-bottom: 10px;" [(ngModel)]="newOptionLabel" name="newOption">
-    </mat-form-field>
-    <mat-form-field>
-    <input type="tex" disabled matInput name="newOption" placeholder="key"  [(ngModel)]="newOptionKey">
-    </mat-form-field>  
+            <i class="fa fa-trash"></i></span>
+        </li>
+      </ul>
+  
+      <div class="col-sm-6">
+        <div class="input-group">
+          <mat-form-field>
+            <input type="text" placeholder="Label" matInput style="margin-bottom: 10px;" [(ngModel)]="newOptionLabel"
+              name="newOption">
+          </mat-form-field>
+          <mat-form-field>
+            <input type="tex" disabled matInput name="newOption" placeholder="key" [(ngModel)]="newOptionKey">
+          </mat-form-field>
+        </div>
+        <button mat-flat-button color="primary" style="margin-top: 10px;" (click)="AddNewOptions()">
+          Add
+        </button>
+      </div>
     </div>
-      <button mat-flat-button color="primary" style="margin-top: 10px;"  (click)="AddNewOptions()">
-      Add
-      </button>
+  
+    <div *ngIf="filtereddata && filtereddata.length > 0">
+      <div class="col-sm-12">
+        <label id="example-radio-group-label">Do you want to related the question based on below options ?</label>
+        <mat-radio-group aria-labelledby="example-radio-group-label" class="example-radio-group"
+          [(ngModel)]="selectedOption">
+          <mat-radio-button class="example-radio-button" *ngFor="let ele of options" [value]="ele">
+            {{ ele.label }}
+          </mat-radio-button>
+        </mat-radio-group>
+      </div>
+  
+  
+      <div class="col-sm-6">
+        <mat-form-field>
+          <mat-label>Select Question to add </mat-label>
+          <select matNativeControl [(ngModel)]="currentSelectedQtn">
+            <option *ngFor="let values of filtereddata" [ngValue]="values"> {{ values.label }} </option>
+          </select>
+        </mat-form-field>
+      </div>
+  
+      <div class="col-sm-6" *ngIf="type=='text' || type=='date' || type=='number'">
+        <mat-form-field>
+          <mat-label>Select Condition </mat-label>
+          <select matNativeControl [(ngModel)]="condition">
+            <option *ngFor="let values of conditionArray" [ngValue]="values.condition"> {{ values.label }} </option>
+          </select>
+        </mat-form-field>
+      </div>
+  
+      <div class="col-sm-6" *ngIf="type=='text' || type=='date' || type=='number'">
+        <mat-form-field>
+          <input type="tex" matInput name="conditionMatchValue" placeholder="" [(ngModel)]="conditionMatchValue">
+        </mat-form-field>
+      </div>
+  
+      <div class="col-sm-2">
+        <button mat-flat-button color="primary" style="margin-top: 10px;" (click)="parentMapping()">
+          Add
+        </button>
+      </div>
     </div>
-    </div>
-
-<div *ngIf ="filtereddata && filtereddata.length > 0">    
-<div class="col-sm-12">
-<label id="example-radio-group-label">Do you want to related the question based on below options ?</label>
-<mat-radio-group
-aria-labelledby="example-radio-group-label"
-class="example-radio-group"
-[(ngModel)]="selectedOption">
-<mat-radio-button class="example-radio-button" *ngFor="let ele of options"  [value]="ele">
-{{ ele.label }}
-</mat-radio-button>
-</mat-radio-group>
-</div>
-
-
-<div class="col-sm-6">
-<mat-form-field >
-<mat-label>Select Question to add </mat-label>
-<select matNativeControl [(ngModel)]="currentSelectedQtn" >
-<option *ngFor="let values of filtereddata"  [ngValue]="values"> {{ values.label }} </option>
-</select>  
-</mat-form-field>
-</div>
-
-<div class="col-sm-6" *ngIf="type=='text' || type=='date' || type=='number'">
-<mat-form-field >
-<mat-label>Select Condition </mat-label>
-<select matNativeControl [(ngModel)]="condition" >
-<option *ngFor="let values of conditionArray"  [ngValue]="values.condition"> {{ values.label }} </option>
-</select>
-</mat-form-field>
-</div>
-
-<div class="col-sm-6" *ngIf="type=='text' || type=='date' || type=='number'">
-<mat-form-field>
-  <input type="tex" matInput name="conditionMatchValue" placeholder=""  [(ngModel)]="conditionMatchValue">
-  </mat-form-field> 
-</div>
-
-<div class="col-sm-2">
-<button mat-flat-button color="primary" style="margin-top: 10px;"  (click)="parentMapping()">
-Add
-</button>
-</div>
-</div>
-<ul class="col-sm-12" *ngFor="let relate of listOfRelation;let i = index">
- <li class="col-sm-12">
-  <span>{{relate.label}} </span><span style="
+  
+    <ul class="col-sm-12" *ngFor="let relate of listOfRelation;let i = index">
+      <li class="col-sm-12">
+        <span>{{relate.label}} </span><span style="
   margin-left: 30px;" (click)="deleteCondition(relate,i)">
-  <i class="fa fa-trash"></i></span>
-</li>
-</ul>
-
-    
-<div class="col-sm-12">
-<label id="example-radio-group-label">is Reqired ?</label>
-<mat-radio-group
-  aria-labelledby="example-radio-group-label"
-  class="example-radio-group"
-  [(ngModel)]="required">
-  <mat-radio-button class="example-radio-button" [value]=true>
-    Yes
-  </mat-radio-button>
-  <mat-radio-button class="example-radio-button" [value]=false>
-    No
-  </mat-radio-button>
-</mat-radio-group>
-</div>
-
-<div class="col-sm-12" *ngIf="type=='date'">
-<label id="example-radio-group-label">is autoCollect</label>
-<mat-radio-group
-  aria-labelledby="example-radio-group-label"
-  class="example-radio-group"
-  [(ngModel)]="autoCollect">
-  <mat-radio-button class="example-radio-button" [value]=true>
-    True
-  </mat-radio-button>
-  <mat-radio-button class="example-radio-button" [value]=false>
-    False
-  </mat-radio-button>
-</mat-radio-group>
-</div>
-
+          <i class="fa fa-trash"></i></span>
+      </li>
+    </ul>
   
-<div  class="col-sm-12">
-
-<button mat-flat-button color="primary" style="margin-right:10px;"  (click)="closeModel('save')">
-Save
-</button>
-
-</div>
-  </div>
-  <div class="form-group row" [formGroup]="form" style="padding:0px;margin:0px;margin-top:10px;box-shadow: 1px 1px 2px 1px rgba(0,0,0,0.19);padding-bottom:10px;">
-  <span class="qtn_position"><span class="">#{{ field.position }}</span></span>
-  <div class="action-component" >
-
-  <span class="cursor-pntr" (click)="deleteElement(field)"><i class="fa fa-trash"></i> </span>
-  <span class="cursor-pntr" (click)="copyElement(field)"><i class="fa fa-copy"></i></span>
-  <span class="cursor-pntr"><i class="fa fa-edit" (click)="loadFormElement(field)" ></i></span>
+  
+    <div class="col-sm-12">
+      <label id="example-radio-group-label">is Reqired ?</label>
+      <mat-radio-group aria-labelledby="example-radio-group-label" class="example-radio-group" [(ngModel)]="required">
+        <mat-radio-button class="example-radio-button" [value]=true>
+          Yes
+        </mat-radio-button>
+        <mat-radio-button class="example-radio-button" [value]=false>
+          No
+        </mat-radio-button>
+      </mat-radio-group>
+    </div>
+  
+    <div class="col-sm-12" *ngIf="type=='date'">
+      <label id="example-radio-group-label">is autoCollect</label>
+      <mat-radio-group aria-labelledby="example-radio-group-label" class="example-radio-group" [(ngModel)]="autoCollect">
+        <mat-radio-button class="example-radio-button" [value]=true>
+          True
+        </mat-radio-button>
+        <mat-radio-button class="example-radio-button" [value]=false>
+          False
+        </mat-radio-button>
+      </mat-radio-group>
+    </div>
+  
+  
+    <div class="col-sm-12">
+  
+      <button mat-flat-button color="primary" style="margin-right:10px;" (click)="closeModel('save')">
+        Save
+      </button>
+  
+    </div>
   
   </div>
+  <div class="form-group row" [formGroup]="form"
+    style="padding:0px;margin:0px;margin-top:10px;box-shadow: 1px 1px 2px 1px rgba(0,0,0,0.19);padding-bottom:10px;">
+    <span class="qtn_position"><span class="">#{{ field.position }}</span></span>
+  
+    <div class="action-component">
+  
+      <span class="cursor-pntr" (click)="deleteElement(field)"><i class="fa fa-trash"></i> </span>
+      <span class="cursor-pntr" (click)="copyElement(field)"><i class="fa fa-copy"></i></span>
+      <span class="cursor-pntr"><i class="fa fa-edit" (click)="loadFormElement(field)"></i></span>
+  
+    </div>
     <div class="col-md-12" [ngSwitch]="field.type">
-    <textbox *ngSwitchCase="'number'" [field]="field" [form]="form"></textbox>
-    <textbox *ngSwitchCase="'text'" [field]="field" [form]="form"></textbox>
-    <date *ngSwitchCase="'date'" [field]="field" [form]="form"></date>
-    <slider *ngSwitchCase="'slider'" [field]="field" [form]="form"></slider>
+      <textbox *ngSwitchCase="'number'" [field]="field" [form]="form"></textbox>
+      <textbox *ngSwitchCase="'text'" [field]="field" [form]="form"></textbox>
+      <date *ngSwitchCase="'date'" [field]="field" [form]="form"></date>
+      <slider *ngSwitchCase="'slider'" [field]="field" [form]="form"></slider>
       <dropdown *ngSwitchCase="'dropdown'" [field]="field" [form]="form"></dropdown>
       <checkbox *ngSwitchCase="'checkbox'" [field]="field" [form]="form"></checkbox>
       <radio *ngSwitchCase="'radio'" [field]="field" [form]="form"></radio>
-      <lib-multi-select *ngSwitchCase="'matrix'"  cdkDrag (childrenDropEvent)="childrenDropEvent($event)" [field]="field" [form]="form"></lib-multi-select>
+      <lib-multi-select *ngSwitchCase="'matrix'" cdkDrag (childrenDropEvent)="childrenDropEvent($event)" [field]="field"
+        [form]="form"></lib-multi-select>
       <file *ngSwitchCase="'file'" [field]="field" [form]="form"></file>
       <div style="float:right">
-       </div> 
-       </div>`,
+      </div>
+    </div>
+    </div>`,
   styles: [`
   .qtn_position {
     float: left;
