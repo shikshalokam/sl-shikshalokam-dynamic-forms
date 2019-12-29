@@ -173,9 +173,12 @@ class DynamicFormBuilderComponent {
             }
             else {
                 /** @type {?} */
+                const pages = this.dynamicServe.getPageNumbers();
+                /** @type {?} */
                 let obj = {
                     action: "all",
-                    data: this.fields
+                    data: this.fields,
+                    pages: pages
                 };
                 console.log("to get all", this.fields);
                 this.questionTrigger.emit(obj);
@@ -754,7 +757,7 @@ DynamicFormBuilderComponent.decorators = [
             <!-- <dynamic-form-builder [fields]="getFields()"></dynamic-form-builder> -->
       
             <span *ngFor="let item of jsonData" >
-              <span [dndDraggable]="item"  class="toolbar"  >
+              <span [dndDraggable]="item" (click)="onDrop(item.responseType)"  class="toolbar"  >
             {{ item.responseType }}   <i class="material-icons">{{ item.icon }}</i>
              </span>
               </span>
@@ -1245,6 +1248,7 @@ class FieldBuilderComponent {
         this.field.validations = {
             'relation': []
         };
+        this.dynamicServe.setPageNumber(this.pages);
     }
     /**
      * @param {?} item
@@ -1274,6 +1278,7 @@ class FieldBuilderComponent {
         // this.pages = this.pages
         this.required = item.validations.required;
         this.description = item.description;
+        this.pageNumber = item.pageNumber;
         if (item.validations.relation) {
             this.listOfRelation = item.validations.relation;
         }
@@ -1323,6 +1328,7 @@ class FieldBuilderComponent {
                 field: this.field,
                 _id: this._id,
                 description: this.description,
+                pageNumber: this.pageNumber,
                 draftCriteriaId: this.draftCriteriaId,
             };
             if (this.type == 'date') {
@@ -1340,6 +1346,7 @@ class FieldBuilderComponent {
             this.field.placeholder = this.placeholder;
             this.field.options = this.options;
             this.field.description = this.description;
+            this.field.pageNumber = this.pageNumber;
             this.field.draftCriteriaId = this.draftCriteriaId;
             if (this.type == 'date') {
                 this.field.validations.minDate = this.minDate;
@@ -1596,7 +1603,7 @@ span.cursor-pntr {
         <mat-label>Pages</mat-label>
   
         <mat-select [(ngModel)]="pageNumber">
-          <mat-option *ngFor="let page of pages; let i = index" value="page.value">{{page.label}}</mat-option>
+          <mat-option *ngFor="let page of pages; let i = index" value="{{page.value}}">{{page.label}}</mat-option>
         </mat-select>
       </mat-form-field>
     </div>
@@ -1824,10 +1831,6 @@ if (false) {
     /** @type {?} */
     FieldBuilderComponent.prototype.modalReference;
     /** @type {?} */
-    FieldBuilderComponent.prototype.pageNumber;
-    /** @type {?} */
-    FieldBuilderComponent.prototype.any;
-    /** @type {?} */
     FieldBuilderComponent.prototype.label;
     /** @type {?} */
     FieldBuilderComponent.prototype.type;
@@ -1855,6 +1858,8 @@ if (false) {
     FieldBuilderComponent.prototype._id;
     /** @type {?} */
     FieldBuilderComponent.prototype.description;
+    /** @type {?} */
+    FieldBuilderComponent.prototype.pageNumber;
     /** @type {?} */
     FieldBuilderComponent.prototype.minDate;
     /** @type {?} */
@@ -2532,6 +2537,12 @@ class MultiSelectComponent {
                 _id: this._id,
                 description: this.description
             };
+            obj.label = data.label;
+            obj.field = data.field;
+            obj.type = data.type;
+            obj.placeholder = data.placeholder;
+            obj.options = data.options;
+            obj.description = data.description;
             if (this.type == 'date') {
                 obj['minDate'] = this.minDate;
                 obj['maxDate'] = this.maxDate;

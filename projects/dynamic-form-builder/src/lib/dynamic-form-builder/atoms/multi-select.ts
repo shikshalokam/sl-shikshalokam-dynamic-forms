@@ -431,6 +431,13 @@ export class MultiSelectComponent {
         description: this.description
       }
 
+      obj.label = data.label;
+      obj.field = data.field;
+      obj.type = data.type;
+      obj.placeholder = data.placeholder;
+      obj.options = data.options;
+      obj.description = data.description;
+
       if (this.type == 'date') {
         obj['minDate'] = this.minDate;
         obj['maxDate'] = this.maxDate

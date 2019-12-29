@@ -96,7 +96,7 @@ span.cursor-pntr {
         <mat-label>Pages</mat-label>
   
         <mat-select [(ngModel)]="pageNumber">
-          <mat-option *ngFor="let page of pages; let i = index" value="page.value">{{page.label}}</mat-option>
+          <mat-option *ngFor="let page of pages; let i = index" value="{{page.value}}">{{page.label}}</mat-option>
         </mat-select>
       </mat-form-field>
     </div>
@@ -307,7 +307,6 @@ export class FieldBuilderComponent implements OnInit {
   getSelectQuestion: any;
   closeResult: string;
   modalReference: any;
-  pageNumber; any;
   label: any;
   type: any;
   placeholder: any;
@@ -318,10 +317,10 @@ export class FieldBuilderComponent implements OnInit {
   pages = [{
     label: 'page 1',
     value: 'page 1'
-  },{
+  }, {
     label: 'page 2',
     value: 'page 2'
-  },{
+  }, {
     label: 'page 3',
     value: 'page 3'
   }]
@@ -333,6 +332,7 @@ export class FieldBuilderComponent implements OnInit {
   openEdit: boolean = false;
   _id: any;
   description: any;
+  pageNumber: any;
   minDate: any;
   maxDate: any;
   min: any;
@@ -533,13 +533,8 @@ export class FieldBuilderComponent implements OnInit {
   }
 
   ngOnInit() {
-
-
-
     // this.currentSelectedQtn = { };
-
     // this.dynamicServe.getALl();
-
     this.options = [];
     this.validations = {
       'relation': []
@@ -548,7 +543,7 @@ export class FieldBuilderComponent implements OnInit {
     this.field.validations = {
       'relation': []
     };
-
+    this.dynamicServe.setPageNumber(this.pages);
   }
   loadFormElement(item) {
 
@@ -581,6 +576,7 @@ export class FieldBuilderComponent implements OnInit {
     this.required = item.validations.required;
 
     this.description = item.description;
+    this.pageNumber = item.pageNumber;
 
     if (item.validations.relation) {
       this.listOfRelation = item.validations.relation;
@@ -638,6 +634,7 @@ export class FieldBuilderComponent implements OnInit {
         field: this.field,
         _id: this._id,
         description: this.description,
+        pageNumber: this.pageNumber,
         draftCriteriaId: this.draftCriteriaId,
 
       }
@@ -663,6 +660,7 @@ export class FieldBuilderComponent implements OnInit {
       this.field.placeholder = this.placeholder;
       this.field.options = this.options;
       this.field.description = this.description;
+      this.field.pageNumber = this.pageNumber;
       this.field.draftCriteriaId = this.draftCriteriaId;
 
       if (this.type == 'date') {
@@ -744,19 +742,19 @@ export class FieldBuilderComponent implements OnInit {
 
     // let newArr = [];
     // let optionsArr = this.options.filter(item => {
-      // if(item.lable==opt.label && item.key==opt.key){
+    // if(item.lable==opt.label && item.key==opt.key){
 
-      // }else{
+    // }else{
 
-      // }
+    // }
 
-      // return (item.label != opt.label && item.key != opt.key)
+    // return (item.label != opt.label && item.key != opt.key)
 
-      // if(item.lable==opt.label && item.key==opt.key){
+    // if(item.lable==opt.label && item.key==opt.key){
 
-      // }else{
-      //   return true;
-      // }
+    // }else{
+    //   return true;
+    // }
     // })
     this.options.splice(index, 1);
 
@@ -767,7 +765,7 @@ export class FieldBuilderComponent implements OnInit {
 
     if (this.newOptionLabel != "") {
 
-      this.newOptionKey = 'R'+ this.options.length;
+      this.newOptionKey = 'R' + this.options.length;
       console.log("this.newOption", this.newOptionLabel);
 
       if (Array.isArray(this.options)) {
@@ -824,11 +822,11 @@ export class FieldBuilderComponent implements OnInit {
   }
 
 
-  add(data){
+  add(data) {
     console.log(' add data', data);
     let page = {
-    label: 'page'+' '+ (data.length + 1),
-    value: 'page'+' '+ (data.length + 1)  ,
+      label: 'page' + ' ' + (data.length + 1),
+      value: 'page' + ' ' + (data.length + 1),
     }
     this.pages.push(page);
     this.dynamicServe.setPageNumber(this.pages);

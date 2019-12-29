@@ -137,7 +137,7 @@ import { Observable } from 'rxjs';
             <!-- <dynamic-form-builder [fields]="getFields()"></dynamic-form-builder> -->
       
             <span *ngFor="let item of jsonData" >
-              <span [dndDraggable]="item"  class="toolbar"  >
+              <span [dndDraggable]="item" (click)="onDrop(item.responseType)"  class="toolbar"  >
             {{ item.responseType }}   <i class="material-icons">{{ item.icon }}</i>
              </span>
               </span>
@@ -222,11 +222,14 @@ export class DynamicFormBuilderComponent implements OnInit {
         this.sendToService(completeData);
 
       } else {
+        const pages = this.dynamicServe.getPageNumbers();
         let obj = {
           action: "all",
-          data: this.fields
+          data: this.fields,
+          pages: pages
         }
         console.log("to get all", this.fields);
+       
         this.questionTrigger.emit(obj);
       }
     })
