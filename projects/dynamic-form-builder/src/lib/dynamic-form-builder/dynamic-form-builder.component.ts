@@ -45,6 +45,7 @@ import {CdkDragDrop, moveItemInArray} from '@angular/cdk/drag-drop';
           <div style="float: right;
           font-size: 4.5em;
           color: midnightblue;
+          cursor: pointer;
           line-height: 46px;">+</div>
 
           <div class="col add-qicons">
