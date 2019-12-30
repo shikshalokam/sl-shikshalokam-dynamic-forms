@@ -46,7 +46,7 @@ import { isNgTemplate } from '@angular/compiler';
 }
 span.cursor-pntr {
   cursor: pointer;
-  padding: 2px;
+  padding: 3px;
 }
 .form-control {
   display: block;

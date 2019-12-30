@@ -233,7 +233,7 @@ import { CdkDragDrop, moveItemInArray } from '@angular/cdk/drag-drop';
       display: block;
     }
     .fa {
-      padding: 2px;
+      padding: 3px;
     }
     `]
 })

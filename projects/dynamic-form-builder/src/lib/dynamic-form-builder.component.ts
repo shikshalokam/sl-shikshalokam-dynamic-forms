@@ -29,6 +29,7 @@ import { Observable } from 'rxjs';
     color: midnightblue;
     width: 100%;
     text-align: left;
+    cursor: pointer;  
     text-transform: capitalize;
   }
   .element-old {
@@ -104,7 +105,7 @@ import { Observable } from 'rxjs';
 
       <div>
         <div class="start-create">
-         <h2 class="text-center" ><a class="start-create">Start Creating a Question</a></h2>
+         <h2 class="text-center" ><span class="start-create">Start Creating a Question</span></h2>
          <div class="add-qicons">
               <div class="col-sm-6"  *ngFor="let item of jsonData;let i = index">
                 <div *ngIf="i <= 4" class="element"   (click)="onDrop(item.responseType)">
