@@ -905,7 +905,7 @@ var DynamicFormBuilderComponent$1 = /** @class */ (function () {
      */
     function (data) {
         console.log('data type', data);
-        console.log('this.fields', this.fields);
+        console.log('before this.fields', this.fields);
         if (typeof (data) === 'string') {
             data = JSON.parse(data);
         }
@@ -940,8 +940,9 @@ var DynamicFormBuilderComponent$1 = /** @class */ (function () {
             /** @type {?} */
             var index = this.fields.indexOf(data);
             console.log("ind", index);
-            this.onFieldUpdate.emit(data);
             this.fields.splice(index, 1);
+            console.log('before this.fields', this.fields);
+            this.onFieldUpdate.emit(data);
             // this.fields = this.fields.filter(function(value, index, arr){
             //   return value!=data;
             // });
