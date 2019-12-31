@@ -1,6 +1,6 @@
 import { Component, Input, OnInit, Output, EventEmitter } from '@angular/core';
 import { FormGroup, FormControl, Validators } from '@angular/forms';
-import {CdkDragDrop, moveItemInArray} from '@angular/cdk/drag-drop';
+import { CdkDragDrop, moveItemInArray } from '@angular/cdk/drag-drop';
 
 @Component({
   selector: 'dynamic-form-builder',
@@ -35,7 +35,7 @@ import {CdkDragDrop, moveItemInArray} from '@angular/cdk/drag-drop';
     display:block;
   }
   `],
-  template:`
+  template: `
    
      <div cdkDropList (cdkDropListDropped)="drop($event)"> <div *ngFor="let field of fields"  cdkDrag>
           <field-builder *ngIf="!field.isDeleted" [field]="field" [form]="form"  
@@ -65,14 +65,14 @@ import {CdkDragDrop, moveItemInArray} from '@angular/cdk/drag-drop';
          
           </div>
       </div></div>`
-     
+
 })
 export class DynamicFormBuilderComponent implements OnInit {
   @Output() onFieldUpdate = new EventEmitter();
   @Input() fields: any[] = [];
   // form: FormGroup;
-  @Input() form:any;
-  formData:any = [];
+  @Input() form: any;
+  formData: any = [];
   constructor() { };
   jsonData = [
     {
@@ -106,11 +106,11 @@ export class DynamicFormBuilderComponent implements OnInit {
   ]
 
 
-  addElement(element){
+  addElement(element) {
 
     let obj = {
-      action:"addnew",
-      element:element
+      action: "addnew",
+      element: element
     }
     this.copyOrDeleteEvent(obj)
   }
@@ -118,14 +118,14 @@ export class DynamicFormBuilderComponent implements OnInit {
     moveItemInArray(this.fields, event.previousIndex, event.currentIndex);
   }
 
-  copyOrDeleteEvent(data){
-
+  copyOrDeleteEvent(data) {
+    debugger
     console.log('data type', data);
     console.log('this.fields', this.fields);
 
-    if(typeof(data) === 'string') {
-      data  = JSON.parse(data);
-   
+    if (typeof (data) === 'string') {
+      data = JSON.parse(data);
+
     }
 
     // let childdata = data;
@@ -133,122 +133,133 @@ export class DynamicFormBuilderComponent implements OnInit {
 
     // console.log(JSON.parse(data),"parse copyEvent occured");
     // let obj = data;
-    console.log(data,"copyEvent occured");
+    console.log(data, "copyEvent occured");
 
     // data.field =(this.fields.length+1)+"question";
     // data.label = (this.fields.length+1)+" question";
 
-    if(data.action=="addnew"){
+    if (data.action == "addnew") {
 
 
-     let transferData =  {
-      action:"addnew",
-      data:data
-    }
-
-    this.onFieldUpdate.emit(transferData);
-
-    }else if(data.action=="copy"){
-
-      console.log(data,"this.form before");
-
-     let transferData =  {
-        action:"copy",
-        data:data
+      let transferData = {
+        action: "addnew",
+        data: data
       }
 
       this.onFieldUpdate.emit(transferData);
-      
-    //  data.field = (this.fields.length+1)+"question";
 
-    //  console.log("data",data)
+    } else if (data.action == "copy") {
+
+      console.log(data, "this.form before");
+
+      let transferData = {
+        action: "copy",
+        data: data
+      }
+
+      this.onFieldUpdate.emit(transferData);
+
+      //  data.field = (this.fields.length+1)+"question";
+
+      //  console.log("data",data)
       // this.formBuild(obj);
 
-    }else if(data.action=="delete"){
+    } else if (data.action == "delete") {
 
-      var index = this.fields.indexOf(data);
+      // var index = this.fields.indexOf(data);
 
-      console.log("ind",index);
-      
+      // console.log("ind", index);
+
       this.onFieldUpdate.emit(data);
 
-      this.fields.splice(index, 1);
+      // this.fields.splice(index, 1);
 
-      
+
 
       // this.fields = this.fields.filter(function(value, index, arr){
       //   return value!=data;
       // });
-     
 
-    
+
+
       // console.log("evens",evens);
       // this.fields= evens;
       // console.log("this.form",this.form);
       // this.fields.
       // console.log(this.fields.length,"copyEvent occured",evens);
-    } else if(data.action =="childDroped"){
+    } else if(data.action == "childDelete"){
+
+      // console.log('childDelete', this.fields);
+
+      
+      // var index = this.fields[0].child.indexOf(data);
+
+      // console.log("ind", index);
+
       this.onFieldUpdate.emit(data);
     }
-    
+     else if (data.action == "childDroped") {
+      this.onFieldUpdate.emit(data);
+    }
+
   }
 
-  eventFromChild(data){
+  eventFromChild(data) {
 
     this.onFieldUpdate.emit(data);
-    console.log("data from child  ------- ",data);
+    console.log("data from child  ------- ", data);
   }
 
   ngOnInit() {
 
     this.formData = this.fields;
 
-    console.log("this.form ---",this.form)
+    console.log("this.form ---", this.form)
     // this.formBuild();
   }
 
-//   formBuild(item){
-//     let fieldsCtrls = {};
+  //   formBuild(item){
+  //     let fieldsCtrls = {};
 
-//     this.form = new FormGroup(fieldsCtrls);
+  //     this.form = new FormGroup(fieldsCtrls);
 
-//     // var formData = this.fields;
+  //     // var formData = this.fields;
 
-//     // console.log("this.fields",this.fields); 
+  //     // console.log("this.fields",this.fields); 
 
-//     let len = this.fields.length + 1;
+  //     let len = this.fields.length + 1;
 
 
-//     var obj = {
-//       "position":len,
-//       "field": len + "question",
-//       "type": item.type,
-//       "label": item.label,
-//       "placeholder": item.placeholder,
-//       "validations":item.validations  
+  //     var obj = {
+  //       "position":len,
+  //       "field": len + "question",
+  //       "type": item.type,
+  //       "label": item.label,
+  //       "placeholder": item.placeholder,
+  //       "validations":item.validations  
 
-//     }
-   
-//     this.fields.push(obj);
-//    this.fields.forEach(function(f){
-//     // console.log("f.type", f);
+  //     }
 
-//     if (f['type'] != 'checkbox') {
-   
-//       fieldsCtrls[f['field']] = new FormControl(f['value'] || '')
-//     } else {
+  //     this.fields.push(obj);
+  //    this.fields.forEach(function(f){
+  //     // console.log("f.type", f);
 
-//       let opts = {};
-//       for (let opt of f['options']) {
+  //     if (f['type'] != 'checkbox') {
 
-//         opts[opt.key] = new FormControl(opt.label);
-//       }
-//       fieldsCtrls[f['field']] = new FormGroup(opts)
-//     }
-//   });
+  //       fieldsCtrls[f['field']] = new FormControl(f['value'] || '')
+  //     } else {
 
-//   this.form = new FormGroup(fieldsCtrls);
+  //       let opts = {};
+  //       for (let opt of f['options']) {
 
-//   // console.log("fieldsCtrls",fieldsCtrls);
-// }
+  //         opts[opt.key] = new FormControl(opt.label);
+  //       }
+  //       fieldsCtrls[f['field']] = new FormGroup(opts)
+  //     }
+  //   });
+
+  //   this.form = new FormGroup(fieldsCtrls);
+
+  //   // console.log("fieldsCtrls",fieldsCtrls);
+  // }
 }

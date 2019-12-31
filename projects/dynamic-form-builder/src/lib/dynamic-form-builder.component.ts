@@ -637,7 +637,14 @@ export class DynamicFormBuilderComponent implements OnInit {
         action: 'delete',
         data: $event
       }
-    } else if ($event.action == "childDroped") {
+    }
+     else if ($event.action == 'childDelete') {
+      trnasformData = {
+        action: 'childDelete',
+        data: $event
+      }
+    } 
+    else if ($event.action == "childDroped") {
 
       console.log('this.fields', this.fields);
 

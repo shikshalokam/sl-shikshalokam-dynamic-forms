@@ -275,8 +275,8 @@ span.cursor-pntr {
       <dropdown *ngSwitchCase="'dropdown'" [field]="field" [form]="form"></dropdown>
       <checkbox *ngSwitchCase="'checkbox'" [field]="field" [form]="form"></checkbox>
       <radio *ngSwitchCase="'radio'" [field]="field" [form]="form"></radio>
-      <lib-multi-select *ngSwitchCase="'matrix'" cdkDrag (childrenDropEvent)="childrenDropEvent($event)" [field]="field"
-        [form]="form"></lib-multi-select>
+      <lib-multi-select *ngSwitchCase="'matrix'" cdkDrag   (sendDataToParent)="eventFromChild($event)" 
+      (childrenDropEvent)="childrenDropEvent($event)" [field]="field" [form]="form"></lib-multi-select>
       <file *ngSwitchCase="'file'" [field]="field" [form]="form"></file>
       <div style="float:right">
       </div>
@@ -793,7 +793,6 @@ export class FieldBuilderComponent implements OnInit {
 
   }
   deleteElement(item) {
-
     item.action = 'delete';
     this.field.isDelete = true;
     this.copyOrDeleteEvent.emit(item);
@@ -831,4 +830,10 @@ export class FieldBuilderComponent implements OnInit {
     this.pages.push(page);
     this.dynamicServe.setPageNumber(this.pages);
   }
+
+  eventFromChild($event) {
+    console.log('sri==========', $event);
+     $event.action = 'childDelete';
+    this.copyOrDeleteEvent.emit($event);
+   }
 }

@@ -592,6 +592,12 @@ class DynamicFormBuilderComponent {
                 data: $event
             };
         }
+        else if ($event.action == 'childDelete') {
+            trnasformData = {
+                action: 'childDelete',
+                data: $event
+            };
+        }
         else if ($event.action == "childDroped") {
             console.log('this.fields', this.fields);
             /** @type {?} */
@@ -649,6 +655,7 @@ DynamicFormBuilderComponent.decorators = [
     color: midnightblue;
     width: 100%;
     text-align: left;
+    cursor: pointer;  
     text-transform: capitalize;
   }
   .element-old {
@@ -724,7 +731,7 @@ DynamicFormBuilderComponent.decorators = [
 
       <div>
         <div class="start-create">
-         <h2 class="text-center" ><a class="start-create">Start Creating a Question</a></h2>
+         <h2 class="text-center" ><span class="start-create">Start Creating a Question</span></h2>
          <div class="add-qicons">
               <div class="col-sm-6"  *ngFor="let item of jsonData;let i = index">
                 <div *ngIf="i <= 4" class="element"   (click)="onDrop(item.responseType)">
@@ -898,8 +905,9 @@ class DynamicFormBuilderComponent$1 {
      * @return {?}
      */
     copyOrDeleteEvent(data) {
+        debugger;
         console.log('data type', data);
-        console.log('before this.fields', this.fields);
+        console.log('this.fields', this.fields);
         if (typeof (data) === 'string') {
             data = JSON.parse(data);
         }
@@ -931,12 +939,10 @@ class DynamicFormBuilderComponent$1 {
             // this.formBuild(obj);
         }
         else if (data.action == "delete") {
-            /** @type {?} */
-            var index = this.fields.indexOf(data);
-            console.log("ind", index);
-            this.fields.splice(index, 1);
-            console.log('before this.fields', this.fields);
+            // var index = this.fields.indexOf(data);
+            // console.log("ind", index);
             this.onFieldUpdate.emit(data);
+            // this.fields.splice(index, 1);
             // this.fields = this.fields.filter(function(value, index, arr){
             //   return value!=data;
             // });
@@ -945,6 +951,12 @@ class DynamicFormBuilderComponent$1 {
             // console.log("this.form",this.form);
             // this.fields.
             // console.log(this.fields.length,"copyEvent occured",evens);
+        }
+        else if (data.action == "childDelete") {
+            // console.log('childDelete', this.fields);
+            // var index = this.fields[0].child.indexOf(data);
+            // console.log("ind", index);
+            this.onFieldUpdate.emit(data);
         }
         else if (data.action == "childDroped") {
             this.onFieldUpdate.emit(data);
@@ -1514,6 +1526,15 @@ class FieldBuilderComponent {
         this.pages.push(page);
         this.dynamicServe.setPageNumber(this.pages);
     }
+    /**
+     * @param {?} $event
+     * @return {?}
+     */
+    eventFromChild($event) {
+        console.log('sri==========', $event);
+        $event.action = 'childDelete';
+        this.copyOrDeleteEvent.emit($event);
+    }
 }
 FieldBuilderComponent.decorators = [
     { type: Component, args: [{
@@ -1554,7 +1575,7 @@ FieldBuilderComponent.decorators = [
 }
 span.cursor-pntr {
   cursor: pointer;
-  padding: 2px;
+  padding: 3px;
 }
 .form-control {
   display: block;
@@ -1783,8 +1804,8 @@ span.cursor-pntr {
       <dropdown *ngSwitchCase="'dropdown'" [field]="field" [form]="form"></dropdown>
       <checkbox *ngSwitchCase="'checkbox'" [field]="field" [form]="form"></checkbox>
       <radio *ngSwitchCase="'radio'" [field]="field" [form]="form"></radio>
-      <lib-multi-select *ngSwitchCase="'matrix'" cdkDrag (childrenDropEvent)="childrenDropEvent($event)" [field]="field"
-        [form]="form"></lib-multi-select>
+      <lib-multi-select *ngSwitchCase="'matrix'" cdkDrag   (sendDataToParent)="eventFromChild($event)" 
+      (childrenDropEvent)="childrenDropEvent($event)" [field]="field" [form]="form"></lib-multi-select>
       <file *ngSwitchCase="'file'" [field]="field" [form]="form"></file>
       <div style="float:right">
       </div>
@@ -2344,6 +2365,7 @@ class MultiSelectComponent {
         this.sendDataToParent = new EventEmitter();
         this.childrenDropEvent = new EventEmitter();
         this.copyOrDeleteEvent = new EventEmitter();
+        this.onFieldUpdate = new EventEmitter();
         this.openEditChild = false;
         this.listOfRelation = [];
         this.conditionArray = [
@@ -2667,12 +2689,15 @@ class MultiSelectComponent {
      * @return {?}
      */
     deleteElement(item, index) {
-        item.action = 'delete';
+        console.log('deleteElement', item);
+        item.deleteindex = index;
+        item.action = 'childDelete';
         this.field.isDelete = true;
         this.field.child.splice(index, 1);
-        this.copyOrDeleteEvent.emit(item);
-        console.log("field delete", this.field, 'index', index);
-        console.log('after delete', this.allData);
+        this.sendDataToParent.emit(item);
+        // this.childrenDropEvent.emit(item);
+        // console.log("field delete", this.field, 'index', index);
+        // console.log('after delete', this.allData);
     }
     /**
      * @param {?} item
@@ -2712,7 +2737,7 @@ MultiSelectComponent.decorators = [
 
   <div *ngIf="field.child.length > 0" cdkDropList (cdkDropListDropped)="drop($event)">
 
-    <div *ngFor="let obj of field.child let i =index" cdkDrag>
+    <div *ngFor="let obj of field.child; let i =index; let data" cdkDrag>
       <div style="float: right;right: -90px; cursor:pointer;" class="col-sm-2 edit-icon">
         <i class="fa fa-trash" (click)="deleteElement(obj, i)"></i>
         <i class="fa fa-copy" (click)="copyElement(obj, i)"></i>
@@ -2922,7 +2947,7 @@ MultiSelectComponent.decorators = [
       display: block;
     }
     .fa {
-      padding: 2px;
+      padding: 3px;
     }
     `]
             },] },
@@ -2937,7 +2962,8 @@ MultiSelectComponent.propDecorators = {
     form: [{ type: Input }],
     sendDataToParent: [{ type: Output }],
     childrenDropEvent: [{ type: Output }],
-    copyOrDeleteEvent: [{ type: Output }]
+    copyOrDeleteEvent: [{ type: Output }],
+    onFieldUpdate: [{ type: Output }]
 };
 if (false) {
     /** @type {?} */
@@ -2950,6 +2976,8 @@ if (false) {
     MultiSelectComponent.prototype.childrenDropEvent;
     /** @type {?} */
     MultiSelectComponent.prototype.copyOrDeleteEvent;
+    /** @type {?} */
+    MultiSelectComponent.prototype.onFieldUpdate;
     /** @type {?} */
     MultiSelectComponent.prototype.activeModelData;
     /** @type {?} */

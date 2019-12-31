@@ -23,7 +23,7 @@ import { CdkDragDrop, moveItemInArray } from '@angular/cdk/drag-drop';
 
   <div *ngIf="field.child.length > 0" cdkDropList (cdkDropListDropped)="drop($event)">
 
-    <div *ngFor="let obj of field.child let i =index" cdkDrag>
+    <div *ngFor="let obj of field.child; let i =index; let data" cdkDrag>
       <div style="float: right;right: -90px; cursor:pointer;" class="col-sm-2 edit-icon">
         <i class="fa fa-trash" (click)="deleteElement(obj, i)"></i>
         <i class="fa fa-copy" (click)="copyElement(obj, i)"></i>
@@ -247,6 +247,7 @@ export class MultiSelectComponent {
   @Output() sendDataToParent = new EventEmitter<string>();
   @Output() childrenDropEvent = new EventEmitter<string>();
   @Output() copyOrDeleteEvent = new EventEmitter<string>();
+  @Output() onFieldUpdate = new EventEmitter();
 
   activeModelData: any;
   validations: any;
@@ -566,12 +567,16 @@ export class MultiSelectComponent {
   }
 
   deleteElement(item, index) {
-    item.action = 'delete';
+    console.log('deleteElement', item);
+    item.deleteindex  = index;
+    
+    item.action = 'childDelete';
     this.field.isDelete = true;
     this.field.child.splice(index, 1);
-    this.copyOrDeleteEvent.emit(item);
-    console.log("field delete", this.field, 'index', index);
-    console.log('after delete', this.allData);
+    this.sendDataToParent.emit(item);
+    // this.childrenDropEvent.emit(item);
+    // console.log("field delete", this.field, 'index', index);
+    // console.log('after delete', this.allData);
 
   }
 
@@ -581,7 +586,6 @@ export class MultiSelectComponent {
     console.log("copy field ----------", item, 'index', index);
     this.field.child.push(item);
     this.copyOrDeleteEvent.emit(item);
-
   }
 
   drop(event: CdkDragDrop<string[]>) {
