@@ -1,6 +1,9 @@
 import { Component, Input, OnInit, ViewChild, ElementRef,EventEmitter, Output } from '@angular/core';
 // import { NgbModal, ModalDismissReasons } from '@ng-bootstrap/ng-bootstrap';
+import { MatTabChangeEvent, MatPaginator, MatTableDataSource, MatSort, MatSnackBar, MatDialog } from '@angular/material';
+
 import { THIS_EXPR } from '@angular/compiler/src/output/output_ast';
+// import { ConfirmationComponent, ConfirmDialogModel } from '../../../../projects/dynamic-form-builder/src/lib/common/confirmation/confirmation.component';
 
 
 @Component({
@@ -173,6 +176,8 @@ export class FieldBuilderComponent implements OnInit {
 
   constructor(
     // private modalService: NgbModal
+    private _snackBar: MatSnackBar,
+    private dialog: MatDialog
     ) { }
 
   ngOnInit() {
@@ -334,5 +339,15 @@ export class FieldBuilderComponent implements OnInit {
     console.log("field",item);
 
   }
+
+
+  openSnackBar(message: string, action: string) {
+    this._snackBar.open(message, action, {
+      duration: 2000,
+    });
+  }
+
+ 
+
 }
 

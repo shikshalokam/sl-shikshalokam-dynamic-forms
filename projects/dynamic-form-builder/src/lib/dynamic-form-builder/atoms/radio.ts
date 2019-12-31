@@ -10,7 +10,7 @@ import { FormGroup } from '@angular/forms';
     </label>
         <div class="form-check" *ngFor="let opt of field.options">
           <input class="form-check-input" type="radio" [id]="field.field" [value]="opt.key">
-          <label class="form-check-label">
+          <label class="form-check-label space">
             {{opt.label}}
           </label>
         </div>
@@ -19,6 +19,9 @@ import { FormGroup } from '@angular/forms';
     styles:[`
     .form-control {
       display: none;
+    }
+    .space {
+      padding-left: 5px
     }
     `]
 })

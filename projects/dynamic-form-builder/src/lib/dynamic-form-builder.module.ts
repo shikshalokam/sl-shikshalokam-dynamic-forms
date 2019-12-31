@@ -18,9 +18,19 @@ import { HttpClientModule } from '@angular/common/http';
 // import { DragulaModule } from 'ng2-dragula';
 // 
 // import  {  } from ''
+// import { ConfirmationComponent} from './common/confirmation/confirmation.component';
 
-import  { MatButtonModule,MatDatepickerModule, MatFormFieldModule,
-  MatTabsModule, MatSelectModule} from '@angular/material'
+// import  { MatButtonModule,MatDatepickerModule, MatDialogModule, MatFormFieldModule,
+//   MatTabsModule, MatSelectModule} from '@angular/material'
+
+  import { MatTooltipModule,MatTabsModule,MatRadioModule,MatCardModule,
+    MatDialogModule, MatButtonModule, MatStepperModule, MatFormFieldModule, 
+    MatInputModule, MatSelectModule,MatTableModule,MatExpansionModule,
+    MatPaginatorModule,
+    MatDatepickerModule,
+    MatNativeDateModule,
+    MatToolbarModule
+   } from '@angular/material';
 
 import { DndModule } from 'ngx-drag-drop';
 
@@ -36,6 +46,14 @@ import { DndModule } from 'ngx-drag-drop';
     FormsModule,
     MatSelectModule,
     MatTabsModule,
+    MatDialogModule,
+    MatTooltipModule,MatTabsModule,MatRadioModule,MatCardModule,
+    MatTableModule,MatExpansionModule,
+    MatPaginatorModule,
+    MatNativeDateModule,
+    MatToolbarModule,
+    MatInputModule,
+    MatStepperModule,
     // NgbModule.forRoot(),
     // DragulaModule.forRoot()
     // DragAndDropModule
@@ -44,6 +62,7 @@ import { DndModule } from 'ngx-drag-drop';
     MatButtonModule,
     MatDatepickerModule
   ],
+  entryComponents: [],
   exports: [DynamicFormBuilderComponent]
 })
 export class DynamicFormBuilderModule1 {

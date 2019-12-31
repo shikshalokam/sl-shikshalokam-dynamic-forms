@@ -331,8 +331,8 @@ export class DynamicFormBuilderComponent implements OnInit {
           "maxLength": ""
         },
         options: [
-          { key: 'option1', label: 'Label 1' },
-          { key: 'option2', label: 'Label 1' }
+          { key: 'R1', label: 'Label 1' },
+          { key: 'R2', label: 'Label 2' }
         ]
       }
     } else if (ele == "checkbox") {
@@ -399,7 +399,7 @@ export class DynamicFormBuilderComponent implements OnInit {
     } else if (ele == 'matrix') {
       if (ele == 'childDroped') {
         let childdata = {
-          "field": len + "question",
+          field: len + "question",
           "type": ele.type,
           "position": len,
           "label": "Question",
@@ -422,6 +422,7 @@ export class DynamicFormBuilderComponent implements OnInit {
         "field": len + "question",
         "type": "matrix",
         "label":  "Question",
+        "position": len,
         "child": [],
         "placeholder": "Please add Child's here",
         "description": "",
@@ -475,7 +476,8 @@ export class DynamicFormBuilderComponent implements OnInit {
         "placeholder": ele.placeholder,
         "validations": ele.validations,
         "options": ele.options,
-        "description": ele.description
+        "description": ele.description,
+        "copied": true 
       }
       obj = copyObj;
 
@@ -678,7 +680,7 @@ export class DynamicFormBuilderComponent implements OnInit {
     } else {
       trnasformData = {
         action: 'update',
-        data: JSON.parse($event)
+        data: $event
       }
     }
     this.questionTrigger.emit(trnasformData);

@@ -4,6 +4,8 @@ import { THIS_EXPR } from '@angular/compiler/src/output/output_ast';
 import { DynamicFormBuilderService } from '../../dynamic-form-builder.service';
 import { Subscription } from 'rxjs';
 import { isNgTemplate } from '@angular/compiler';
+// import { ConfirmationComponent, ConfirmDialogModel } from '../../common/confirmation/confirmation.component';
+import { MatTabChangeEvent, MatPaginator, MatTableDataSource, MatSort, MatSnackBar, MatDialog } from '@angular/material';
 
 
 
@@ -149,7 +151,7 @@ span.cursor-pntr {
       <ul class="col" *ngFor="let opt of options;let i = index">
         <li class="">
           <span>{{opt.label}} </span><span style="
-      margin-left: 30px;" (click)="deleteOption(opt,i)">
+      margin-left: 30px;cursor: pointer" title = "delete" (click)="deleteOption(opt,i)">
             <i class="fa fa-trash"></i></span>
         </li>
       </ul>
@@ -159,9 +161,6 @@ span.cursor-pntr {
           <mat-form-field>
             <input type="text" placeholder="Label" matInput style="margin-bottom: 10px;" [(ngModel)]="newOptionLabel"
               name="newOption">
-          </mat-form-field>
-          <mat-form-field>
-            <input type="tex" disabled matInput name="newOption" placeholder="key" [(ngModel)]="newOptionKey">
           </mat-form-field>
         </div>
         <button mat-flat-button color="primary" style="margin-top: 10px;" (click)="AddNewOptions()">
@@ -234,8 +233,8 @@ span.cursor-pntr {
       </mat-radio-group>
     </div>
   
-    <div class="col-sm-12" *ngIf="type=='date'">
-      <label id="example-radio-group-label">is autoCollect</label>
+    <div class="col-sm-12" *ngIf="type=='date'">  
+    <label id="example-radio-group-label">is autoCollect</label>
       <mat-radio-group aria-labelledby="example-radio-group-label" class="example-radio-group" [(ngModel)]="autoCollect">
         <mat-radio-button class="example-radio-button" [value]=true>
           True
@@ -262,9 +261,9 @@ span.cursor-pntr {
   
     <div class="action-component">
   
-      <span class="cursor-pntr" (click)="deleteElement(field)"><i class="fa fa-trash"></i> </span>
-      <span class="cursor-pntr" (click)="copyElement(field)"><i class="fa fa-copy"></i></span>
-      <span class="cursor-pntr"><i class="fa fa-edit" (click)="loadFormElement(field)"></i></span>
+      <span class="cursor-pntr" title = "delete" (click)="deleteElement(field)"><i class="fa fa-trash"></i> </span>
+      <span class="cursor-pntr" title = "copy" (click)="copyElement(field)"><i class="fa fa-copy"></i></span>
+      <span class="cursor-pntr" title = "edit"><i class="fa fa-edit" (click)="loadFormElement(field)"></i></span>
   
     </div>
     <div class="col-md-12" [ngSwitch]="field.type">
@@ -384,7 +383,9 @@ export class FieldBuilderComponent implements OnInit {
 
   constructor(
     // private modalService: NgbModal
-    private dynamicServe: DynamicFormBuilderService
+    private dynamicServe: DynamicFormBuilderService,
+    private _snackBar: MatSnackBar,
+    private dialog: MatDialog
   ) {
 
   }
@@ -738,6 +739,7 @@ export class FieldBuilderComponent implements OnInit {
   // }
 
   deleteOption(opt, index) {
+    // this.deleteDraftCriteria();
     console.log("delete", this.options);
 
     // let newArr = [];
@@ -836,4 +838,19 @@ export class FieldBuilderComponent implements OnInit {
      $event.action = 'childDelete';
     this.copyOrDeleteEvent.emit($event);
    }
+
+  //  deleteDraftCriteria() {
+  //   let message = `Are you sure you delete criteria?`;
+  //   let dialogData = new ConfirmDialogModel("Confirm Action", message);
+  //   const dialogRef = this.dialog.open(ConfirmationComponent, {
+  //     width: '350px',
+  //     data: dialogData
+  //   })
+  //   dialogRef.afterClosed().subscribe(result => {
+  //     if (result) {
+  //       alert('result'+ result);
+  //     }
+  //   });
+  // }
+
 }

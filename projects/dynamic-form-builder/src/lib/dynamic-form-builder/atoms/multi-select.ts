@@ -19,17 +19,178 @@ import { CdkDragDrop, moveItemInArray } from '@angular/cdk/drag-drop';
   <textarea rows="2" class="form-control">
 
   </textarea>
- 
+
 
   <div *ngIf="field.child.length > 0" cdkDropList (cdkDropListDropped)="drop($event)">
 
     <div *ngFor="let obj of field.child; let i =index; let data" cdkDrag>
-      <div style="float: right;right: -90px; cursor:pointer;" class="col-sm-2 edit-icon">
-        <i class="fa fa-trash" (click)="deleteElement(obj, i)"></i>
-        <i class="fa fa-copy" (click)="copyElement(obj, i)"></i>
-        <i class="fa fa-edit" (click)="loadFormElement(obj, i)"></i>
+      <div style="float: right;right: -70px; cursor:pointer; padding-top: 10px" class="col-sm-2 edit-icon">
+        <i class="fa fa-trash" title = "delete" (click)="deleteElement(obj, i)"></i>
+        <i class="fa fa-copy" title = "copy" (click)="copyElement(obj, i)"></i>
+        <i class="fa fa-edit" title = "edit" (click)="loadFormElement(obj, i)"></i>
       </div>
+      <div class="row" *ngIf="obj.expand" style="padding: 20px;
+      border: 1px solid #ccc;margin-top:10px; margin:40px; margin-left: 20%;
+      box-shadow: 1px 1px 4px 1px rgba(0,0,0,0.19); margin-top:20px;">
 
+        <div class="col-sm-6">
+          <mat-form-field>
+            <input matInput placeholder="Label" [(ngModel)]="obj.label" [ngModelOptions]="{standalone: true}">
+          </mat-form-field>
+        </div>
+
+        <div class="col-sm-6">
+          <mat-form-field>
+            <input matInput placeholder="Input Place Holder" [(ngModel)]="obj.placeholder"
+              [ngModelOptions]="{standalone: true}">
+          </mat-form-field>
+        </div>
+
+        <div class="col-sm-6">
+          <mat-form-field>
+            <input matInput placeholder="Hint/Description" [(ngModel)]="obj.description"
+              [ngModelOptions]="{standalone: true}">
+          </mat-form-field>
+        </div>
+
+        <div class="col-sm-6">
+          <mat-form-field>
+            <mat-label>Input Type</mat-label>
+            <mat-select [(ngModel)]="obj.type" [ngModelOptions]="{standalone: true}">
+              <mat-option value="text">text</mat-option>
+              <mat-option value="number">number</mat-option>
+              <mat-option value="radio">radio</mat-option>
+              <mat-option value="date">date</mat-option>
+            </mat-select>
+          </mat-form-field>
+        </div>
+
+        <div class="col-sm-6" *ngIf="obj.type=='slider'">
+          <mat-form-field>
+            <input type="text" placeholder="Min" matInput [(ngModel)]="min" [ngModelOptions]="{standalone: true}">
+          </mat-form-field>
+        </div>
+
+        <div class="col-sm-6" *ngIf="obj.type=='slider'">
+          <mat-form-field>
+            <input type="text" placeholder="Max" matInput [(ngModel)]="max" [ngModelOptions]="{standalone: true}">
+          </mat-form-field>
+        </div>
+
+        <div class="col-sm-6" *ngIf="obj.type=='date'">
+          <mat-form-field>
+            <input matInput [matDatepicker]="picker" [(ngModel)]="minDate" [ngModelOptions]="{standalone: true}"
+              placeholder="Choose a min date">
+            <mat-datepicker-toggle matSuffix [for]="picker"></mat-datepicker-toggle>
+            <mat-datepicker #picker></mat-datepicker>
+          </mat-form-field>
+
+          <mat-form-field>
+            <input matInput [matDatepicker]="pickerMaxDate" [(ngModel)]="maxDate" [ngModelOptions]="{standalone: true}"
+              placeholder="Choose a max date">
+            <mat-datepicker-toggle matSuffix [for]="pickerMaxDate"></mat-datepicker-toggle>
+            <mat-datepicker #pickerMaxDate></mat-datepicker>
+          </mat-form-field>
+
+
+        </div>
+        <div class="col-sm-12 form-group " *ngIf="type=='radio' || type=='checkbox' || type=='dropdown'">
+          <label for="label" class="col-sm-12">Options</label>
+
+          <div class="col-sm-7 form-group" *ngIf="type=='slider'">
+            <mat-form-field>
+              <input type="text" placeholder="Max" matInput [(ngModel)]="max" [ngModelOptions]="{standalone: true}">
+            </mat-form-field>
+          </div>
+
+        </div>
+
+        <div *ngIf="field.child && field.child.length > 0">
+          <div class="col-sm-12">
+            <label id="example-radio-group-label">Do you want to related the question based on below options ?</label>
+            <mat-radio-group aria-labelledby="example-radio-group-label" class="example-radio-group"
+              [(ngModel)]="selectedOption" [ngModelOptions]="{standalone: true}">
+              <mat-radio-button style="padding: 10px" class="example-radio-button" *ngFor="let ele of options"
+                [value]="ele">
+                {{ ele.label }}
+              </mat-radio-button>
+            </mat-radio-group>
+          </div>
+
+
+          <div class="col-sm-6">
+            <mat-form-field>
+              <mat-label>Select Question to add </mat-label>
+              <select matNativeControl [(ngModel)]="currentSelectedQtn" [ngModelOptions]="{standalone: true}">
+                <option *ngFor="let values of filtereddata" [ngValue]="values"> {{ values.label }} </option>
+              </select>
+            </mat-form-field>
+            <mat-form-field>
+              <mat-label>Select Condition </mat-label>
+              <select matNativeControl [(ngModel)]="condition" [ngModelOptions]="{standalone: true}">
+                <option *ngFor="let values of conditionArray" [ngValue]="values.condition"> {{ values.label }} </option>
+              </select>
+            </mat-form-field>
+          </div>
+
+          <div class="col-sm-6" *ngIf="type=='text' || type=='date' || type=='number'">
+            <mat-form-field>
+              <input type="tex" matInput name="conditionMatchValue" placeholder="" [(ngModel)]="conditionMatchValue"
+                [ngModelOptions]="{standalone: true}">
+            </mat-form-field>
+          </div>
+
+          <div class="col-sm-2">
+            <button mat-flat-button color="primary" style="margin-top: 10px;" (click)="parentMapping()">
+              Add
+            </button>
+          </div>
+        </div>
+
+        <ul class="col-sm-12" *ngFor="let relate of listOfRelation;let i = index">
+          <li class="col-sm-12">
+            <span>{{relate.label}} </span><span style="
+      margin-left: 30px;" (click)="deleteCondition(relate,i)">
+              <i class="fa fa-trash"></i></span>
+          </li>
+        </ul>
+
+
+        <div class="col-sm-12">
+          <label id="example-radio-group-label">is Reqired ?</label>
+          <mat-radio-group aria-labelledby="example-radio-group-label" class="example-radio-group"
+            [ngModelOptions]="{standalone: true}" [(ngModel)]="required">
+            <mat-radio-button class="example-radio-button" [value]=true>
+              Yes
+            </mat-radio-button>
+            <mat-radio-button class="example-radio-button" [value]=false>
+              No
+            </mat-radio-button>
+          </mat-radio-group>
+        </div>
+
+        <div class="col-sm-7" *ngIf="type=='date'">
+          <label id="example-radio-group-label">is autoCollect</label>
+          <mat-radio-group aria-labelledby="example-radio-group-label" class="example-radio-group"
+            [(ngModel)]="autoCollect" [ngModelOptions]="{standalone: true}">
+            <mat-radio-button class="example-radio-button" [value]=true>
+              True
+            </mat-radio-button>
+            <mat-radio-button class="example-radio-button" [value]=false>
+              False
+            </mat-radio-button>
+          </mat-radio-group>
+        </div>
+
+
+        <div class="col-sm-12">
+
+          <button mat-flat-button color="primary" style="margin-right:10px;" (click)="closeModelChild('save', obj)">
+            Save
+          </button>
+
+        </div>
+      </div>
 
       <div class="col-md-0" [ngSwitch]="obj.type" style="width: 80%;
           margin-left: 20%;
@@ -56,170 +217,7 @@ import { CdkDragDrop, moveItemInArray } from '@angular/cdk/drag-drop';
 
 
       </div>
-      <div class="row" *ngIf="obj.expand" style="padding: 20px;
-      border: 1px solid #ccc;margin-top:10px; margin:40px; margin-left: 20%;
-      box-shadow: 1px 1px 4px 1px rgba(0,0,0,0.19); margin-top:20px;">
       
-          <div class="col-sm-6">
-            <mat-form-field>
-              <input matInput placeholder="Label" [(ngModel)]="obj.label" [ngModelOptions]="{standalone: true}">
-            </mat-form-field>
-          </div>
-      
-          <div class="col-sm-6">
-            <mat-form-field>
-              <input matInput placeholder="Input Place Holder" [(ngModel)]="obj.placeholder"
-                [ngModelOptions]="{standalone: true}">
-            </mat-form-field>
-          </div>
-      
-          <div class="col-sm-6">
-            <mat-form-field>
-              <input matInput placeholder="Hint/Description" [(ngModel)]="obj.description" [ngModelOptions]="{standalone: true}">
-            </mat-form-field>
-          </div>
-      
-          <div class="col-sm-6">
-            <mat-form-field>
-              <mat-label>Input Type</mat-label>
-              <mat-select [(ngModel)]="obj.type" [ngModelOptions]="{standalone: true}">
-                <mat-option value="text">text</mat-option>
-                <mat-option value="number">number</mat-option>
-                <mat-option value="radio">radio</mat-option>
-                <mat-option value="date">date</mat-option>
-              </mat-select>
-            </mat-form-field>
-          </div>
-      
-          <div class="col-sm-6" *ngIf="obj.type=='slider'">
-            <mat-form-field>
-              <input type="text" placeholder="Min" matInput [(ngModel)]="min" [ngModelOptions]="{standalone: true}">
-            </mat-form-field>
-          </div>
-      
-          <div class="col-sm-6" *ngIf="obj.type=='slider'">
-            <mat-form-field>
-              <input type="text" placeholder="Max" matInput [(ngModel)]="max" [ngModelOptions]="{standalone: true}">
-            </mat-form-field>
-          </div>
-      
-          <div class="col-sm-6" *ngIf="obj.type=='date'">
-            <mat-form-field>
-              <input matInput [matDatepicker]="picker" [(ngModel)]="minDate" [ngModelOptions]="{standalone: true}"
-                placeholder="Choose a min date">
-              <mat-datepicker-toggle matSuffix [for]="picker"></mat-datepicker-toggle>
-              <mat-datepicker #picker></mat-datepicker>
-            </mat-form-field>
-      
-            <mat-form-field>
-              <input matInput [matDatepicker]="pickerMaxDate" [(ngModel)]="maxDate" [ngModelOptions]="{standalone: true}"
-                placeholder="Choose a max date">
-              <mat-datepicker-toggle matSuffix [for]="pickerMaxDate"></mat-datepicker-toggle>
-              <mat-datepicker #pickerMaxDate></mat-datepicker>
-            </mat-form-field>
-      
-      
-          </div>
-          <div class="col-sm-12 form-group" *ngIf="type=='radio' || type=='checkbox' || type=='dropdown'">
-            <label for="label" class="col-sm-12">Options</label>
-      
-            <div class="col-sm-7 form-group" *ngIf="type=='slider'">
-              <mat-form-field>
-                <input type="text" placeholder="Max" matInput [(ngModel)]="max" [ngModelOptions]="{standalone: true}">
-              </mat-form-field>
-            </div>
-      
-          </div>
-      
-          <div *ngIf="field.child && field.child.length > 0">
-            <div class="col-sm-12">
-              <label id="example-radio-group-label">Do you want to related the question based on below options ?</label>
-              <mat-radio-group aria-labelledby="example-radio-group-label" class="example-radio-group"
-                [(ngModel)]="selectedOption" [ngModelOptions]="{standalone: true}">
-                <mat-radio-button style="padding: 10px" class="example-radio-button" *ngFor="let ele of options"
-                  [value]="ele">
-                  {{ ele.label }}
-                </mat-radio-button>
-              </mat-radio-group>
-            </div>
-      
-      
-            <div class="col-sm-6">
-              <mat-form-field>
-                <mat-label>Select Question to add </mat-label>
-                <select matNativeControl [(ngModel)]="currentSelectedQtn" [ngModelOptions]="{standalone: true}">
-                  <option *ngFor="let values of filtereddata" [ngValue]="values"> {{ values.label }} </option>
-                </select>
-              </mat-form-field>
-            </div>
-      
-            <div class="col-sm-6" *ngIf="type=='text' || type=='date' || type=='number'">
-              <mat-form-field>
-                <mat-label>Select Condition </mat-label>
-                <select matNativeControl [(ngModel)]="condition" [ngModelOptions]="{standalone: true}">
-                  <option *ngFor="let values of conditionArray" [ngValue]="values.condition"> {{ values.label }} </option>
-                </select>
-              </mat-form-field>
-            </div>
-      
-            <div class="col-sm-6" *ngIf="type=='text' || type=='date' || type=='number'">
-              <mat-form-field>
-                <input type="tex" matInput name="conditionMatchValue" placeholder="" [(ngModel)]="conditionMatchValue"
-                  [ngModelOptions]="{standalone: true}">
-              </mat-form-field>
-            </div>
-      
-            <div class="col-sm-2">
-              <button mat-flat-button color="primary" style="margin-top: 10px;" (click)="parentMapping()">
-                Add
-              </button>
-            </div>
-          </div>
-      
-          <ul class="col-sm-12" *ngFor="let relate of listOfRelation;let i = index">
-            <li class="col-sm-12">
-              <span>{{relate.label}} </span><span style="
-      margin-left: 30px;" (click)="deleteCondition(relate,i)">
-                <i class="fa fa-trash"></i></span>
-            </li>
-          </ul>
-      
-      
-          <div class="col-sm-7">
-            <label id="example-radio-group-label">is Reqired ?</label>
-            <mat-radio-group aria-labelledby="example-radio-group-label" class="example-radio-group"
-              [ngModelOptions]="{standalone: true}" [(ngModel)]="required">
-              <mat-radio-button class="example-radio-button" [value]=true>
-                Yes
-              </mat-radio-button>
-              <mat-radio-button class="example-radio-button" [value]=false>
-                No
-              </mat-radio-button>
-            </mat-radio-group>
-          </div>
-      
-          <div class="col-sm-7" *ngIf="type=='date'">
-            <label id="example-radio-group-label">is autoCollect</label>
-            <mat-radio-group aria-labelledby="example-radio-group-label" class="example-radio-group" [(ngModel)]="autoCollect"
-              [ngModelOptions]="{standalone: true}">
-              <mat-radio-button class="example-radio-button" [value]=true>
-                True
-              </mat-radio-button>
-              <mat-radio-button class="example-radio-button" [value]=false>
-                False
-              </mat-radio-button>
-            </mat-radio-group>
-          </div>
-      
-      
-          <div class="col-sm-12">
-      
-            <button mat-flat-button color="primary" style="margin-right:10px;" (click)="closeModelChild('save', obj)">
-              Save
-            </button>
-      
-          </div>
-        </div>
     </div>
 
   </div>

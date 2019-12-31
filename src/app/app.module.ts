@@ -24,6 +24,7 @@ import { HttpClientModule } from '@angular/common/http';
 import { DndModule } from 'ngx-drag-drop';
 
 import { LibComponent } from 'src/app/lib.component';
+// import { ConfirmationComponent } from '../../projects/dynamic-form-builder/src/lib/common/confirmation/confirmation.component';
 
 // import  { DynamicFormBuilderModule1 } from 'dynamic-form-builder';
 
@@ -42,7 +43,7 @@ import { LibComponent } from 'src/app/lib.component';
     // MyLibModule,
     // DynamicFormBuilderModule1
   ],
-  declarations: [ LibComponent ],
+  declarations: [ LibComponent],
   bootstrap:    [ LibComponent ]
   // declarations: [ AppComponent ],
   // bootstrap:    [ AppComponent ]
