@@ -616,6 +616,10 @@ class DynamicFormBuilderComponent {
                     let obj = this.getToolObj($event.data.responseType, item.child.length + 1);
                     // }
                     item.child.push(obj);
+                    trnasformData = {
+                        action: 'childDroped',
+                        data: $event
+                    };
                     return item;
                 }
                 else {
@@ -670,13 +674,17 @@ DynamicFormBuilderComponent.decorators = [
   }
 
    .toolbar {
-    border: 1px solid midnightblue;
     list-style: none;
     padding: 10px;
     margin-bottom: 10px;
     color: midnightblue;
-    width: 100%;
+    width: 98%;
     text-align: left;
+    display: block;
+    margin: 1%;
+    font-size: 16px;
+    border: 1px solid midnightblue;
+    padding: 6px;
     cursor: pointer;
     text-transform: capitalize;
    }
@@ -697,7 +705,7 @@ DynamicFormBuilderComponent.decorators = [
       opacity: 0.75;
       min-height: 390px;
     }
-    
+
     .start-create {
       width: 50%;
       margin:auto;
@@ -708,7 +716,8 @@ DynamicFormBuilderComponent.decorators = [
     }
     .toolbar i.material-icons {
       vertical-align: middle;
-      padding: 6px;
+      padding: 0 px;
+      float: right;
     }
     .element i.material-icons {
       vertical-align: middle;
@@ -722,6 +731,20 @@ DynamicFormBuilderComponent.decorators = [
       width:100%
       margin: auto;
       // box-shadow: 1px 1px 4px 1px rgba(0,0,0,0.19);
+    }
+    .qtype {
+      float: left;
+      width: 50%
+    }
+    .space {
+      padding-top:20px;
+    }
+
+    @media only screen and (max-width:600px) {
+      .start-create {
+        width: 100%;
+        padding: 0px;
+      }
     }
     
   </style>
@@ -760,12 +783,12 @@ DynamicFormBuilderComponent.decorators = [
           </div>
         </div>
       </div>
-      <div class="col-sm-12" style="padding-top:25px" *ngIf="fields.length > 0  || !showQuestionBlock">
+      <div class="col-sm-12 space" *ngIf="fields.length > 0  || !showQuestionBlock">
           
           <div  class="col-md-12">
             <!-- <dynamic-form-builder [fields]="getFields()"></dynamic-form-builder> -->
       
-            <span *ngFor="let item of jsonData" >
+            <span  class ="qtype" *ngFor="let item of jsonData" >
               <span [dndDraggable]="item" (click)="onDrop(item.responseType)"  class="toolbar"  >
             {{ item.responseType }}   <i class="material-icons">{{ item.icon }}</i>
              </span>
@@ -1538,8 +1561,12 @@ class FieldBuilderComponent {
      * @return {?}
      */
     eventFromChild($event) {
-        console.log('sri==========', $event);
-        $event.action = 'childDelete';
+        if ($event.action == 'copy') {
+            // $event.action = 'copy';
+        }
+        else {
+            $event.action = 'childDelete';
+        }
         this.copyOrDeleteEvent.emit($event);
     }
 }
@@ -1562,8 +1589,9 @@ FieldBuilderComponent.decorators = [
     position: relative;
     flex: auto;
     min-width: 0;
-    width: 372px;
+    width: 100%;
   }
+
   .input-group {
     position: relative;
      border-collapse: separate;
@@ -1589,8 +1617,23 @@ span.cursor-pntr {
   visibility: hidden;
 
 }
+.addicon {
+  margin-left: 90%
+}
+.spacearoundbtn{
+  margin-top: 10px;
+  margin-bottom: 15px;
+}
 .label.col-md-8.form-control-label {
   text-decoration: underline;
+}
+@media only screen and (max-width: 600px) {
+  .col-sm-12 {
+    padding: 0px
+  }
+  .col-sm-6 {
+    padding: 0px
+  }
 }
 
   </style>
@@ -1637,7 +1680,7 @@ span.cursor-pntr {
       </mat-form-field>
     </div>
     <div class="col-sm-1">
-      <span style="float:right;padding-top:15px" class="cursor-pntr"><i title="Add Page" class="fa fa-plus"
+      <span class="cursor-pntr addicon"><i title="Add Page" class="fa fa-plus"
           (click)="add(pages)"></i></span>
     </div>
   
@@ -1697,7 +1740,7 @@ span.cursor-pntr {
               name="newOption">
           </mat-form-field>
         </div>
-        <button mat-flat-button color="primary" style="margin-top: 10px;" (click)="AddNewOptions()">
+        <button mat-flat-button color="primary" class = "spacearoundbtn" (click)="AddNewOptions()">
           Add
         </button>
       </div>
@@ -1735,12 +1778,12 @@ span.cursor-pntr {
   
       <div class="col-sm-6" *ngIf="type=='text' || type=='date' || type=='number'">
         <mat-form-field>
-          <input type="tex" matInput name="conditionMatchValue" placeholder="" [(ngModel)]="conditionMatchValue">
+          <input type="text" matInput name="conditionMatchValue" placeholder="Value" [(ngModel)]="conditionMatchValue">
         </mat-form-field>
       </div>
   
       <div class="col-sm-2">
-        <button mat-flat-button color="primary" style="margin-top: 10px;" (click)="parentMapping()">
+        <button mat-flat-button color="primary" class = "spacearoundbtn" (click)="parentMapping()">
           Add
         </button>
       </div>
@@ -1959,7 +2002,7 @@ TextBoxComponent.decorators = [
                 selector: 'textbox',
                 template: `
       <div [formGroup]="form">
-      <label class="col-md-0 form-control-label" [attr.for]="field.label">
+      <label class="col-md-0 form-control-label labeloverflow" [attr.for]="field.label">
       {{field.label}}
       </label>
     
@@ -1972,6 +2015,9 @@ TextBoxComponent.decorators = [
                 styles: [`
     .form-control {
       display: none;
+    }
+    .labeloverflow {
+      float: left;
     }
     `]
             },] },
@@ -2004,7 +2050,7 @@ DropDownComponent.decorators = [
                 selector: 'dropdown',
                 template: `
       <div [formGroup]="form">
-      <label class="col-sm-0 form-control-label" [attr.for]="field.label">
+      <label class="col-sm-0 form-control-label labeloverflow" [attr.for]="field.label">
       {{field.label}}
     </label>
         <select class="form-control" [id]="field.field">
@@ -2015,6 +2061,9 @@ DropDownComponent.decorators = [
                 styles: [`
     .form-control {
       display: none;
+    }
+    .labeloverflow {
+      float: left;
     }
     `]
             },] },
@@ -2168,12 +2217,12 @@ CheckBoxComponent.decorators = [
                 selector: 'checkbox',
                 template: `
       <div [formGroup]="form">
-      <label class="col-sm -12 form-control-label" [attr.for]="field.label">
+      <label class="col-sm -12 form-control-label labeloverflow" [attr.for]="field.label">
       {{field.label}}
     </label>
         <div [formGroupName]="field.field" >
           <div *ngFor="let opt of field.options" class="form-check form-check">
-          <label class="form-check-label">
+          <label class="form-check-label checkflow">
              <input class="form-check-input" type="checkbox" id="inlineCheckbox1" value="option1" />
              {{opt.label}}</label>
           </div>
@@ -2184,6 +2233,12 @@ CheckBoxComponent.decorators = [
                 styles: [`
     .form-control {
       display: none;
+    }
+    .labeloverflow {
+      float: left;
+    } .checkflow {
+      float: left;
+      width: 100%
     }
     `]
             },] },
@@ -2214,10 +2269,10 @@ RadioComponent.decorators = [
                 selector: 'radio',
                 template: `
       <div [formGroup]="form">
-      <label class="col-sm-12 form-control-label" [attr.for]="field.label">
+      <label class="col-sm-12 form-control-label labeloverflow" [attr.for]="field.label">
       {{field.label}}
     </label>
-        <div class="form-check" *ngFor="let opt of field.options">
+        <div class="form-check rnxtline" *ngFor="let opt of field.options">
           <input class="form-check-input" type="radio" [id]="field.field" [value]="opt.key">
           <label class="form-check-label space">
             {{opt.label}}
@@ -2232,6 +2287,13 @@ RadioComponent.decorators = [
     .space {
       padding-left: 5px
     }
+    .labeloverflow {
+      float: left;
+    }
+     .rnxtline {
+       float: left;
+       width: 100%
+     }
     `]
             },] },
 ];
@@ -2272,7 +2334,7 @@ DateComponent.decorators = [
                 selector: 'date',
                 template: `
       <div [formGroup]="form">
-      <label class="col-md-8 form-control-label" [attr.for]="field.label">
+      <label class="col-md-8 form-control-label labeloverflow" [attr.for]="field.label">
       {{field.label}}
     </label>
         <input *ngIf="!field.multiline" [attr.type]="field.type" class="form-control" 
@@ -2285,6 +2347,8 @@ DateComponent.decorators = [
                 styles: [`
     .form-control {
       display: none;
+    } .labeloverflow {
+      float: left;
     }
     `]
             },] },
@@ -2328,7 +2392,7 @@ SliderComponent.decorators = [
                 selector: 'slider',
                 template: `
       <div [formGroup]="form" >
-      <label class="col-md-0 form-control-label" [attr.for]="field.label">
+      <label class="col-md-0 form-control-label labeloverflow" [attr.for]="field.label">
       {{field.label}}
     </label>
         <input *ngIf="!field.multiline" type="hidden" class="form-control" [id]="field.field" [name]="field.field">
@@ -2348,6 +2412,9 @@ SliderComponent.decorators = [
                 styles: [`
     .form-control {
       display: none;
+    }
+    .labeloverflow {
+      float: left;
     }
     `]
             },] },
@@ -2709,11 +2776,11 @@ class MultiSelectComponent {
      */
     deleteElement(item, index) {
         console.log('deleteElement', item);
-        item.deleteindex = index;
-        item.action = 'childDelete';
+        this.field.deleteindex = index;
         this.field.isDelete = true;
-        this.field.child.splice(index, 1);
-        this.sendDataToParent.emit(item);
+        // this.field.child.splice(index, 1);
+        console.log('deleteElement', this.field);
+        this.sendDataToParent.emit(this.field);
         // this.childrenDropEvent.emit(item);
         // console.log("field delete", this.field, 'index', index);
         // console.log('after delete', this.allData);
@@ -2725,10 +2792,21 @@ class MultiSelectComponent {
      */
     copyElement(item, index) {
         // this.field.push(item);
-        item.action = 'copy';
-        console.log("copy field ----------", item, 'index', index);
+        console.log("before copy field ----------", item);
+        /** @type {?} */
+        let newobj = {
+            action: "copy",
+            description: item.description,
+            field: item.field,
+            label: item.label,
+            placeholder: item.placeholder,
+            position: item.pointer,
+            type: item.type
+        };
+        console.log("after copy field ----------", newobj, 'index', index);
         this.field.child.push(item);
-        this.copyOrDeleteEvent.emit(item);
+        // this.copyOrDeleteEvent.emit(item);
+        this.sendDataToParent.emit(newobj);
     }
     /**
      * @param {?} event
@@ -2746,7 +2824,7 @@ MultiSelectComponent.decorators = [
     { type: Component, args: [{
                 selector: 'lib-multi-select',
                 template: `<div [formGroup]="form" dndDropzone (dndDrop)="onDropNew($event,field)" class="card-body">
-  <label class="col-md-0 form-control-label" [attr.for]="field.label">
+  <label class="col-md-0 form-control-label labeloverflow" [attr.for]="field.label">
     {{field.label}}
   </label>
   <textarea rows="2" class="form-control">
@@ -2757,7 +2835,7 @@ MultiSelectComponent.decorators = [
   <div *ngIf="field.child.length > 0" cdkDropList (cdkDropListDropped)="drop($event)">
 
     <div *ngFor="let obj of field.child; let i =index; let data" cdkDrag>
-      <div style="float: right;right: -70px; cursor:pointer; padding-top: 10px" class="col-sm-2 edit-icon">
+      <div class="col-sm-2 edit-icon actions">
         <i class="fa fa-trash" title = "delete" (click)="deleteElement(obj, i)"></i>
         <i class="fa fa-copy" title = "copy" (click)="copyElement(obj, i)"></i>
         <i class="fa fa-edit" title = "edit" (click)="loadFormElement(obj, i)"></i>
@@ -2965,6 +3043,20 @@ MultiSelectComponent.decorators = [
     }
     .fa {
       padding: 3px;
+    }
+    .actions {
+      float: right;
+      cursor: pointer;
+     padding-top: 10px;
+     right: -70px;
+    }
+    .labeloverflow {
+      float: left;
+    }
+    @media only screen and (max-width: 600px) {
+      .actions {
+       position: inherit
+      }
     }
     `]
             },] },
