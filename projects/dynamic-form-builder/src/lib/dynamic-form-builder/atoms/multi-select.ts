@@ -13,7 +13,7 @@ import { CdkDragDrop, moveItemInArray } from '@angular/cdk/drag-drop';
 @Component({
   selector: 'lib-multi-select',
   template: `<div [formGroup]="form" dndDropzone (dndDrop)="onDropNew($event,field)" class="card-body">
-  <label class="col-md-0 form-control-label" [attr.for]="field.label">
+  <label class="col-md-0 form-control-label labeloverflow" [attr.for]="field.label">
     {{field.label}}
   </label>
   <textarea rows="2" class="form-control">
@@ -24,7 +24,7 @@ import { CdkDragDrop, moveItemInArray } from '@angular/cdk/drag-drop';
   <div *ngIf="field.child.length > 0" cdkDropList (cdkDropListDropped)="drop($event)">
 
     <div *ngFor="let obj of field.child; let i =index; let data" cdkDrag>
-      <div style="float: right;right: -70px; cursor:pointer; padding-top: 10px" class="col-sm-2 edit-icon">
+      <div class="col-sm-2 edit-icon actions">
         <i class="fa fa-trash" title = "delete" (click)="deleteElement(obj, i)"></i>
         <i class="fa fa-copy" title = "copy" (click)="copyElement(obj, i)"></i>
         <i class="fa fa-edit" title = "edit" (click)="loadFormElement(obj, i)"></i>
@@ -232,6 +232,20 @@ import { CdkDragDrop, moveItemInArray } from '@angular/cdk/drag-drop';
     }
     .fa {
       padding: 3px;
+    }
+    .actions {
+      float: right;
+      cursor: pointer;
+     padding-top: 10px;
+     right: -70px;
+    }
+    .labeloverflow {
+      float: left;
+    }
+    @media only screen and (max-width: 600px) {
+      .actions {
+       position: inherit
+      }
     }
     `]
 })
@@ -511,14 +525,14 @@ export class MultiSelectComponent {
 
   loadFormElement(item, id) {
     console.log("item ---", item, "id", id);
-    item.expand = ! item.expand;
+    item.expand = !item.expand;
     this.activeModelData = "";
     this.label = item.label;
     this.currentItem = item;
     this.allData = this.dynamicServe.getALl();
     console.log('this.field', this.field);
     // for(let i = 0; i < this.allData['questionList']['questionList'][0].child.length; i++) {
-      this.filtereddata = this.field.child.filter(t => t.field !== item.field);
+    this.filtereddata = this.field.child.filter(t => t.field !== item.field);
     // }
     // this.filtereddata = this.field.child;
 
@@ -566,12 +580,13 @@ export class MultiSelectComponent {
 
   deleteElement(item, index) {
     console.log('deleteElement', item);
-    item.deleteindex  = index;
-    
-    item.action = 'childDelete';
+    this.field.deleteindex = index;
+
     this.field.isDelete = true;
-    this.field.child.splice(index, 1);
-    this.sendDataToParent.emit(item);
+    // this.field.child.splice(index, 1);
+  console.log('deleteElement', this.field);
+  
+    this.sendDataToParent.emit( this.field);
     // this.childrenDropEvent.emit(item);
     // console.log("field delete", this.field, 'index', index);
     // console.log('after delete', this.allData);
@@ -580,10 +595,21 @@ export class MultiSelectComponent {
 
   copyElement(item, index) {
     // this.field.push(item);
-    item.action = 'copy';
-    console.log("copy field ----------", item, 'index', index);
+    console.log("before copy field ----------", item);
+    let newobj: any = {
+    action: "copy",
+    description: item.description,
+    field: item.field,
+    label: item.label,
+    placeholder: item.placeholder,
+    position: item.pointer,
+    type: item.type
+    }
+   
+    console.log("after copy field ----------", newobj, 'index', index);
     this.field.child.push(item);
-    this.copyOrDeleteEvent.emit(item);
+    // this.copyOrDeleteEvent.emit(item);
+    this.sendDataToParent.emit(newobj);
   }
 
   drop(event: CdkDragDrop<string[]>) {
