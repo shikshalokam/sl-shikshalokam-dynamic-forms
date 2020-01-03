@@ -67,6 +67,9 @@ span.cursor-pntr {
 .label.col-md-8.form-control-label {
   text-decoration: underline;
 }
+.labeloverflow {
+  float: left;
+}
 @media only screen and (max-width: 600px) {
   .col-sm-12 {
     padding: 0px

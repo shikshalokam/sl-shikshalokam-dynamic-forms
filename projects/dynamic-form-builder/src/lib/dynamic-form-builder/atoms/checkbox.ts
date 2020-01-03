@@ -23,11 +23,9 @@ import { FormGroup } from '@angular/forms';
       display: none;
     }
     .labeloverflow {
-      float: left;
       padding-top: 5px;
     }
     .checkflow {
-      float: left;
       width: 100%
     }
     `]
