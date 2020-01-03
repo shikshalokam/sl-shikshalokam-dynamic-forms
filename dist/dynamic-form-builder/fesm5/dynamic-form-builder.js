@@ -26,6 +26,7 @@ DynamicFormBuilderService = /** @class */ (function () {
         // private messageSource = new BehaviorSubject('default message');
         // currentMessage = this.messageSource.asObservable();
         this.list = [];
+        this.pagelist = [];
         this.all = [];
         this.criteriaList = [];
     }
@@ -61,7 +62,17 @@ DynamicFormBuilderService = /** @class */ (function () {
      */
     function (data) {
         this.pagelist = data;
+        console.log("data=====page", data);
         this.communicateSubject.next();
+    };
+    /**
+     * @return {?}
+     */
+    DynamicFormBuilderService.prototype.getPages = /**
+     * @return {?}
+     */
+    function () {
+        return this.pagelist;
     };
     /**
      * @return {?}
@@ -482,7 +493,7 @@ var DynamicFormBuilderComponent = /** @class */ (function () {
                 type: 'slider',
                 "position": len,
                 name: len + ". question",
-                label: len + ". question",
+                label: ". question",
                 description: "",
                 required: true,
                 "validations": {
@@ -519,11 +530,13 @@ var DynamicFormBuilderComponent = /** @class */ (function () {
         var len = this.fields.length + 1;
         /** @type {?} */
         var obj = {};
+        console.log(action, "calling from child copy", ele);
+        debugger;
         if (action == "copy") {
             /** @type {?} */
             var copyObj = {
                 "position": len,
-                "field": len + "question",
+                "field": ele.field ? ele.field : len + "question",
                 "type": ele.type,
                 "label": ele.label,
                 "placeholder": ele.placeholder,
@@ -600,7 +613,7 @@ var DynamicFormBuilderComponent = /** @class */ (function () {
         console.log("completeData", completeData);
         this.sendToService(completeData);
         // this.questionTrigger.emit(trnasformData);
-        // this.questionTrigger.emit(trnasformData);
+        this.questionTrigger.emit(trnasformData);
         // console.log("fields controls", this.form);
     };
     /**
@@ -739,6 +752,10 @@ var DynamicFormBuilderComponent = /** @class */ (function () {
             this.onDrop($event.data, "copy");
         }
         else if ($event.action == "delete") {
+            // this.fields = this.fields.filter( each => {
+            //   return each.field != $event.data.field
+            // })
+            // console.log("$event",$event.data.field); 
             trnasformData = {
                 action: 'delete',
                 data: $event
@@ -766,6 +783,10 @@ var DynamicFormBuilderComponent = /** @class */ (function () {
                     var obj = _this.getToolObj($event.data.responseType, item.child.length + 1);
                     // }
                     item.child.push(obj);
+                    trnasformData = {
+                        action: 'childDroped',
+                        data: $event
+                    };
                     return item;
                 }
                 else {
@@ -788,7 +809,7 @@ var DynamicFormBuilderComponent = /** @class */ (function () {
     DynamicFormBuilderComponent.decorators = [
         { type: Component, args: [{
                     selector: 'lib-dynamic-form-builder',
-                    template: "<style>\n  p {\n      font-family: Lato;\n    }\n    .noPadding {\n        padding: 0px;\n    }\n    .margin-5 {\n        margin-top:5%;\n    }\n    .element {\n      border: 1px solid midnightblue;\n    list-style: none;\n    padding: 10px;\n    margin-bottom: 10px;\n    color: midnightblue;\n    width: 100%;\n    text-align: left;\n    cursor: pointer;  \n    text-transform: capitalize;\n  }\n  .element-old {\n    border: 1px solid #ccc;\n    padding: 10px;\n    margin-bottom: 10px;\n    color: #333;\n    text-align: left;\n    text-transform: capitalize;\n  }\n\n   .toolbar {\n    border: 1px solid midnightblue;\n    list-style: none;\n    padding: 10px;\n    margin-bottom: 10px;\n    color: midnightblue;\n    width: 100%;\n    text-align: left;\n    cursor: pointer;\n    text-transform: capitalize;\n   }\n    .element span {\n      text-transform: uppercase !important;\n    }\n    .form-group {\n        margin-bottom: 0.5rem;\n        border: 1px solid #ece7e7;\n    }\n    .cursor-pntr {\n        cursor: pointer;\n    }\n\n    .showQBlock {\n      background: #a5f1d7;\n      padding: 50px;\n      opacity: 0.75;\n      min-height: 390px;\n    }\n    \n    .start-create {\n      width: 50%;\n      margin:auto;\n      padding:20px;\n    }\n    .start-create:hover .add-qicons{\n      display:block;\n    }\n    .toolbar i.material-icons {\n      vertical-align: middle;\n      padding: 6px;\n    }\n    .element i.material-icons {\n      vertical-align: middle;\n      float: right;\n    }\n    .add-qicons{\n     \n      // background: #d9d9f9;\n      padding: 5px;\n      text-align: center;\n      width:100%\n      margin: auto;\n      // box-shadow: 1px 1px 4px 1px rgba(0,0,0,0.19);\n    }\n    \n  </style>\n  <div class=\"col-sm-12\">\n      \n\n    <div class=\"col-sm-12 noPadding\">\n    <div class=\"card showQBlock\" *ngIf=\"fields.length <= 0 && showQuestionBlock\">\n\n      <div>\n        <div class=\"start-create\">\n         <h2 class=\"text-center\" ><span class=\"start-create\">Start Creating a Question</span></h2>\n         <div class=\"add-qicons\">\n              <div class=\"col-sm-6\"  *ngFor=\"let item of jsonData;let i = index\">\n                <div *ngIf=\"i <= 4\" class=\"element\"   (click)=\"onDrop(item.responseType)\">\n                  <span  >\n                  <i class=\"material-icons\">{{ item.icon }}</i>{{ item.responseType }}\n                  </span>\n                </div>\n                <div *ngIf=\"i > 4\" class=\"element\" (click)=\"onDrop(item.responseType)\">\n                  <span   >\n                  <i class=\"material-icons\">{{ item.icon }}</i>{{ item.responseType }}\n                  </span>\n                </div>\n              </div>\n              </div>\n         </div>\n      </div>\n\n    </div>\n    <div class=\"card\" *ngIf=\"fields.length > 0 || !showQuestionBlock\">\n          <div dndDropzone class=\"card-body\" (dndDrop)=\"onDrop($event)\">\n              <form (ngSubmit)=\"onSubmit(this.form.value)\" [formGroup]=\"form\" class=\"form-horizontal\">\n            <dynamic-form-builder [fields]=\"getFields()\" [form]=\"form\"  (onFieldUpdate)=\"onFieldUpdate($event)\" ></dynamic-form-builder>\n            </form>\n          </div>\n        </div>\n      </div>\n      <div class=\"col-sm-12\" style=\"padding-top:25px\" *ngIf=\"fields.length > 0  || !showQuestionBlock\">\n          \n          <div  class=\"col-md-12\">\n            <!-- <dynamic-form-builder [fields]=\"getFields()\"></dynamic-form-builder> -->\n      \n            <span *ngFor=\"let item of jsonData\" >\n              <span [dndDraggable]=\"item\" (click)=\"onDrop(item.responseType)\"  class=\"toolbar\"  >\n            {{ item.responseType }}   <i class=\"material-icons\">{{ item.icon }}</i>\n             </span>\n              </span>\n\n              <!-- <div class=\"col-sm-12 element\" (click)=\"addFormElement(item.responseType)\" >Number</div> -->\n            <!-- <div class=\"col-sm-12 element\" (click)=\"addFormElement('input')\" >Input</div>\n            <div class=\"col-sm-12 element\" (click)=\"addFormElement('number')\" >Number</div> -->\n\n          </div>\n      </div>\n\n\n      \n      <div class=\"col-sm-12\">\n      </div>",
+                    template: "<style>\n  p {\n      font-family: Lato;\n    }\n    .noPadding {\n        padding: 0px;\n    }\n    .margin-5 {\n        margin-top:5%;\n    }\n    .element {\n      border: 1px solid midnightblue;\n    list-style: none;\n    padding: 10px;\n    margin-bottom: 10px;\n    color: midnightblue;\n    width: 100%;\n    text-align: left;\n    cursor: pointer;  \n    text-transform: capitalize;\n  }\n  .element-old {\n    border: 1px solid #ccc;\n    padding: 10px;\n    margin-bottom: 10px;\n    color: #333;\n    text-align: left;\n    text-transform: capitalize;\n  }\n\n   .toolbar {\n    list-style: none;\n    padding: 10px;\n    margin-bottom: 10px;\n    color: midnightblue;\n    width: 100%;\n    text-align: left;\n    display: block;\n    margin: 1%;\n    font-size: 16px;\n    border: 1px solid midnightblue;\n    padding: 6px;\n    cursor: pointer;\n    text-transform: capitalize;\n   }\n    .element span {\n      text-transform: uppercase !important;\n    }\n    .form-group {\n        margin-bottom: 0.5rem;\n        border: 1px solid #ece7e7;\n    }\n    .cursor-pntr {\n        cursor: pointer;\n    }\n\n    .showQBlock {\n      background: #a5f1d7;\n      padding: 50px;\n      opacity: 0.75;\n      min-height: 390px;\n    }\n\n    .start-create {\n      width: 50%;\n      margin:auto;\n      padding:20px;\n    }\n    .start-create:hover .add-qicons{\n      display:block;\n    }\n    .toolbar i.material-icons {\n      vertical-align: middle;\n      padding: 0 px;\n      float: right;\n    }\n    .element i.material-icons {\n      vertical-align: middle;\n      float: right;\n    }\n    .add-qicons{\n     \n      // background: #d9d9f9;\n      padding: 5px;\n      text-align: center;\n      width:100%\n      margin: auto;\n      // box-shadow: 1px 1px 4px 1px rgba(0,0,0,0.19);\n    }\n    .qtype {\n      float: left;\n      margin-left: 5pxpx;\n    }\n    .space {\n      padding-top:20px;\n    }\n\n    @media only screen and (max-width:600px) {\n      .qtype {\n        float: left;\n        width: 50%\n        margin-left: 0px;\n      }\n      .start-create {\n        width: 100%;\n        padding: 0px;\n      }\n    }\n    \n  </style>\n  <div class=\"col-sm-12\">\n      \n\n    <div class=\"col-sm-12 noPadding\">\n    <div class=\"card showQBlock\" *ngIf=\"fields.length <= 0 && showQuestionBlock\">\n\n      <div>\n        <div class=\"start-create\">\n         <h2 class=\"text-center\" ><span class=\"start-create\">Start Creating a Question</span></h2>\n         <div class=\"add-qicons\">\n              <div class=\"col-sm-6\"  *ngFor=\"let item of jsonData;let i = index\">\n                <div *ngIf=\"i <= 4\" class=\"element\"   (click)=\"onDrop(item.responseType)\">\n                  <span  >\n                  <i class=\"material-icons\">{{ item.icon }}</i>{{ item.responseType }}\n                  </span>\n                </div>\n                <div *ngIf=\"i > 4\" class=\"element\" (click)=\"onDrop(item.responseType)\">\n                  <span   >\n                  <i class=\"material-icons\">{{ item.icon }}</i>{{ item.responseType }}\n                  </span>\n                </div>\n              </div>\n              </div>\n         </div>\n      </div>\n\n    </div>\n    <div class=\"card\" *ngIf=\"fields.length > 0 || !showQuestionBlock\">\n          <div dndDropzone class=\"card-body\" (dndDrop)=\"onDrop($event)\">\n              <form (ngSubmit)=\"onSubmit(this.form.value)\" [formGroup]=\"form\" class=\"form-horizontal\">\n            <dynamic-form-builder [fields]=\"getFields()\" [form]=\"form\"  (onFieldUpdate)=\"onFieldUpdate($event)\" ></dynamic-form-builder>\n            </form>\n          </div>\n        </div>\n      </div>\n      <div class=\"col-sm-12 space\" *ngIf=\"fields.length > 0  || !showQuestionBlock\">\n          \n          <div  class=\"col-md-12\">\n            <!-- <dynamic-form-builder [fields]=\"getFields()\"></dynamic-form-builder> -->\n      \n            <span  class =\"qtype\" *ngFor=\"let item of jsonData\" >\n              <span [dndDraggable]=\"item\" (click)=\"onDrop(item.responseType)\"  class=\"toolbar\"  >\n            {{ item.responseType }}   <i class=\"material-icons\">{{ item.icon }}</i>\n             </span>\n              </span>\n\n              <!-- <div class=\"col-sm-12 element\" (click)=\"addFormElement(item.responseType)\" >Number</div> -->\n            <!-- <div class=\"col-sm-12 element\" (click)=\"addFormElement('input')\" >Input</div>\n            <div class=\"col-sm-12 element\" (click)=\"addFormElement('number')\" >Number</div> -->\n\n          </div>\n      </div>\n\n\n      \n      <div class=\"col-sm-12\">\n      </div>",
                     styleUrls: []
                 },] },
     ];
@@ -1529,14 +1550,16 @@ var FieldBuilderComponent = /** @class */ (function () {
      * @return {?}
      */
     function ($event) {
-        console.log('sri==========', $event);
-        $event.action = 'childDelete';
+        if ($event.action == 'copy') ;
+        else {
+            $event.action = 'childDelete';
+        }
         this.copyOrDeleteEvent.emit($event);
     };
     FieldBuilderComponent.decorators = [
         { type: Component, args: [{
                     selector: 'field-builder',
-                    template: "\n  <style>\n  .mat-slider-horizontal {\n    min-width: 80% !important;\n  }\n  .example-radio-group {\n    display: flex;\n    flex-direction: block;\n    margin: 15px 0; \n  }\n\n  .mat-form-field {\n    display: block;\n    position: relative;\n    flex: auto;\n    min-width: 0;\n    width: 372px;\n  }\n  .input-group {\n    position: relative;\n     border-collapse: separate;\n     display: block;\n  }\n  \n  .example-radio-button {\n    margin: 5px;\n  }\n  .action-component {\n    padding:10px 10px 0px 0px;\n    right: 0px;\n    cursor: pointer;\n    float: right;\n  \n}\nspan.cursor-pntr {\n  cursor: pointer;\n  padding: 3px;\n}\n.form-control {\n  display: block;\n  visibility: hidden;\n\n}\n.label.col-md-8.form-control-label {\n  text-decoration: underline;\n}\n\n  </style>\n  <div class=\"row\" *ngIf=\"openEdit\" style=\"padding: 15px;\n  border: 1px solid #ccc;margin-top:10px;width:85%;margin-top:40px;margin: auto;\n  box-shadow: 1px 1px 1px 1px rgba(0,0,0,0.19);margin-top:20px;\">\n    <div class=\"col-sm-6\">\n      <mat-form-field>\n        <input matInput placeholder=\"Label\" [(ngModel)]=\"label\" name=\"label\">\n      </mat-form-field>\n    </div>\n  \n    <div class=\"col-sm-6\">\n      <mat-form-field>\n        <input matInput placeholder=\"Input Place Holder\" [(ngModel)]=\"placeholder\" name=\"placeholder\">\n      </mat-form-field>\n    </div>\n  \n    <div class=\"col-sm-6\">\n      <mat-form-field>\n        <input matInput placeholder=\"Hint/Description\" [(ngModel)]=\"description\" name=\"Description\">\n      </mat-form-field>\n    </div>\n  \n    <div class=\"col-sm-6 \" style=\"display:none\">\n      <mat-form-field>\n        <mat-label>Input Type</mat-label>\n        <mat-select [(ngModel)]=\"type\">\n          <mat-option value=\"text\">text</mat-option>\n          <mat-option value=\"number\">number</mat-option>\n          <mat-option value=\"radio\">radio</mat-option>\n          <mat-option value=\"date\">date</mat-option>\n        </mat-select>\n      </mat-form-field>\n    </div>\n  \n    <div class=\"col-sm-5\">\n      <mat-form-field>\n        <mat-label>Pages</mat-label>\n  \n        <mat-select [(ngModel)]=\"pageNumber\">\n          <mat-option *ngFor=\"let page of pages; let i = index\" value=\"{{page.value}}\">{{page.label}}</mat-option>\n        </mat-select>\n      </mat-form-field>\n    </div>\n    <div class=\"col-sm-1\">\n      <span style=\"float:right;padding-top:15px\" class=\"cursor-pntr\"><i title=\"Add Page\" class=\"fa fa-plus\"\n          (click)=\"add(pages)\"></i></span>\n    </div>\n  \n    <div class=\"col-sm-6\">\n      <mat-form-field>\n        <mat-label>Criteria</mat-label>\n        <mat-select [(ngModel)]=\"draftCriteriaId\">\n          <mat-option *ngFor=\"let item of criteriaList\" [value]=\"item._id\">{{ item.name}}</mat-option>\n        </mat-select>\n      </mat-form-field>\n    </div>\n    <div class=\"col-sm-6\">\n    <label id=\"example-radio-group-label\">is Reqired ?</label>\n    <mat-radio-group aria-labelledby=\"radio-group-label\" class=\"radio-group\" [(ngModel)]=\"required\">\n      <mat-radio-button class=\"example-radio-button\" [value]=true>\n        Yes\n      </mat-radio-button>\n      <mat-radio-button class=\"example-radio-button\" [value]=false>\n        No\n      </mat-radio-button>\n    </mat-radio-group>\n  </div>\n  \n  \n  \n    <div class=\"col-sm-6\" *ngIf=\"type=='slider'\">\n      <mat-form-field>\n        <input type=\"text\" placeholder=\"Min\" matInput [(ngModel)]=\"min\" name=\"min value\">\n      </mat-form-field>\n    </div>\n  \n    <div class=\"col-sm-6\" *ngIf=\"type=='slider'\">\n      <mat-form-field>\n        <input type=\"text\" placeholder=\"Max\" matInput [(ngModel)]=\"max\" name=\"min value\">\n      </mat-form-field>\n    </div>\n  \n    <div class=\"col-sm-6\" *ngIf=\"type=='date'\">\n      <mat-form-field>\n        <input matInput [matDatepicker]=\"picker\" [(ngModel)]=\"minDate\" placeholder=\"Choose a min date\">\n        <mat-datepicker-toggle matSuffix [for]=\"picker\"></mat-datepicker-toggle>\n        <mat-datepicker #picker></mat-datepicker>\n      </mat-form-field>\n  \n      <mat-form-field>\n        <input matInput [matDatepicker]=\"pickerMaxDate\" [(ngModel)]=\"maxDate\" placeholder=\"Choose a max date\">\n        <mat-datepicker-toggle matSuffix [for]=\"pickerMaxDate\"></mat-datepicker-toggle>\n        <mat-datepicker #pickerMaxDate></mat-datepicker>\n      </mat-form-field>\n  \n  \n    </div>\n    <div class=\"\" *ngIf=\"type=='radio' || type=='checkbox' || type=='dropdown'\">\n      <label for=\"label\" class=\"col-sm-12\">Options</label>\n  \n      <ul class=\"col-sm-12 option-ul\" *ngFor=\"let opt of options;let i = index\">\n        <li class=\"\">\n          <span>{{opt.label}} </span><span style=\"\n      margin-left: 30px;cursor: pointer\" title = \"delete\" (click)=\"deleteOption(opt,i)\">\n            <i class=\"fa fa-trash\"></i></span>\n        </li>\n      </ul>\n  \n      <div class=\"col-sm-12\">\n        <div class=\"input-group pull-left col-sm-6\">\n          <mat-form-field>\n            <input type=\"text\" placeholder=\"Label\" matInput style=\"\" [(ngModel)]=\"newOptionLabel\"\n              name=\"newOption\">\n          </mat-form-field>\n        </div>\n        <button mat-flat-button color=\"primary\" style=\"margin-top: 10px;\" (click)=\"AddNewOptions()\">\n          Add\n        </button>\n      </div>\n    </div>\n  \n    <div *ngIf=\"filtereddata && filtereddata.length > 0\">\n      <div class=\"col-sm-12\">\n        <label id=\"example-radio-group-label\">Do you want to related the question based on below options ?</label>\n        <mat-radio-group aria-labelledby=\"example-radio-group-label\" class=\"example-radio-group\"\n          [(ngModel)]=\"selectedOption\">\n          <mat-radio-button class=\"example-radio-button\" *ngFor=\"let ele of options\" [value]=\"ele\">\n            {{ ele.label }}\n          </mat-radio-button>\n        </mat-radio-group>\n      </div>\n  \n  \n      <div class=\"col-sm-6\">\n        <mat-form-field>\n          <mat-label>Select Question to add </mat-label>\n          <select matNativeControl [(ngModel)]=\"currentSelectedQtn\">\n            <option *ngFor=\"let values of filtereddata\" [ngValue]=\"values\"> {{ values.label }} </option>\n          </select>\n        </mat-form-field>\n      </div>\n  \n      <div class=\"col-sm-6\" *ngIf=\"type=='text' || type=='date' || type=='number'\">\n        <mat-form-field>\n          <mat-label>Select Condition </mat-label>\n          <select matNativeControl [(ngModel)]=\"condition\">\n            <option *ngFor=\"let values of conditionArray\" [ngValue]=\"values.condition\"> {{ values.label }} </option>\n          </select>\n        </mat-form-field>\n      </div>\n  \n      <div class=\"col-sm-6\" *ngIf=\"type=='text' || type=='date' || type=='number'\">\n        <mat-form-field>\n          <input type=\"tex\" matInput name=\"conditionMatchValue\" placeholder=\"\" [(ngModel)]=\"conditionMatchValue\">\n        </mat-form-field>\n      </div>\n  \n      <div class=\"col-sm-2\">\n        <button mat-flat-button color=\"primary\" style=\"margin-top: 10px;\" (click)=\"parentMapping()\">\n          Add\n        </button>\n      </div>\n    </div>\n  \n    <ul class=\"col-sm-12\" *ngFor=\"let relate of listOfRelation;let i = index\">\n      <li class=\"col-sm-12\">\n        <span>{{relate.label}} </span><span style=\"\n  margin-left: 30px;\" (click)=\"deleteCondition(relate,i)\">\n          <i class=\"fa fa-trash\"></i></span>\n      </li>\n    </ul>\n  \n  \n   \n  \n    <div class=\"col-sm-12\" *ngIf=\"type=='date'\">  \n    <label id=\"example-radio-group-label\">is autoCollect</label>\n      <mat-radio-group aria-labelledby=\"example-radio-group-label\" class=\"example-radio-group\" [(ngModel)]=\"autoCollect\">\n        <mat-radio-button class=\"example-radio-button\" [value]=true>\n          True\n        </mat-radio-button>\n        <mat-radio-button class=\"example-radio-button\" [value]=false>\n          False\n        </mat-radio-button>\n      </mat-radio-group>\n    </div>\n  \n  \n    <div class=\"col-sm-12\">\n  \n      <button mat-flat-button color=\"primary\" style=\"margin-right:10px;\" (click)=\"closeModel('save')\">\n        Save\n      </button>\n  \n    </div>\n  \n  </div>\n  <div class=\"form-group row\" [formGroup]=\"form\"\n    style=\"padding:0px;margin:0px;margin-top:10px;box-shadow: 1px 1px 2px 1px rgba(0,0,0,0.19);padding-bottom:10px;\">\n    <span class=\"qtn_position\"><span class=\"\">#{{ field.position }}</span></span>\n  \n    <div class=\"action-component\">\n  \n      <span class=\"cursor-pntr\" title = \"delete\" (click)=\"deleteElement(field)\"><i class=\"fa fa-trash\"></i> </span>\n      <span class=\"cursor-pntr\" title = \"copy\" (click)=\"copyElement(field)\"><i class=\"fa fa-copy\"></i></span>\n      <span class=\"cursor-pntr\" title = \"edit\"><i class=\"fa fa-edit\" (click)=\"loadFormElement(field)\"></i></span>\n  \n    </div>\n    <div class=\"col-md-12\" [ngSwitch]=\"field.type\">\n      <textbox *ngSwitchCase=\"'number'\" [field]=\"field\" [form]=\"form\"></textbox>\n      <textbox *ngSwitchCase=\"'text'\" [field]=\"field\" [form]=\"form\"></textbox>\n      <date *ngSwitchCase=\"'date'\" [field]=\"field\" [form]=\"form\"></date>\n      <slider *ngSwitchCase=\"'slider'\" [field]=\"field\" [form]=\"form\"></slider>\n      <dropdown *ngSwitchCase=\"'dropdown'\" [field]=\"field\" [form]=\"form\"></dropdown>\n      <checkbox *ngSwitchCase=\"'checkbox'\" [field]=\"field\" [form]=\"form\"></checkbox>\n      <radio *ngSwitchCase=\"'radio'\" [field]=\"field\" [form]=\"form\"></radio>\n      <lib-multi-select *ngSwitchCase=\"'matrix'\" cdkDrag   (sendDataToParent)=\"eventFromChild($event)\" \n      (childrenDropEvent)=\"childrenDropEvent($event)\" [field]=\"field\" [form]=\"form\"></lib-multi-select>\n      <file *ngSwitchCase=\"'file'\" [field]=\"field\" [form]=\"form\"></file>\n      <div style=\"float:right\">\n      </div>\n    </div>\n    </div>",
+                    template: "\n  <style>\n  .mat-slider-horizontal {\n    min-width: 80% !important;\n  }\n  .example-radio-group {\n    display: flex;\n    flex-direction: block;\n    margin: 15px 0; \n  }\n\n  .mat-form-field {\n    display: block;\n    position: relative;\n    flex: auto;\n    min-width: 0;\n    width: 100%;\n  }\n\n  .input-group {\n    position: relative;\n     border-collapse: separate;\n     display: block;\n  }\n  \n  .example-radio-button {\n    margin: 5px;\n  }\n  .action-component {\n    padding:10px 10px 0px 0px;\n    right: 0px;\n    cursor: pointer;\n    float: right;\n  \n}\nspan.cursor-pntr {\n  cursor: pointer;\n  padding: 3px;\n}\n.form-control {\n  display: block;\n  visibility: hidden;\n\n}\n.addicon {\n  margin-left: 90%\n}\n.spacearoundbtn{\n  margin-top: 10px;\n  margin-bottom: 15px;\n}\n.label.col-md-8.form-control-label {\n  text-decoration: underline;\n}\n@media only screen and (max-width: 600px) {\n  .col-sm-12 {\n    padding: 0px\n  }\n  .col-sm-6 {\n    padding: 0px\n  }\n}\n\n  </style>\n  <div class=\"row\" *ngIf=\"openEdit\" style=\"padding: 15px;\n  border: 1px solid #ccc;margin-top:10px;width:85%;margin-top:40px;margin: auto;\n  box-shadow: 1px 1px 1px 1px rgba(0,0,0,0.19);margin-top:20px;\">\n    <div class=\"col-sm-6\">\n      <mat-form-field>\n        <input matInput placeholder=\"Label\" [(ngModel)]=\"label\" name=\"label\">\n      </mat-form-field>\n    </div>\n  \n    <div class=\"col-sm-6\">\n      <mat-form-field>\n        <input matInput placeholder=\"Input Place Holder\" [(ngModel)]=\"placeholder\" name=\"placeholder\">\n      </mat-form-field>\n    </div>\n  \n    <div class=\"col-sm-6\">\n      <mat-form-field>\n        <input matInput placeholder=\"Hint/Description\" [(ngModel)]=\"description\" name=\"Description\">\n      </mat-form-field>\n    </div>\n  \n    <div class=\"col-sm-6 \" style=\"display:none\">\n      <mat-form-field>\n        <mat-label>Input Type</mat-label>\n        <mat-select [(ngModel)]=\"type\">\n          <mat-option value=\"text\">text</mat-option>\n          <mat-option value=\"number\">number</mat-option>\n          <mat-option value=\"radio\">radio</mat-option>\n          <mat-option value=\"date\">date</mat-option>\n        </mat-select>\n      </mat-form-field>\n    </div>\n  \n    <div class=\"col-sm-5\">\n      <mat-form-field>\n        <mat-label>Pages</mat-label>\n  \n        <mat-select [(ngModel)]=\"pageNumber\">\n          <mat-option *ngFor=\"let page of pages; let i = index\" value=\"{{page.value}}\">{{page.label}}</mat-option>\n        </mat-select>\n      </mat-form-field>\n    </div>\n    <div class=\"col-sm-1\">\n      <span class=\"cursor-pntr addicon\"><i title=\"Add Page\" class=\"fa fa-plus\"\n          (click)=\"add(pages)\"></i></span>\n    </div>\n  \n    <div class=\"col-sm-6\">\n      <mat-form-field>\n        <mat-label>Criteria</mat-label>\n        <mat-select [(ngModel)]=\"draftCriteriaId\">\n          <mat-option *ngFor=\"let item of criteriaList\" [value]=\"item._id\">{{ item.name}}</mat-option>\n        </mat-select>\n      </mat-form-field>\n    </div>\n    <div class=\"col-sm-6\">\n    <label id=\"example-radio-group-label\">is Reqired ?</label>\n    <mat-radio-group aria-labelledby=\"radio-group-label\" class=\"radio-group\" [(ngModel)]=\"required\">\n      <mat-radio-button class=\"example-radio-button\" [value]=true>\n        Yes\n      </mat-radio-button>\n      <mat-radio-button class=\"example-radio-button\" [value]=false>\n        No\n      </mat-radio-button>\n    </mat-radio-group>\n  </div>\n  \n  \n  \n    <div class=\"col-sm-6\" *ngIf=\"type=='slider'\">\n      <mat-form-field>\n        <input type=\"text\" placeholder=\"Min\" matInput [(ngModel)]=\"min\" name=\"min value\">\n      </mat-form-field>\n    </div>\n  \n    <div class=\"col-sm-6\" *ngIf=\"type=='slider'\">\n      <mat-form-field>\n        <input type=\"text\" placeholder=\"Max\" matInput [(ngModel)]=\"max\" name=\"min value\">\n      </mat-form-field>\n    </div>\n  \n    <div class=\"col-sm-6\" *ngIf=\"type=='date'\">\n      <mat-form-field>\n        <input matInput [matDatepicker]=\"picker\" [(ngModel)]=\"minDate\" placeholder=\"Choose a min date\">\n        <mat-datepicker-toggle matSuffix [for]=\"picker\"></mat-datepicker-toggle>\n        <mat-datepicker #picker></mat-datepicker>\n      </mat-form-field>\n  \n      <mat-form-field>\n        <input matInput [matDatepicker]=\"pickerMaxDate\" [(ngModel)]=\"maxDate\" placeholder=\"Choose a max date\">\n        <mat-datepicker-toggle matSuffix [for]=\"pickerMaxDate\"></mat-datepicker-toggle>\n        <mat-datepicker #pickerMaxDate></mat-datepicker>\n      </mat-form-field>\n  \n  \n    </div>\n    <div class=\"\" *ngIf=\"type=='radio' || type=='checkbox' || type=='dropdown'\">\n      <label for=\"label\" class=\"col-sm-12\">Options</label>\n  \n      <ul class=\"col-sm-12 option-ul\" *ngFor=\"let opt of options;let i = index\">\n        <li class=\"\">\n          <span>{{opt.label}} </span><span style=\"\n      margin-left: 30px;cursor: pointer\" title = \"delete\" (click)=\"deleteOption(opt,i)\">\n            <i class=\"fa fa-trash\"></i></span>\n        </li>\n      </ul>\n  \n      <div class=\"col-sm-12\">\n        <div class=\"input-group pull-left col-sm-6\">\n          <mat-form-field>\n            <input type=\"text\" placeholder=\"Label\" matInput style=\"\" [(ngModel)]=\"newOptionLabel\"\n              name=\"newOption\">\n          </mat-form-field>\n        </div>\n        <button mat-flat-button color=\"primary\" class = \"spacearoundbtn\" (click)=\"AddNewOptions()\">\n          Add\n        </button>\n      </div>\n    </div>\n  \n    <div *ngIf=\"filtereddata && filtereddata.length > 0\">\n      <div class=\"col-sm-12\">\n        <label id=\"example-radio-group-label\">Do you want to related the question based on below options ?</label>\n        <mat-radio-group aria-labelledby=\"example-radio-group-label\" class=\"example-radio-group\"\n          [(ngModel)]=\"selectedOption\">\n          <mat-radio-button class=\"example-radio-button\" *ngFor=\"let ele of options\" [value]=\"ele\">\n            {{ ele.label }}\n          </mat-radio-button>\n        </mat-radio-group>\n      </div>\n  \n  \n      <div class=\"col-sm-6\">\n        <mat-form-field>\n          <mat-label>Select Question to add </mat-label>\n          <select matNativeControl [(ngModel)]=\"currentSelectedQtn\">\n            <option *ngFor=\"let values of filtereddata\" [ngValue]=\"values\"> {{ values.label }} </option>\n          </select>\n        </mat-form-field>\n      </div>\n  \n      <div class=\"col-sm-6\" *ngIf=\"type=='text' || type=='date' || type=='number'\">\n        <mat-form-field>\n          <mat-label>Select Condition </mat-label>\n          <select matNativeControl [(ngModel)]=\"condition\">\n            <option *ngFor=\"let values of conditionArray\" [ngValue]=\"values.condition\"> {{ values.label }} </option>\n          </select>\n        </mat-form-field>\n      </div>\n  \n      <div class=\"col-sm-6\" *ngIf=\"type=='text' || type=='date' || type=='number'\">\n        <mat-form-field>\n          <input type=\"text\" matInput name=\"conditionMatchValue\" placeholder=\"Value\" [(ngModel)]=\"conditionMatchValue\">\n        </mat-form-field>\n      </div>\n  \n      <div class=\"col-sm-2\">\n        <button mat-flat-button color=\"primary\" class = \"spacearoundbtn\" (click)=\"parentMapping()\">\n          Add\n        </button>\n      </div>\n    </div>\n  \n    <ul class=\"col-sm-12\" *ngFor=\"let relate of listOfRelation;let i = index\">\n      <li class=\"col-sm-12\">\n        <span>{{relate.label}} </span><span style=\"\n  margin-left: 30px;\" (click)=\"deleteCondition(relate,i)\">\n          <i class=\"fa fa-trash\"></i></span>\n      </li>\n    </ul>\n  \n  \n   \n  \n    <div class=\"col-sm-12\" *ngIf=\"type=='date'\">  \n    <label id=\"example-radio-group-label\">is autoCollect</label>\n      <mat-radio-group aria-labelledby=\"example-radio-group-label\" class=\"example-radio-group\" [(ngModel)]=\"autoCollect\">\n        <mat-radio-button class=\"example-radio-button\" [value]=true>\n          True\n        </mat-radio-button>\n        <mat-radio-button class=\"example-radio-button\" [value]=false>\n          False\n        </mat-radio-button>\n      </mat-radio-group>\n    </div>\n  \n  \n    <div class=\"col-sm-12\">\n  \n      <button mat-flat-button color=\"primary\" style=\"margin-right:10px;\" (click)=\"closeModel('save')\">\n        Save\n      </button>\n  \n    </div>\n  \n  </div>\n  <div class=\"form-group row\" [formGroup]=\"form\"\n    style=\"padding:0px;margin:0px;margin-top:10px;box-shadow: 1px 1px 2px 1px rgba(0,0,0,0.19);padding-bottom:10px;\">\n    <span class=\"qtn_position\"><span class=\"\">#{{ field.position }}</span></span>\n  \n    <div class=\"action-component\">\n  \n      <span class=\"cursor-pntr\" title = \"delete\" (click)=\"deleteElement(field)\"><i class=\"fa fa-trash\"></i> </span>\n      <span class=\"cursor-pntr\" title = \"copy\" (click)=\"copyElement(field)\"><i class=\"fa fa-copy\"></i></span>\n      <span class=\"cursor-pntr\" title = \"edit\"><i class=\"fa fa-edit\" (click)=\"loadFormElement(field)\"></i></span>\n  \n    </div>\n    <div class=\"col-md-12\" [ngSwitch]=\"field.type\">\n      <textbox *ngSwitchCase=\"'number'\" [field]=\"field\" [form]=\"form\"></textbox>\n      <textbox *ngSwitchCase=\"'text'\" [field]=\"field\" [form]=\"form\"></textbox>\n      <date *ngSwitchCase=\"'date'\" [field]=\"field\" [form]=\"form\"></date>\n      <slider *ngSwitchCase=\"'slider'\" [field]=\"field\" [form]=\"form\"></slider>\n      <dropdown *ngSwitchCase=\"'dropdown'\" [field]=\"field\" [form]=\"form\"></dropdown>\n      <checkbox *ngSwitchCase=\"'checkbox'\" [field]=\"field\" [form]=\"form\"></checkbox>\n      <radio *ngSwitchCase=\"'radio'\" [field]=\"field\" [form]=\"form\"></radio>\n      <lib-multi-select *ngSwitchCase=\"'matrix'\" cdkDrag   (sendDataToParent)=\"eventFromChild($event)\" \n      (childrenDropEvent)=\"childrenDropEvent($event)\" [field]=\"field\" [form]=\"form\"></lib-multi-select>\n      <file *ngSwitchCase=\"'file'\" [field]=\"field\" [form]=\"form\"></file>\n      <div style=\"float:right\">\n      </div>\n    </div>\n    </div>",
                     styles: ["\n  .qtn_position {\n    float: left;\n    width: 40px;\n    padding: 5px 0px 0px 5px;\n    color: #ccc;\n  }\n  .radio-group {\n    display: inline-block;\n    margin: 15px 0; \n  }\n   .option-ul {\n    padding-left: 44px;\n    padding-top: 5px;\n   }\n  \n  "
                     ]
                 },] },
@@ -1588,8 +1611,8 @@ var TextBoxComponent = /** @class */ (function () {
     TextBoxComponent.decorators = [
         { type: Component, args: [{
                     selector: 'textbox',
-                    template: "\n      <div [formGroup]=\"form\">\n      <label class=\"col-md-0 form-control-label\" [attr.for]=\"field.label\">\n      {{field.label}}\n      </label>\n    \n        <input *ngIf=\"!field.multiline\" [attr.type]=\"field.type\" class=\"form-control\"  [id]=\"field.field\" [name]=\"field.field\" >\n        <textarea *ngIf=\"field.multiline\"  [id]=\"field.field\"\n        rows=\"20\" class=\"form-control\" [placeholder]=\"field.placeholder\"></textarea>\n\n      </div> \n    ",
-                    styles: ["\n    .form-control {\n      display: none;\n    }\n    "]
+                    template: "\n      <div [formGroup]=\"form\">\n      <label class=\"col-md-0 form-control-label labeloverflow\" [attr.for]=\"field.label\">\n      {{field.label}}\n      </label>\n    \n        <input *ngIf=\"!field.multiline\" [attr.type]=\"field.type\" class=\"form-control\"  [id]=\"field.field\" [name]=\"field.field\" >\n        <textarea *ngIf=\"field.multiline\"  [id]=\"field.field\"\n        rows=\"20\" class=\"form-control\" [placeholder]=\"field.placeholder\"></textarea>\n\n      </div> \n    ",
+                    styles: ["\n    .form-control {\n      display: none;\n    }\n    .labeloverflow {\n      float: left;\n    }\n    "]
                 },] },
     ];
     /** @nocollapse */
@@ -1612,8 +1635,8 @@ var DropDownComponent = /** @class */ (function () {
     DropDownComponent.decorators = [
         { type: Component, args: [{
                     selector: 'dropdown',
-                    template: "\n      <div [formGroup]=\"form\">\n      <label class=\"col-sm-0 form-control-label\" [attr.for]=\"field.label\">\n      {{field.label}}\n    </label>\n        <select class=\"form-control\" [id]=\"field.field\">\n          <option *ngFor=\"let opt of field.options\" [value]=\"opt.key\">{{opt.label}}</option>\n        </select>\n      </div> \n    ",
-                    styles: ["\n    .form-control {\n      display: none;\n    }\n    "]
+                    template: "\n      <div [formGroup]=\"form\">\n      <label class=\"col-sm-0 form-control-label labeloverflow\" [attr.for]=\"field.label\">\n      {{field.label}}\n    </label>\n        <select class=\"form-control\" [id]=\"field.field\">\n          <option *ngFor=\"let opt of field.options\" [value]=\"opt.key\">{{opt.label}}</option>\n        </select>\n      </div> \n    ",
+                    styles: ["\n    .form-control {\n      display: none;\n    }\n    .labeloverflow {\n      float: left;\n      padding-top: 5px;\n    }\n    "]
                 },] },
     ];
     /** @nocollapse */
@@ -1705,8 +1728,8 @@ var CheckBoxComponent = /** @class */ (function () {
     CheckBoxComponent.decorators = [
         { type: Component, args: [{
                     selector: 'checkbox',
-                    template: "\n      <div [formGroup]=\"form\">\n      <label class=\"col-sm -12 form-control-label\" [attr.for]=\"field.label\">\n      {{field.label}}\n    </label>\n        <div [formGroupName]=\"field.field\" >\n          <div *ngFor=\"let opt of field.options\" class=\"form-check form-check\">\n          <label class=\"form-check-label\">\n             <input class=\"form-check-input\" type=\"checkbox\" id=\"inlineCheckbox1\" value=\"option1\" />\n             {{opt.label}}</label>\n          </div>\n        </div>\n\n      </div> \n    ",
-                    styles: ["\n    .form-control {\n      display: none;\n    }\n    "]
+                    template: "\n      <div [formGroup]=\"form\">\n      <label class=\"col-sm -12 form-control-label labeloverflow\" [attr.for]=\"field.label\">\n      {{field.label}}\n    </label>\n        <div [formGroupName]=\"field.field\" >\n          <div *ngFor=\"let opt of field.options\" class=\"form-check form-check\">\n          <label class=\"form-check-label checkflow\">\n             <input class=\"form-check-input\" type=\"checkbox\" id=\"inlineCheckbox1\" value=\"option1\" />\n             {{opt.label}}</label>\n          </div>\n        </div>\n\n      </div> \n    ",
+                    styles: ["\n    .form-control {\n      display: none;\n    }\n    .labeloverflow {\n      float: left;\n      padding-top: 5px;\n    }\n    .checkflow {\n      float: left;\n      width: 100%\n    }\n    "]
                 },] },
     ];
     CheckBoxComponent.propDecorators = {
@@ -1727,8 +1750,8 @@ var RadioComponent = /** @class */ (function () {
     RadioComponent.decorators = [
         { type: Component, args: [{
                     selector: 'radio',
-                    template: "\n      <div [formGroup]=\"form\">\n      <label class=\"col-sm-12 form-control-label\" [attr.for]=\"field.label\">\n      {{field.label}}\n    </label>\n        <div class=\"form-check\" *ngFor=\"let opt of field.options\">\n          <input class=\"form-check-input\" type=\"radio\" [id]=\"field.field\" [value]=\"opt.key\">\n          <label class=\"form-check-label space\">\n            {{opt.label}}\n          </label>\n        </div>\n      </div> \n    ",
-                    styles: ["\n    .form-control {\n      display: none;\n    }\n    .space {\n      padding-left: 5px\n    }\n    "]
+                    template: "\n      <div [formGroup]=\"form\">\n      <label class=\"col-sm-12 form-control-label labeloverflow\" [attr.for]=\"field.label\">\n      {{field.label}}\n    </label>\n        <div class=\"form-check rnxtline\" *ngFor=\"let opt of field.options\">\n          <input class=\"form-check-input\" type=\"radio\" [id]=\"field.field\" [value]=\"opt.key\">\n          <label class=\"form-check-label space\">\n            {{opt.label}}\n          </label>\n        </div>\n      </div> \n    ",
+                    styles: ["\n    .form-control {\n      display: none;\n    }\n    .space {\n      padding-left: 5px\n    }\n    .labeloverflow {\n      float: left;\n      padding-top: 5px;\n    }\n     .rnxtline {\n       float: left;\n       width: 100%\n     }\n    "]
                 },] },
     ];
     RadioComponent.propDecorators = {
@@ -1768,8 +1791,8 @@ var DateComponent = /** @class */ (function () {
     DateComponent.decorators = [
         { type: Component, args: [{
                     selector: 'date',
-                    template: "\n      <div [formGroup]=\"form\">\n      <label class=\"col-md-8 form-control-label\" [attr.for]=\"field.label\">\n      {{field.label}}\n    </label>\n        <input *ngIf=\"!field.multiline\" [attr.type]=\"field.type\" class=\"form-control\" \n         [id]=\"field.field\" [name]=\"field.field\">\n        <textarea *ngIf=\"field.multiline\" [class.is-invalid]=\"isDirty && !isValid\" [id]=\"field.field\"\n        rows=\"20\" class=\"form-control\" [placeholder]=\"field.placeholder\"></textarea>\n\n      </div> \n    ",
-                    styles: ["\n    .form-control {\n      display: none;\n    }\n    "]
+                    template: "\n      <div [formGroup]=\"form\">\n      <label class=\"col-md-8 form-control-label labeloverflow\" [attr.for]=\"field.label\">\n      {{field.label}}\n    </label>\n        <input *ngIf=\"!field.multiline\" [attr.type]=\"field.type\" class=\"form-control\" \n         [id]=\"field.field\" [name]=\"field.field\">\n        <textarea *ngIf=\"field.multiline\" [class.is-invalid]=\"isDirty && !isValid\" [id]=\"field.field\"\n        rows=\"20\" class=\"form-control\" [placeholder]=\"field.placeholder\"></textarea>\n\n      </div> \n    ",
+                    styles: ["\n    .form-control {\n      display: none;\n    } .labeloverflow {\n      float: left;\n      padding-top: 5px;\n    }\n    "]
                 },] },
     ];
     /** @nocollapse */
@@ -1811,8 +1834,8 @@ var SliderComponent = /** @class */ (function () {
     SliderComponent.decorators = [
         { type: Component, args: [{
                     selector: 'slider',
-                    template: "\n      <div [formGroup]=\"form\" >\n      <label class=\"col-md-0 form-control-label\" [attr.for]=\"field.label\">\n      {{field.label}}\n    </label>\n        <input *ngIf=\"!field.multiline\" type=\"hidden\" class=\"form-control\" [id]=\"field.field\" [name]=\"field.field\">\n        \n        <mat-slider\n   class = \"tp-margin\"\n   [disabled] = \"false\"\n   [invert] = \"false\"      \n   [thumbLabel] = \"false\"\n   [max]=\"field.max\"\n   [min]=\"field.min\"    \n   [vertical] = \"false\">\n</mat-slider>\n\n      </div> \n    ",
-                    styles: ["\n    .form-control {\n      display: none;\n    }\n    "]
+                    template: "\n      <div [formGroup]=\"form\" >\n      <label class=\"col-md-0 form-control-label labeloverflow\" [attr.for]=\"field.label\">\n      {{field.label}}\n    </label>\n        <input *ngIf=\"!field.multiline\" type=\"hidden\" class=\"form-control\" [id]=\"field.field\" [name]=\"field.field\">\n        \n        <mat-slider\n   class = \"tp-margin\"\n   [disabled] = \"false\"\n   [invert] = \"false\"      \n   [thumbLabel] = \"false\"\n   [max]=\"field.max\"\n   [min]=\"field.min\"    \n   [vertical] = \"false\">\n</mat-slider>\n\n      </div> \n    ",
+                    styles: ["\n    .form-control {\n      display: none;\n    }\n    .labeloverflow {\n      float: left;\n    }\n    "]
                 },] },
     ];
     /** @nocollapse */
@@ -2040,14 +2063,14 @@ var MultiSelectComponent = /** @class */ (function () {
             // this.activeModelData.options = this.options;
             /** @type {?} */
             var obj = {
-                label: this.label,
-                type: this.type,
-                placeholder: this.placeholder,
-                options: this.options,
-                validations: this.validations,
-                field: this.field,
+                label: '',
+                type: '',
+                placeholder: '',
+                options: '',
+                validations: '',
+                field: '',
                 _id: this._id,
-                description: this.description
+                description: ''
             };
             obj.label = data.label;
             obj.field = data.field;
@@ -2055,21 +2078,22 @@ var MultiSelectComponent = /** @class */ (function () {
             obj.placeholder = data.placeholder;
             obj.options = data.options;
             obj.description = data.description;
-            if (this.type == 'date') {
-                obj['minDate'] = this.minDate;
-                obj['maxDate'] = this.maxDate;
+            if (data.type == 'date') {
+                obj['minDate'] = data.minDate;
+                obj['maxDate'] = data.maxDate;
             }
-            else if (this.type == 'slider') {
-                obj['min'] = this.min;
-                obj['max'] = this.max;
+            else if (data.type == 'slider') {
+                obj['min'] = data.min;
+                obj['max'] = data.max;
             }
             // console.log("obj",obj);
+            debugger;
             /** @type {?} */
             var index = this.field.child.findIndex((/**
-             * @param {?} item
+             * @param {?} el
              * @return {?}
              */
-            function (item) { return item.field === _this.currentItem.field; }));
+            function (el) { return el.field === _this.currentItem.field; }));
             this.field.child.splice(index, 1, obj);
             // let newObj =  this.field.child.filter(item => {
             //   if (item.field == this.currentItem.field) {
@@ -2111,21 +2135,21 @@ var MultiSelectComponent = /** @class */ (function () {
         //  this.myModal.nativeElement.className = 'modal hide';
     };
     /**
-     * @param {?} item
+     * @param {?} loadEle
      * @param {?} id
      * @return {?}
      */
-    MultiSelectComponent.prototype.loadFormElement = /**
-     * @param {?} item
+    MultiSelectComponent.prototype.loadFormChildElement = /**
+     * @param {?} loadEle
      * @param {?} id
      * @return {?}
      */
-    function (item, id) {
-        console.log("item ---", item, "id", id);
-        item.expand = !item.expand;
+    function (loadEle, id) {
+        console.log("item ---", loadEle, "id", id);
+        loadEle.expand = !loadEle.expand;
         this.activeModelData = "";
-        this.label = item.label;
-        this.currentItem = item;
+        this.label = loadEle.label;
+        this.currentItem = loadEle;
         this.allData = this.dynamicServe.getALl();
         console.log('this.field', this.field);
         // for(let i = 0; i < this.allData['questionList']['questionList'][0].child.length; i++) {
@@ -2133,25 +2157,25 @@ var MultiSelectComponent = /** @class */ (function () {
          * @param {?} t
          * @return {?}
          */
-        function (t) { return t.field !== item.field; }));
+        function (t) { return t.field !== loadEle.field; }));
         // }
         // this.filtereddata = this.field.child;
         console.log('multi select', this.allData);
         console.log('this.filtereddata', this.filtereddata);
-        this.type = item.type;
-        this.placeholder = item.placeholder;
-        this.options = item.options;
-        this._id = item._id;
+        this.type = loadEle.type;
+        this.placeholder = loadEle.placeholder;
+        this.options = loadEle.options;
+        this._id = loadEle._id;
         // this.required = item.validations.required;
-        this.description = item.description;
-        if (item.type == "date") {
-            this.minDate = item.validations.minDate;
-            this.maxDate = item.validations.maxDate;
-            this.autoCollect = item.validations.autoCollect;
+        this.description = loadEle.description;
+        if (loadEle.type == "date") {
+            this.minDate = loadEle.validations.minDate;
+            this.maxDate = loadEle.validations.maxDate;
+            this.autoCollect = loadEle.validations.autoCollect;
         }
-        else if (item.type == "slider") {
-            this.min = item.validations.min;
-            this.max = item.validations.max;
+        else if (loadEle.type == "slider") {
+            this.min = loadEle.validations.min;
+            this.max = loadEle.validations.max;
         }
         // this.required = this.field.validations.required;
         // console.log(item.validations.required, "item.validations.required",
@@ -2194,11 +2218,11 @@ var MultiSelectComponent = /** @class */ (function () {
      */
     function (item, index) {
         console.log('deleteElement', item);
-        item.deleteindex = index;
-        item.action = 'childDelete';
+        this.field.deleteindex = index;
         this.field.isDelete = true;
-        this.field.child.splice(index, 1);
-        this.sendDataToParent.emit(item);
+        // this.field.child.splice(index, 1);
+        console.log('deleteElement', this.field);
+        this.sendDataToParent.emit(this.field);
         // this.childrenDropEvent.emit(item);
         // console.log("field delete", this.field, 'index', index);
         // console.log('after delete', this.allData);
@@ -2215,10 +2239,23 @@ var MultiSelectComponent = /** @class */ (function () {
      */
     function (item, index) {
         // this.field.push(item);
-        item.action = 'copy';
-        console.log("copy field ----------", item, 'index', index);
-        this.field.child.push(item);
-        this.copyOrDeleteEvent.emit(item);
+        console.log("before copy field ----------", this.field.child.length);
+        /** @type {?} */
+        var lengthOfChild = this.field.child.length + 1;
+        /** @type {?} */
+        var newobj = {
+            action: "copy",
+            description: item.description,
+            field: item.field + '' + lengthOfChild,
+            label: item.label,
+            placeholder: item.placeholder,
+            position: item.pointer,
+            type: item.type
+        };
+        console.log("after copy field ----------", newobj, 'index', index);
+        this.field.child.push(newobj);
+        // this.copyOrDeleteEvent.emit(item);
+        // this.sendDataToParent.emit(newobj);
     };
     /**
      * @param {?} event
@@ -2238,8 +2275,8 @@ var MultiSelectComponent = /** @class */ (function () {
                 },] },
         { type: Component, args: [{
                     selector: 'lib-multi-select',
-                    template: "<div [formGroup]=\"form\" dndDropzone (dndDrop)=\"onDropNew($event,field)\" class=\"card-body\">\n  <label class=\"col-md-0 form-control-label\" [attr.for]=\"field.label\">\n    {{field.label}}\n  </label>\n  <textarea rows=\"2\" class=\"form-control\">\n\n  </textarea>\n\n\n  <div *ngIf=\"field.child.length > 0\" cdkDropList (cdkDropListDropped)=\"drop($event)\">\n\n    <div *ngFor=\"let obj of field.child; let i =index; let data\" cdkDrag>\n      <div style=\"float: right;right: -70px; cursor:pointer; padding-top: 10px\" class=\"col-sm-2 edit-icon\">\n        <i class=\"fa fa-trash\" title = \"delete\" (click)=\"deleteElement(obj, i)\"></i>\n        <i class=\"fa fa-copy\" title = \"copy\" (click)=\"copyElement(obj, i)\"></i>\n        <i class=\"fa fa-edit\" title = \"edit\" (click)=\"loadFormElement(obj, i)\"></i>\n      </div>\n      <div class=\"row\" *ngIf=\"obj.expand\" style=\"padding: 20px;\n      border: 1px solid #ccc;margin-top:10px; margin:40px; margin-left: 20%;\n      box-shadow: 1px 1px 4px 1px rgba(0,0,0,0.19); margin-top:20px;\">\n\n        <div class=\"col-sm-6\">\n          <mat-form-field>\n            <input matInput placeholder=\"Label\" [(ngModel)]=\"obj.label\" [ngModelOptions]=\"{standalone: true}\">\n          </mat-form-field>\n        </div>\n\n        <div class=\"col-sm-6\">\n          <mat-form-field>\n            <input matInput placeholder=\"Input Place Holder\" [(ngModel)]=\"obj.placeholder\"\n              [ngModelOptions]=\"{standalone: true}\">\n          </mat-form-field>\n        </div>\n\n        <div class=\"col-sm-6\">\n          <mat-form-field>\n            <input matInput placeholder=\"Hint/Description\" [(ngModel)]=\"obj.description\"\n              [ngModelOptions]=\"{standalone: true}\">\n          </mat-form-field>\n        </div>\n\n        <div class=\"col-sm-6\">\n          <mat-form-field>\n            <mat-label>Input Type</mat-label>\n            <mat-select [(ngModel)]=\"obj.type\" [ngModelOptions]=\"{standalone: true}\">\n              <mat-option value=\"text\">text</mat-option>\n              <mat-option value=\"number\">number</mat-option>\n              <mat-option value=\"radio\">radio</mat-option>\n              <mat-option value=\"date\">date</mat-option>\n            </mat-select>\n          </mat-form-field>\n        </div>\n\n        <div class=\"col-sm-6\" *ngIf=\"obj.type=='slider'\">\n          <mat-form-field>\n            <input type=\"text\" placeholder=\"Min\" matInput [(ngModel)]=\"min\" [ngModelOptions]=\"{standalone: true}\">\n          </mat-form-field>\n        </div>\n\n        <div class=\"col-sm-6\" *ngIf=\"obj.type=='slider'\">\n          <mat-form-field>\n            <input type=\"text\" placeholder=\"Max\" matInput [(ngModel)]=\"max\" [ngModelOptions]=\"{standalone: true}\">\n          </mat-form-field>\n        </div>\n\n        <div class=\"col-sm-6\" *ngIf=\"obj.type=='date'\">\n          <mat-form-field>\n            <input matInput [matDatepicker]=\"picker\" [(ngModel)]=\"minDate\" [ngModelOptions]=\"{standalone: true}\"\n              placeholder=\"Choose a min date\">\n            <mat-datepicker-toggle matSuffix [for]=\"picker\"></mat-datepicker-toggle>\n            <mat-datepicker #picker></mat-datepicker>\n          </mat-form-field>\n\n          <mat-form-field>\n            <input matInput [matDatepicker]=\"pickerMaxDate\" [(ngModel)]=\"maxDate\" [ngModelOptions]=\"{standalone: true}\"\n              placeholder=\"Choose a max date\">\n            <mat-datepicker-toggle matSuffix [for]=\"pickerMaxDate\"></mat-datepicker-toggle>\n            <mat-datepicker #pickerMaxDate></mat-datepicker>\n          </mat-form-field>\n\n\n        </div>\n        <div class=\"col-sm-12 form-group \" *ngIf=\"type=='radio' || type=='checkbox' || type=='dropdown'\">\n          <label for=\"label\" class=\"col-sm-12\">Options</label>\n\n          <div class=\"col-sm-7 form-group\" *ngIf=\"type=='slider'\">\n            <mat-form-field>\n              <input type=\"text\" placeholder=\"Max\" matInput [(ngModel)]=\"max\" [ngModelOptions]=\"{standalone: true}\">\n            </mat-form-field>\n          </div>\n\n        </div>\n\n        <div *ngIf=\"field.child && field.child.length > 0\">\n          <div class=\"col-sm-12\">\n            <label id=\"example-radio-group-label\">Do you want to related the question based on below options ?</label>\n            <mat-radio-group aria-labelledby=\"example-radio-group-label\" class=\"example-radio-group\"\n              [(ngModel)]=\"selectedOption\" [ngModelOptions]=\"{standalone: true}\">\n              <mat-radio-button style=\"padding: 10px\" class=\"example-radio-button\" *ngFor=\"let ele of options\"\n                [value]=\"ele\">\n                {{ ele.label }}\n              </mat-radio-button>\n            </mat-radio-group>\n          </div>\n\n\n          <div class=\"col-sm-6\">\n            <mat-form-field>\n              <mat-label>Select Question to add </mat-label>\n              <select matNativeControl [(ngModel)]=\"currentSelectedQtn\" [ngModelOptions]=\"{standalone: true}\">\n                <option *ngFor=\"let values of filtereddata\" [ngValue]=\"values\"> {{ values.label }} </option>\n              </select>\n            </mat-form-field>\n            <mat-form-field>\n              <mat-label>Select Condition </mat-label>\n              <select matNativeControl [(ngModel)]=\"condition\" [ngModelOptions]=\"{standalone: true}\">\n                <option *ngFor=\"let values of conditionArray\" [ngValue]=\"values.condition\"> {{ values.label }} </option>\n              </select>\n            </mat-form-field>\n          </div>\n\n          <div class=\"col-sm-6\" *ngIf=\"type=='text' || type=='date' || type=='number'\">\n            <mat-form-field>\n              <input type=\"tex\" matInput name=\"conditionMatchValue\" placeholder=\"\" [(ngModel)]=\"conditionMatchValue\"\n                [ngModelOptions]=\"{standalone: true}\">\n            </mat-form-field>\n          </div>\n\n          <div class=\"col-sm-2\">\n            <button mat-flat-button color=\"primary\" style=\"margin-top: 10px;\" (click)=\"parentMapping()\">\n              Add\n            </button>\n          </div>\n        </div>\n\n        <ul class=\"col-sm-12\" *ngFor=\"let relate of listOfRelation;let i = index\">\n          <li class=\"col-sm-12\">\n            <span>{{relate.label}} </span><span style=\"\n      margin-left: 30px;\" (click)=\"deleteCondition(relate,i)\">\n              <i class=\"fa fa-trash\"></i></span>\n          </li>\n        </ul>\n\n\n        <div class=\"col-sm-12\">\n          <label id=\"example-radio-group-label\">is Reqired ?</label>\n          <mat-radio-group aria-labelledby=\"example-radio-group-label\" class=\"example-radio-group\"\n            [ngModelOptions]=\"{standalone: true}\" [(ngModel)]=\"required\">\n            <mat-radio-button class=\"example-radio-button\" [value]=true>\n              Yes\n            </mat-radio-button>\n            <mat-radio-button class=\"example-radio-button\" [value]=false>\n              No\n            </mat-radio-button>\n          </mat-radio-group>\n        </div>\n\n        <div class=\"col-sm-7\" *ngIf=\"type=='date'\">\n          <label id=\"example-radio-group-label\">is autoCollect</label>\n          <mat-radio-group aria-labelledby=\"example-radio-group-label\" class=\"example-radio-group\"\n            [(ngModel)]=\"autoCollect\" [ngModelOptions]=\"{standalone: true}\">\n            <mat-radio-button class=\"example-radio-button\" [value]=true>\n              True\n            </mat-radio-button>\n            <mat-radio-button class=\"example-radio-button\" [value]=false>\n              False\n            </mat-radio-button>\n          </mat-radio-group>\n        </div>\n\n\n        <div class=\"col-sm-12\">\n\n          <button mat-flat-button color=\"primary\" style=\"margin-right:10px;\" (click)=\"closeModelChild('save', obj)\">\n            Save\n          </button>\n\n        </div>\n      </div>\n\n      <div class=\"col-md-0\" [ngSwitch]=\"obj.type\" style=\"width: 80%;\n          margin-left: 20%;\n          padding-left: 10px;\n          margin-top: 10px;\n          box-shadow: 1px 1px 2px 1px rgba(0,0,0,0.19);\n          padding-bottom: 10px;\">\n\n        <textbox style=\"padding-left:30px\" *ngSwitchCase=\"'number'\" [field]=\"obj\" [form]=\"form\"></textbox>\n\n        <textbox style=\"padding-left:30px\" *ngSwitchCase=\"'text'\" [field]=\"obj\" [form]=\"form\"></textbox>\n\n        <date style=\"padding-left:30px\" *ngSwitchCase=\"'date'\" [field]=\"obj\" [form]=\"form\"></date>\n\n        <slider style=\"padding-left:30px\" *ngSwitchCase=\"'slider'\" [field]=\"obj\" [form]=\"form\"></slider>\n\n        <dropdown style=\"padding-left:30px\" *ngSwitchCase=\"'dropdown'\" [field]=\"obj\" [form]=\"form\"></dropdown>\n\n        <checkbox style=\"padding-left:30px\" *ngSwitchCase=\"'checkbox'\" [field]=\"obj\" [form]=\"form\"></checkbox>\n\n        <radio style=\"padding-left:30px\" *ngSwitchCase=\"'radio'\" [field]=\"obj\" [form]=\"form\"></radio>\n\n        <file style=\"padding-left:30px\" *ngSwitchCase=\"'file'\" [field]=\"obj\" [form]=\"form\"></file>\n\n\n      </div>\n      \n    </div>\n\n  </div>\n</div>\n",
-                    styles: ["\n    .form-control {\n      display: none;\n    }\n    .mat-form-field {\n      display: block;\n    }\n    .fa {\n      padding: 3px;\n    }\n    "]
+                    template: "<div [formGroup]=\"form\" dndDropzone (dndDrop)=\"onDropNew($event,field)\" class=\"card-body\">\n  <label class=\"col-md-0 form-control-label labeloverflow\" [attr.for]=\"field.label\">\n    {{field.label}}\n  </label>\n  <textarea rows=\"2\" class=\"form-control\">\n\n  </textarea>\n\n\n  <div *ngIf=\"field.child.length > 0\" cdkDropList (cdkDropListDropped)=\"drop($event)\">\n\n    <div *ngFor=\"let obj of field.child; let i =index; let data\" cdkDrag>\n      <div class=\"col-sm-2 edit-icon actions\">\n        <i class=\"fa fa-trash\" title = \"delete\" (click)=\"deleteElement(obj, i)\"></i>\n        <i class=\"fa fa-copy\" title = \"copy\" (click)=\"copyElement(obj, i)\"></i>\n        <i class=\"fa fa-edit\" title = \"edit\" (click)=\"loadFormChildElement(obj, i)\"></i>\n      </div>\n      <div class=\"row\" *ngIf=\"obj.expand\" style=\"padding: 20px;\n      border: 1px solid #ccc;margin-top:10px; margin:40px; margin-left: 20%;\n      box-shadow: 1px 1px 4px 1px rgba(0,0,0,0.19); margin-top:20px;\">\n\n        <div class=\"col-sm-6\">\n          <mat-form-field>\n            <input matInput placeholder=\"Label\" [(ngModel)]=\"obj.label\" [ngModelOptions]=\"{standalone: true}\">\n          </mat-form-field>\n        </div>\n\n        <div class=\"col-sm-6\">\n          <mat-form-field>\n            <input matInput placeholder=\"Input Place Holder\" [(ngModel)]=\"obj.placeholder\"\n              [ngModelOptions]=\"{standalone: true}\">\n          </mat-form-field>\n        </div>\n\n        <div class=\"col-sm-6\">\n          <mat-form-field>\n            <input matInput placeholder=\"Hint/Description\" [(ngModel)]=\"obj.description\"\n              [ngModelOptions]=\"{standalone: true}\">\n          </mat-form-field>\n        </div>\n\n        <div class=\"col-sm-6\">\n          <mat-form-field>\n            <mat-label>Input Type</mat-label>\n            <mat-select [(ngModel)]=\"obj.type\" [ngModelOptions]=\"{standalone: true}\">\n              <mat-option value=\"text\">text</mat-option>\n              <mat-option value=\"number\">number</mat-option>\n              <mat-option value=\"radio\">radio</mat-option>\n              <mat-option value=\"date\">date</mat-option>\n            </mat-select>\n          </mat-form-field>\n        </div>\n\n        <div class=\"col-sm-6\" *ngIf=\"obj.type=='slider'\">\n          <mat-form-field>\n            <input type=\"text\" placeholder=\"Min\" matInput [(ngModel)]=\"min\" [ngModelOptions]=\"{standalone: true}\">\n          </mat-form-field>\n        </div>\n\n        <div class=\"col-sm-6\" *ngIf=\"obj.type=='slider'\">\n          <mat-form-field>\n            <input type=\"text\" placeholder=\"Max\" matInput [(ngModel)]=\"max\" [ngModelOptions]=\"{standalone: true}\">\n          </mat-form-field>\n        </div>\n\n        <div class=\"col-sm-6\" *ngIf=\"obj.type=='date'\">\n          <mat-form-field>\n            <input matInput [matDatepicker]=\"picker\" [(ngModel)]=\"minDate\" [ngModelOptions]=\"{standalone: true}\"\n              placeholder=\"Choose a min date\">\n            <mat-datepicker-toggle matSuffix [for]=\"picker\"></mat-datepicker-toggle>\n            <mat-datepicker #picker></mat-datepicker>\n          </mat-form-field>\n\n          <mat-form-field>\n            <input matInput [matDatepicker]=\"pickerMaxDate\" [(ngModel)]=\"maxDate\" [ngModelOptions]=\"{standalone: true}\"\n              placeholder=\"Choose a max date\">\n            <mat-datepicker-toggle matSuffix [for]=\"pickerMaxDate\"></mat-datepicker-toggle>\n            <mat-datepicker #pickerMaxDate></mat-datepicker>\n          </mat-form-field>\n\n\n        </div>\n        <div class=\"col-sm-12 form-group \" *ngIf=\"type=='radio' || type=='checkbox' || type=='dropdown'\">\n          <label for=\"label\" class=\"col-sm-12\">Options</label>\n\n          <div class=\"col-sm-7 form-group\" *ngIf=\"type=='slider'\">\n            <mat-form-field>\n              <input type=\"text\" placeholder=\"Max\" matInput [(ngModel)]=\"max\" [ngModelOptions]=\"{standalone: true}\">\n            </mat-form-field>\n          </div>\n\n        </div>\n\n        <div *ngIf=\"field.child && field.child.length > 0\">\n          <div class=\"col-sm-12\">\n            <label id=\"example-radio-group-label\">Do you want to related the question based on below options ?</label>\n            <mat-radio-group aria-labelledby=\"example-radio-group-label\" class=\"example-radio-group\"\n              [(ngModel)]=\"selectedOption\" [ngModelOptions]=\"{standalone: true}\">\n              <mat-radio-button style=\"padding: 10px\" class=\"example-radio-button\" *ngFor=\"let ele of options\"\n                [value]=\"ele\">\n                {{ ele.label }}\n              </mat-radio-button>\n            </mat-radio-group>\n          </div>\n\n\n          <div class=\"col-sm-6\">\n            <mat-form-field>\n              <mat-label>Select Question to add </mat-label>\n              <select matNativeControl [(ngModel)]=\"currentSelectedQtn\" [ngModelOptions]=\"{standalone: true}\">\n                <option *ngFor=\"let values of filtereddata\" [ngValue]=\"values\"> {{ values.label }} </option>\n              </select>\n            </mat-form-field>\n            <mat-form-field>\n              <mat-label>Select Condition </mat-label>\n              <select matNativeControl [(ngModel)]=\"condition\" [ngModelOptions]=\"{standalone: true}\">\n                <option *ngFor=\"let values of conditionArray\" [ngValue]=\"values.condition\"> {{ values.label }} </option>\n              </select>\n            </mat-form-field>\n          </div>\n\n          <div class=\"col-sm-6\" *ngIf=\"type=='text' || type=='date' || type=='number'\">\n            <mat-form-field>\n              <input type=\"tex\" matInput name=\"conditionMatchValue\" placeholder=\"\" [(ngModel)]=\"conditionMatchValue\"\n                [ngModelOptions]=\"{standalone: true}\">\n            </mat-form-field>\n          </div>\n\n          <div class=\"col-sm-2\">\n            <button mat-flat-button color=\"primary\" style=\"margin-top: 10px;\" (click)=\"parentMapping()\">\n              Add\n            </button>\n          </div>\n        </div>\n\n        <ul class=\"col-sm-12\" *ngFor=\"let relate of listOfRelation;let i = index\">\n          <li class=\"col-sm-12\">\n            <span>{{relate.label}} </span><span style=\"\n      margin-left: 30px;\" (click)=\"deleteCondition(relate,i)\">\n              <i class=\"fa fa-trash\"></i></span>\n          </li>\n        </ul>\n\n\n        <div class=\"col-sm-12\">\n          <label id=\"example-radio-group-label\">is Reqired ?</label>\n          <mat-radio-group aria-labelledby=\"example-radio-group-label\" class=\"example-radio-group\"\n            [ngModelOptions]=\"{standalone: true}\" [(ngModel)]=\"required\">\n            <mat-radio-button class=\"example-radio-button\" [value]=true>\n              Yes\n            </mat-radio-button>\n            <mat-radio-button class=\"example-radio-button\" [value]=false>\n              No\n            </mat-radio-button>\n          </mat-radio-group>\n        </div>\n\n        <div class=\"col-sm-7\" *ngIf=\"type=='date'\">\n          <label id=\"example-radio-group-label\">is autoCollect</label>\n          <mat-radio-group aria-labelledby=\"example-radio-group-label\" class=\"example-radio-group\"\n            [(ngModel)]=\"autoCollect\" [ngModelOptions]=\"{standalone: true}\">\n            <mat-radio-button class=\"example-radio-button\" [value]=true>\n              True\n            </mat-radio-button>\n            <mat-radio-button class=\"example-radio-button\" [value]=false>\n              False\n            </mat-radio-button>\n          </mat-radio-group>\n        </div>\n\n\n        <div class=\"col-sm-12\">\n\n          <button mat-flat-button color=\"primary\" style=\"margin-right:10px;\" (click)=\"closeModelChild('save', obj)\">\n            Save\n          </button>\n\n        </div>\n      </div>\n\n      <div class=\"col-md-0\" [ngSwitch]=\"obj.type\" style=\"width: 80%;\n          margin-left: 20%;\n          padding-left: 10px;\n          margin-top: 10px;\n          box-shadow: 1px 1px 2px 1px rgba(0,0,0,0.19);\n          padding-bottom: 30px;\">\n\n        <textbox style=\"padding-left:30px\" *ngSwitchCase=\"'number'\" [field]=\"obj\" [form]=\"form\"></textbox>\n\n        <textbox style=\"padding-left:30px\" *ngSwitchCase=\"'text'\" [field]=\"obj\" [form]=\"form\"></textbox>\n\n        <date style=\"padding-left:30px\" *ngSwitchCase=\"'date'\" [field]=\"obj\" [form]=\"form\"></date>\n\n        <slider style=\"padding-left:30px\" *ngSwitchCase=\"'slider'\" [field]=\"obj\" [form]=\"form\"></slider>\n\n        <dropdown style=\"padding-left:30px\" *ngSwitchCase=\"'dropdown'\" [field]=\"obj\" [form]=\"form\"></dropdown>\n\n        <checkbox style=\"padding-left:30px\" *ngSwitchCase=\"'checkbox'\" [field]=\"obj\" [form]=\"form\"></checkbox>\n\n        <radio style=\"padding-left:30px\" *ngSwitchCase=\"'radio'\" [field]=\"obj\" [form]=\"form\"></radio>\n\n        <file style=\"padding-left:30px\" *ngSwitchCase=\"'file'\" [field]=\"obj\" [form]=\"form\"></file>\n\n\n      </div>\n      \n    </div>\n\n  </div>\n</div>\n",
+                    styles: ["\n    .form-control {\n      display: none;\n    }\n    .mat-form-field {\n      display: block;\n    }\n    .fa {\n      padding: 3px;\n    }\n    .actions {\n      float: right;\n      cursor: pointer;\n     padding-top: 10px;\n     right: -70px;\n    }\n    .labeloverflow {\n      float: left;\n    }\n    @media only screen and (max-width: 600px) {\n      .actions {\n       position: inherit\n      }\n    }\n    "]
                 },] },
     ];
     /** @nocollapse */

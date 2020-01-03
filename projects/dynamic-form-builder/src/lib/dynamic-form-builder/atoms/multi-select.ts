@@ -13,7 +13,7 @@ import { CdkDragDrop, moveItemInArray } from '@angular/cdk/drag-drop';
 @Component({
   selector: 'lib-multi-select',
   template: `<div [formGroup]="form" dndDropzone (dndDrop)="onDropNew($event,field)" class="card-body">
-  <label class="col-md-0 form-control-label" [attr.for]="field.label">
+  <label class="col-md-0 form-control-label labeloverflow" [attr.for]="field.label">
     {{field.label}}
   </label>
   <textarea rows="2" class="form-control">
@@ -24,10 +24,10 @@ import { CdkDragDrop, moveItemInArray } from '@angular/cdk/drag-drop';
   <div *ngIf="field.child.length > 0" cdkDropList (cdkDropListDropped)="drop($event)">
 
     <div *ngFor="let obj of field.child; let i =index; let data" cdkDrag>
-      <div style="float: right;right: -70px; cursor:pointer; padding-top: 10px" class="col-sm-2 edit-icon">
+      <div class="col-sm-2 edit-icon actions">
         <i class="fa fa-trash" title = "delete" (click)="deleteElement(obj, i)"></i>
         <i class="fa fa-copy" title = "copy" (click)="copyElement(obj, i)"></i>
-        <i class="fa fa-edit" title = "edit" (click)="loadFormElement(obj, i)"></i>
+        <i class="fa fa-edit" title = "edit" (click)="loadFormChildElement(obj, i)"></i>
       </div>
       <div class="row" *ngIf="obj.expand" style="padding: 20px;
       border: 1px solid #ccc;margin-top:10px; margin:40px; margin-left: 20%;
@@ -197,7 +197,7 @@ import { CdkDragDrop, moveItemInArray } from '@angular/cdk/drag-drop';
           padding-left: 10px;
           margin-top: 10px;
           box-shadow: 1px 1px 2px 1px rgba(0,0,0,0.19);
-          padding-bottom: 10px;">
+          padding-bottom: 30px;">
 
         <textbox style="padding-left:30px" *ngSwitchCase="'number'" [field]="obj" [form]="form"></textbox>
 
@@ -233,6 +233,20 @@ import { CdkDragDrop, moveItemInArray } from '@angular/cdk/drag-drop';
     .fa {
       padding: 3px;
     }
+    .actions {
+      float: right;
+      cursor: pointer;
+     padding-top: 10px;
+     right: -70px;
+    }
+    .labeloverflow {
+      float: left;
+    }
+    @media only screen and (max-width: 600px) {
+      .actions {
+       position: inherit
+      }
+    }
     `]
 })
 export class MultiSelectComponent {
@@ -246,6 +260,8 @@ export class MultiSelectComponent {
   @Output() childrenDropEvent = new EventEmitter<string>();
   @Output() copyOrDeleteEvent = new EventEmitter<string>();
   @Output() onFieldUpdate = new EventEmitter();
+
+  // obj:Object= {};
 
   activeModelData: any;
   validations: any;
@@ -419,15 +435,17 @@ export class MultiSelectComponent {
       // this.activeModelData.placeholder = this.placeholder;
       // this.activeModelData.options = this.options;
 
+    
+
       let obj = {
-        label: this.label,
-        type: this.type,
-        placeholder: this.placeholder,
-        options: this.options,
-        validations: this.validations,
-        field: this.field,
+        label: '',
+        type: '',
+        placeholder: '',
+        options: '',
+        validations: '',
+        field: '',
         _id: this._id,
-        description: this.description
+        description: ''
       }
 
       obj.label = data.label;
@@ -437,18 +455,19 @@ export class MultiSelectComponent {
       obj.options = data.options;
       obj.description = data.description;
 
-      if (this.type == 'date') {
-        obj['minDate'] = this.minDate;
-        obj['maxDate'] = this.maxDate
-      } else if (this.type == 'slider') {
-        obj['min'] = this.min;
-        obj['max'] = this.max;
+      if (data.type == 'date') {
+        obj['minDate'] = data.minDate;
+        obj['maxDate'] = data.maxDate
+      } else if (data.type == 'slider') {
+        obj['min'] = data.min;
+        obj['max'] = data.max;
       }
 
       // console.log("obj",obj);
 
+      debugger;
 
-      var index = this.field.child.findIndex(item => item.field === this.currentItem.field);
+      var index = this.field.child.findIndex(el => el.field === this.currentItem.field);
       this.field.child.splice(index, 1, obj)
 
       // let newObj =  this.field.child.filter(item => {
@@ -509,36 +528,36 @@ export class MultiSelectComponent {
 
   currentItem: any;
 
-  loadFormElement(item, id) {
-    console.log("item ---", item, "id", id);
-    item.expand = ! item.expand;
+  loadFormChildElement(loadEle, id) {
+    console.log("item ---", loadEle, "id", id);
+    loadEle.expand = !loadEle.expand;
     this.activeModelData = "";
-    this.label = item.label;
-    this.currentItem = item;
+    this.label = loadEle.label;
+    this.currentItem = loadEle;
     this.allData = this.dynamicServe.getALl();
     console.log('this.field', this.field);
     // for(let i = 0; i < this.allData['questionList']['questionList'][0].child.length; i++) {
-      this.filtereddata = this.field.child.filter(t => t.field !== item.field);
+    this.filtereddata = this.field.child.filter(t => t.field !== loadEle.field);
     // }
     // this.filtereddata = this.field.child;
 
 
     console.log('multi select', this.allData);
     console.log('this.filtereddata', this.filtereddata)
-    this.type = item.type;
-    this.placeholder = item.placeholder;
-    this.options = item.options;
-    this._id = item._id;
+    this.type = loadEle.type;
+    this.placeholder = loadEle.placeholder;
+    this.options = loadEle.options;
+    this._id = loadEle._id;
     // this.required = item.validations.required;
-    this.description = item.description;
-    if (item.type == "date") {
-      this.minDate = item.validations.minDate;
-      this.maxDate = item.validations.maxDate
-      this.autoCollect = item.validations.autoCollect;
+    this.description = loadEle.description;
+    if (loadEle.type == "date") {
+      this.minDate = loadEle.validations.minDate;
+      this.maxDate = loadEle.validations.maxDate
+      this.autoCollect = loadEle.validations.autoCollect;
     }
-    else if (item.type == "slider") {
-      this.min = item.validations.min;
-      this.max = item.validations.max;
+    else if (loadEle.type == "slider") {
+      this.min = loadEle.validations.min;
+      this.max = loadEle.validations.max;
     }
 
     // this.required = this.field.validations.required;
@@ -566,12 +585,13 @@ export class MultiSelectComponent {
 
   deleteElement(item, index) {
     console.log('deleteElement', item);
-    item.deleteindex  = index;
-    
-    item.action = 'childDelete';
+    this.field.deleteindex = index;
+
     this.field.isDelete = true;
-    this.field.child.splice(index, 1);
-    this.sendDataToParent.emit(item);
+    // this.field.child.splice(index, 1);
+  console.log('deleteElement', this.field);
+  
+    this.sendDataToParent.emit( this.field);
     // this.childrenDropEvent.emit(item);
     // console.log("field delete", this.field, 'index', index);
     // console.log('after delete', this.allData);
@@ -580,10 +600,23 @@ export class MultiSelectComponent {
 
   copyElement(item, index) {
     // this.field.push(item);
-    item.action = 'copy';
-    console.log("copy field ----------", item, 'index', index);
-    this.field.child.push(item);
-    this.copyOrDeleteEvent.emit(item);
+    console.log("before copy field ----------", this.field.child.length);
+
+    let lengthOfChild = this.field.child.length + 1;
+    let newobj: any = {
+    action: "copy",
+    description: item.description,
+    field: item.field + '' +lengthOfChild ,
+    label: item.label,
+    placeholder: item.placeholder,
+    position: item.pointer,
+    type: item.type
+    }
+   
+    console.log("after copy field ----------", newobj, 'index', index);
+    this.field.child.push(newobj);
+    // this.copyOrDeleteEvent.emit(item);
+    // this.sendDataToParent.emit(newobj);
   }
 
   drop(event: CdkDragDrop<string[]>) {

@@ -21,6 +21,7 @@ class DynamicFormBuilderService {
         // private messageSource = new BehaviorSubject('default message');
         // currentMessage = this.messageSource.asObservable();
         this.list = [];
+        this.pagelist = [];
         this.all = [];
         this.criteriaList = [];
     }
@@ -45,7 +46,14 @@ class DynamicFormBuilderService {
      */
     setPageNumber(data) {
         this.pagelist = data;
+        console.log("data=====page", data);
         this.communicateSubject.next();
+    }
+    /**
+     * @return {?}
+     */
+    getPages() {
+        return this.pagelist;
     }
     /**
      * @return {?}
@@ -412,7 +420,7 @@ class DynamicFormBuilderComponent {
                 type: 'slider',
                 "position": len,
                 name: len + ". question",
-                label: len + ". question",
+                label: ". question",
                 description: "",
                 required: true,
                 "validations": {
@@ -442,11 +450,13 @@ class DynamicFormBuilderComponent {
         let len = this.fields.length + 1;
         /** @type {?} */
         var obj = {};
+        console.log(action, "calling from child copy", ele);
+        debugger;
         if (action == "copy") {
             /** @type {?} */
             let copyObj = {
                 "position": len,
-                "field": len + "question",
+                "field": ele.field ? ele.field : len + "question",
                 "type": ele.type,
                 "label": ele.label,
                 "placeholder": ele.placeholder,
@@ -503,7 +513,7 @@ class DynamicFormBuilderComponent {
         console.log("completeData", completeData);
         this.sendToService(completeData);
         // this.questionTrigger.emit(trnasformData);
-        // this.questionTrigger.emit(trnasformData);
+        this.questionTrigger.emit(trnasformData);
         // console.log("fields controls", this.form);
     }
     /**
@@ -598,6 +608,10 @@ class DynamicFormBuilderComponent {
             this.onDrop($event.data, "copy");
         }
         else if ($event.action == "delete") {
+            // this.fields = this.fields.filter( each => {
+            //   return each.field != $event.data.field
+            // })
+            // console.log("$event",$event.data.field); 
             trnasformData = {
                 action: 'delete',
                 data: $event
@@ -625,6 +639,10 @@ class DynamicFormBuilderComponent {
                     let obj = this.getToolObj($event.data.responseType, item.child.length + 1);
                     // }
                     item.child.push(obj);
+                    trnasformData = {
+                        action: 'childDroped',
+                        data: $event
+                    };
                     return item;
                 }
                 else {
@@ -679,13 +697,17 @@ DynamicFormBuilderComponent.decorators = [
   }
 
    .toolbar {
-    border: 1px solid midnightblue;
     list-style: none;
     padding: 10px;
     margin-bottom: 10px;
     color: midnightblue;
     width: 100%;
     text-align: left;
+    display: block;
+    margin: 1%;
+    font-size: 16px;
+    border: 1px solid midnightblue;
+    padding: 6px;
     cursor: pointer;
     text-transform: capitalize;
    }
@@ -706,7 +728,7 @@ DynamicFormBuilderComponent.decorators = [
       opacity: 0.75;
       min-height: 390px;
     }
-    
+
     .start-create {
       width: 50%;
       margin:auto;
@@ -717,7 +739,8 @@ DynamicFormBuilderComponent.decorators = [
     }
     .toolbar i.material-icons {
       vertical-align: middle;
-      padding: 6px;
+      padding: 0 px;
+      float: right;
     }
     .element i.material-icons {
       vertical-align: middle;
@@ -731,6 +754,25 @@ DynamicFormBuilderComponent.decorators = [
       width:100%
       margin: auto;
       // box-shadow: 1px 1px 4px 1px rgba(0,0,0,0.19);
+    }
+    .qtype {
+      float: left;
+      margin-left: 5pxpx;
+    }
+    .space {
+      padding-top:20px;
+    }
+
+    @media only screen and (max-width:600px) {
+      .qtype {
+        float: left;
+        width: 50%
+        margin-left: 0px;
+      }
+      .start-create {
+        width: 100%;
+        padding: 0px;
+      }
     }
     
   </style>
@@ -769,12 +811,12 @@ DynamicFormBuilderComponent.decorators = [
           </div>
         </div>
       </div>
-      <div class="col-sm-12" style="padding-top:25px" *ngIf="fields.length > 0  || !showQuestionBlock">
+      <div class="col-sm-12 space" *ngIf="fields.length > 0  || !showQuestionBlock">
           
           <div  class="col-md-12">
             <!-- <dynamic-form-builder [fields]="getFields()"></dynamic-form-builder> -->
       
-            <span *ngFor="let item of jsonData" >
+            <span  class ="qtype" *ngFor="let item of jsonData" >
               <span [dndDraggable]="item" (click)="onDrop(item.responseType)"  class="toolbar"  >
             {{ item.responseType }}   <i class="material-icons">{{ item.icon }}</i>
              </span>
@@ -1482,8 +1524,10 @@ class FieldBuilderComponent {
      * @return {?}
      */
     eventFromChild($event) {
-        console.log('sri==========', $event);
-        $event.action = 'childDelete';
+        if ($event.action == 'copy') ;
+        else {
+            $event.action = 'childDelete';
+        }
         this.copyOrDeleteEvent.emit($event);
     }
 }
@@ -1506,8 +1550,9 @@ FieldBuilderComponent.decorators = [
     position: relative;
     flex: auto;
     min-width: 0;
-    width: 372px;
+    width: 100%;
   }
+
   .input-group {
     position: relative;
      border-collapse: separate;
@@ -1533,8 +1578,23 @@ span.cursor-pntr {
   visibility: hidden;
 
 }
+.addicon {
+  margin-left: 90%
+}
+.spacearoundbtn{
+  margin-top: 10px;
+  margin-bottom: 15px;
+}
 .label.col-md-8.form-control-label {
   text-decoration: underline;
+}
+@media only screen and (max-width: 600px) {
+  .col-sm-12 {
+    padding: 0px
+  }
+  .col-sm-6 {
+    padding: 0px
+  }
 }
 
   </style>
@@ -1581,7 +1641,7 @@ span.cursor-pntr {
       </mat-form-field>
     </div>
     <div class="col-sm-1">
-      <span style="float:right;padding-top:15px" class="cursor-pntr"><i title="Add Page" class="fa fa-plus"
+      <span class="cursor-pntr addicon"><i title="Add Page" class="fa fa-plus"
           (click)="add(pages)"></i></span>
     </div>
   
@@ -1652,7 +1712,7 @@ span.cursor-pntr {
               name="newOption">
           </mat-form-field>
         </div>
-        <button mat-flat-button color="primary" style="margin-top: 10px;" (click)="AddNewOptions()">
+        <button mat-flat-button color="primary" class = "spacearoundbtn" (click)="AddNewOptions()">
           Add
         </button>
       </div>
@@ -1690,12 +1750,12 @@ span.cursor-pntr {
   
       <div class="col-sm-6" *ngIf="type=='text' || type=='date' || type=='number'">
         <mat-form-field>
-          <input type="tex" matInput name="conditionMatchValue" placeholder="" [(ngModel)]="conditionMatchValue">
+          <input type="text" matInput name="conditionMatchValue" placeholder="Value" [(ngModel)]="conditionMatchValue">
         </mat-form-field>
       </div>
   
       <div class="col-sm-2">
-        <button mat-flat-button color="primary" style="margin-top: 10px;" (click)="parentMapping()">
+        <button mat-flat-button color="primary" class = "spacearoundbtn" (click)="parentMapping()">
           Add
         </button>
       </div>
@@ -1820,7 +1880,7 @@ TextBoxComponent.decorators = [
                 selector: 'textbox',
                 template: `
       <div [formGroup]="form">
-      <label class="col-md-0 form-control-label" [attr.for]="field.label">
+      <label class="col-md-0 form-control-label labeloverflow" [attr.for]="field.label">
       {{field.label}}
       </label>
     
@@ -1833,6 +1893,9 @@ TextBoxComponent.decorators = [
                 styles: [`
     .form-control {
       display: none;
+    }
+    .labeloverflow {
+      float: left;
     }
     `]
             },] },
@@ -1858,7 +1921,7 @@ DropDownComponent.decorators = [
                 selector: 'dropdown',
                 template: `
       <div [formGroup]="form">
-      <label class="col-sm-0 form-control-label" [attr.for]="field.label">
+      <label class="col-sm-0 form-control-label labeloverflow" [attr.for]="field.label">
       {{field.label}}
     </label>
         <select class="form-control" [id]="field.field">
@@ -1869,6 +1932,10 @@ DropDownComponent.decorators = [
                 styles: [`
     .form-control {
       display: none;
+    }
+    .labeloverflow {
+      float: left;
+      padding-top: 5px;
     }
     `]
             },] },
@@ -2008,12 +2075,12 @@ CheckBoxComponent.decorators = [
                 selector: 'checkbox',
                 template: `
       <div [formGroup]="form">
-      <label class="col-sm -12 form-control-label" [attr.for]="field.label">
+      <label class="col-sm -12 form-control-label labeloverflow" [attr.for]="field.label">
       {{field.label}}
     </label>
         <div [formGroupName]="field.field" >
           <div *ngFor="let opt of field.options" class="form-check form-check">
-          <label class="form-check-label">
+          <label class="form-check-label checkflow">
              <input class="form-check-input" type="checkbox" id="inlineCheckbox1" value="option1" />
              {{opt.label}}</label>
           </div>
@@ -2024,6 +2091,14 @@ CheckBoxComponent.decorators = [
                 styles: [`
     .form-control {
       display: none;
+    }
+    .labeloverflow {
+      float: left;
+      padding-top: 5px;
+    }
+    .checkflow {
+      float: left;
+      width: 100%
     }
     `]
             },] },
@@ -2047,10 +2122,10 @@ RadioComponent.decorators = [
                 selector: 'radio',
                 template: `
       <div [formGroup]="form">
-      <label class="col-sm-12 form-control-label" [attr.for]="field.label">
+      <label class="col-sm-12 form-control-label labeloverflow" [attr.for]="field.label">
       {{field.label}}
     </label>
-        <div class="form-check" *ngFor="let opt of field.options">
+        <div class="form-check rnxtline" *ngFor="let opt of field.options">
           <input class="form-check-input" type="radio" [id]="field.field" [value]="opt.key">
           <label class="form-check-label space">
             {{opt.label}}
@@ -2065,6 +2140,14 @@ RadioComponent.decorators = [
     .space {
       padding-left: 5px
     }
+    .labeloverflow {
+      float: left;
+      padding-top: 5px;
+    }
+     .rnxtline {
+       float: left;
+       width: 100%
+     }
     `]
             },] },
 ];
@@ -2098,7 +2181,7 @@ DateComponent.decorators = [
                 selector: 'date',
                 template: `
       <div [formGroup]="form">
-      <label class="col-md-8 form-control-label" [attr.for]="field.label">
+      <label class="col-md-8 form-control-label labeloverflow" [attr.for]="field.label">
       {{field.label}}
     </label>
         <input *ngIf="!field.multiline" [attr.type]="field.type" class="form-control" 
@@ -2111,6 +2194,9 @@ DateComponent.decorators = [
                 styles: [`
     .form-control {
       display: none;
+    } .labeloverflow {
+      float: left;
+      padding-top: 5px;
     }
     `]
             },] },
@@ -2147,7 +2233,7 @@ SliderComponent.decorators = [
                 selector: 'slider',
                 template: `
       <div [formGroup]="form" >
-      <label class="col-md-0 form-control-label" [attr.for]="field.label">
+      <label class="col-md-0 form-control-label labeloverflow" [attr.for]="field.label">
       {{field.label}}
     </label>
         <input *ngIf="!field.multiline" type="hidden" class="form-control" [id]="field.field" [name]="field.field">
@@ -2167,6 +2253,9 @@ SliderComponent.decorators = [
                 styles: [`
     .form-control {
       display: none;
+    }
+    .labeloverflow {
+      float: left;
     }
     `]
             },] },
@@ -2375,14 +2464,14 @@ class MultiSelectComponent {
             // this.activeModelData.options = this.options;
             /** @type {?} */
             let obj = {
-                label: this.label,
-                type: this.type,
-                placeholder: this.placeholder,
-                options: this.options,
-                validations: this.validations,
-                field: this.field,
+                label: '',
+                type: '',
+                placeholder: '',
+                options: '',
+                validations: '',
+                field: '',
                 _id: this._id,
-                description: this.description
+                description: ''
             };
             obj.label = data.label;
             obj.field = data.field;
@@ -2390,21 +2479,22 @@ class MultiSelectComponent {
             obj.placeholder = data.placeholder;
             obj.options = data.options;
             obj.description = data.description;
-            if (this.type == 'date') {
-                obj['minDate'] = this.minDate;
-                obj['maxDate'] = this.maxDate;
+            if (data.type == 'date') {
+                obj['minDate'] = data.minDate;
+                obj['maxDate'] = data.maxDate;
             }
-            else if (this.type == 'slider') {
-                obj['min'] = this.min;
-                obj['max'] = this.max;
+            else if (data.type == 'slider') {
+                obj['min'] = data.min;
+                obj['max'] = data.max;
             }
             // console.log("obj",obj);
+            debugger;
             /** @type {?} */
             var index = this.field.child.findIndex((/**
-             * @param {?} item
+             * @param {?} el
              * @return {?}
              */
-            item => item.field === this.currentItem.field));
+            el => el.field === this.currentItem.field));
             this.field.child.splice(index, 1, obj);
             // let newObj =  this.field.child.filter(item => {
             //   if (item.field == this.currentItem.field) {
@@ -2446,16 +2536,16 @@ class MultiSelectComponent {
         //  this.myModal.nativeElement.className = 'modal hide';
     }
     /**
-     * @param {?} item
+     * @param {?} loadEle
      * @param {?} id
      * @return {?}
      */
-    loadFormElement(item, id) {
-        console.log("item ---", item, "id", id);
-        item.expand = !item.expand;
+    loadFormChildElement(loadEle, id) {
+        console.log("item ---", loadEle, "id", id);
+        loadEle.expand = !loadEle.expand;
         this.activeModelData = "";
-        this.label = item.label;
-        this.currentItem = item;
+        this.label = loadEle.label;
+        this.currentItem = loadEle;
         this.allData = this.dynamicServe.getALl();
         console.log('this.field', this.field);
         // for(let i = 0; i < this.allData['questionList']['questionList'][0].child.length; i++) {
@@ -2463,25 +2553,25 @@ class MultiSelectComponent {
          * @param {?} t
          * @return {?}
          */
-        t => t.field !== item.field));
+        t => t.field !== loadEle.field));
         // }
         // this.filtereddata = this.field.child;
         console.log('multi select', this.allData);
         console.log('this.filtereddata', this.filtereddata);
-        this.type = item.type;
-        this.placeholder = item.placeholder;
-        this.options = item.options;
-        this._id = item._id;
+        this.type = loadEle.type;
+        this.placeholder = loadEle.placeholder;
+        this.options = loadEle.options;
+        this._id = loadEle._id;
         // this.required = item.validations.required;
-        this.description = item.description;
-        if (item.type == "date") {
-            this.minDate = item.validations.minDate;
-            this.maxDate = item.validations.maxDate;
-            this.autoCollect = item.validations.autoCollect;
+        this.description = loadEle.description;
+        if (loadEle.type == "date") {
+            this.minDate = loadEle.validations.minDate;
+            this.maxDate = loadEle.validations.maxDate;
+            this.autoCollect = loadEle.validations.autoCollect;
         }
-        else if (item.type == "slider") {
-            this.min = item.validations.min;
-            this.max = item.validations.max;
+        else if (loadEle.type == "slider") {
+            this.min = loadEle.validations.min;
+            this.max = loadEle.validations.max;
         }
         // this.required = this.field.validations.required;
         // console.log(item.validations.required, "item.validations.required",
@@ -2514,11 +2604,11 @@ class MultiSelectComponent {
      */
     deleteElement(item, index) {
         console.log('deleteElement', item);
-        item.deleteindex = index;
-        item.action = 'childDelete';
+        this.field.deleteindex = index;
         this.field.isDelete = true;
-        this.field.child.splice(index, 1);
-        this.sendDataToParent.emit(item);
+        // this.field.child.splice(index, 1);
+        console.log('deleteElement', this.field);
+        this.sendDataToParent.emit(this.field);
         // this.childrenDropEvent.emit(item);
         // console.log("field delete", this.field, 'index', index);
         // console.log('after delete', this.allData);
@@ -2530,10 +2620,23 @@ class MultiSelectComponent {
      */
     copyElement(item, index) {
         // this.field.push(item);
-        item.action = 'copy';
-        console.log("copy field ----------", item, 'index', index);
-        this.field.child.push(item);
-        this.copyOrDeleteEvent.emit(item);
+        console.log("before copy field ----------", this.field.child.length);
+        /** @type {?} */
+        let lengthOfChild = this.field.child.length + 1;
+        /** @type {?} */
+        let newobj = {
+            action: "copy",
+            description: item.description,
+            field: item.field + '' + lengthOfChild,
+            label: item.label,
+            placeholder: item.placeholder,
+            position: item.pointer,
+            type: item.type
+        };
+        console.log("after copy field ----------", newobj, 'index', index);
+        this.field.child.push(newobj);
+        // this.copyOrDeleteEvent.emit(item);
+        // this.sendDataToParent.emit(newobj);
     }
     /**
      * @param {?} event
@@ -2551,7 +2654,7 @@ MultiSelectComponent.decorators = [
     { type: Component, args: [{
                 selector: 'lib-multi-select',
                 template: `<div [formGroup]="form" dndDropzone (dndDrop)="onDropNew($event,field)" class="card-body">
-  <label class="col-md-0 form-control-label" [attr.for]="field.label">
+  <label class="col-md-0 form-control-label labeloverflow" [attr.for]="field.label">
     {{field.label}}
   </label>
   <textarea rows="2" class="form-control">
@@ -2562,10 +2665,10 @@ MultiSelectComponent.decorators = [
   <div *ngIf="field.child.length > 0" cdkDropList (cdkDropListDropped)="drop($event)">
 
     <div *ngFor="let obj of field.child; let i =index; let data" cdkDrag>
-      <div style="float: right;right: -70px; cursor:pointer; padding-top: 10px" class="col-sm-2 edit-icon">
+      <div class="col-sm-2 edit-icon actions">
         <i class="fa fa-trash" title = "delete" (click)="deleteElement(obj, i)"></i>
         <i class="fa fa-copy" title = "copy" (click)="copyElement(obj, i)"></i>
-        <i class="fa fa-edit" title = "edit" (click)="loadFormElement(obj, i)"></i>
+        <i class="fa fa-edit" title = "edit" (click)="loadFormChildElement(obj, i)"></i>
       </div>
       <div class="row" *ngIf="obj.expand" style="padding: 20px;
       border: 1px solid #ccc;margin-top:10px; margin:40px; margin-left: 20%;
@@ -2735,7 +2838,7 @@ MultiSelectComponent.decorators = [
           padding-left: 10px;
           margin-top: 10px;
           box-shadow: 1px 1px 2px 1px rgba(0,0,0,0.19);
-          padding-bottom: 10px;">
+          padding-bottom: 30px;">
 
         <textbox style="padding-left:30px" *ngSwitchCase="'number'" [field]="obj" [form]="form"></textbox>
 
@@ -2770,6 +2873,20 @@ MultiSelectComponent.decorators = [
     }
     .fa {
       padding: 3px;
+    }
+    .actions {
+      float: right;
+      cursor: pointer;
+     padding-top: 10px;
+     right: -70px;
+    }
+    .labeloverflow {
+      float: left;
+    }
+    @media only screen and (max-width: 600px) {
+      .actions {
+       position: inherit
+      }
     }
     `]
             },] },

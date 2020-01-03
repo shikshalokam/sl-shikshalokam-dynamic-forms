@@ -5,7 +5,7 @@ import { FormGroup } from '@angular/forms';
     selector: 'dropdown',
     template: `
       <div [formGroup]="form">
-      <label class="col-sm-0 form-control-label" [attr.for]="field.label">
+      <label class="col-sm-0 form-control-label labeloverflow" [attr.for]="field.label">
       {{field.label}}
     </label>
         <select class="form-control" [id]="field.field">
@@ -16,6 +16,10 @@ import { FormGroup } from '@angular/forms';
     styles:[`
     .form-control {
       display: none;
+    }
+    .labeloverflow {
+      float: left;
+      padding-top: 5px;
     }
     `]
 })

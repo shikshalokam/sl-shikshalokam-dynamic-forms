@@ -42,13 +42,17 @@ import { Observable } from 'rxjs';
   }
 
    .toolbar {
-    border: 1px solid midnightblue;
     list-style: none;
     padding: 10px;
     margin-bottom: 10px;
     color: midnightblue;
     width: 100%;
     text-align: left;
+    display: block;
+    margin: 1%;
+    font-size: 16px;
+    border: 1px solid midnightblue;
+    padding: 6px;
     cursor: pointer;
     text-transform: capitalize;
    }
@@ -69,7 +73,7 @@ import { Observable } from 'rxjs';
       opacity: 0.75;
       min-height: 390px;
     }
-    
+
     .start-create {
       width: 50%;
       margin:auto;
@@ -80,7 +84,8 @@ import { Observable } from 'rxjs';
     }
     .toolbar i.material-icons {
       vertical-align: middle;
-      padding: 6px;
+      padding: 0 px;
+      float: right;
     }
     .element i.material-icons {
       vertical-align: middle;
@@ -94,6 +99,25 @@ import { Observable } from 'rxjs';
       width:100%
       margin: auto;
       // box-shadow: 1px 1px 4px 1px rgba(0,0,0,0.19);
+    }
+    .qtype {
+      float: left;
+      margin-left: 5pxpx;
+    }
+    .space {
+      padding-top:20px;
+    }
+
+    @media only screen and (max-width:600px) {
+      .qtype {
+        float: left;
+        width: 50%
+        margin-left: 0px;
+      }
+      .start-create {
+        width: 100%;
+        padding: 0px;
+      }
     }
     
   </style>
@@ -132,12 +156,12 @@ import { Observable } from 'rxjs';
           </div>
         </div>
       </div>
-      <div class="col-sm-12" style="padding-top:25px" *ngIf="fields.length > 0  || !showQuestionBlock">
+      <div class="col-sm-12 space" *ngIf="fields.length > 0  || !showQuestionBlock">
           
           <div  class="col-md-12">
             <!-- <dynamic-form-builder [fields]="getFields()"></dynamic-form-builder> -->
       
-            <span *ngFor="let item of jsonData" >
+            <span  class ="qtype" *ngFor="let item of jsonData" >
               <span [dndDraggable]="item" (click)="onDrop(item.responseType)"  class="toolbar"  >
             {{ item.responseType }}   <i class="material-icons">{{ item.icon }}</i>
              </span>
@@ -438,7 +462,7 @@ export class DynamicFormBuilderComponent implements OnInit {
         type: 'slider',
         "position": len,
         name: len + ". question",
-        label: len + ". question",
+        label: ". question",
         description: "",
         required: true,
         "validations": {
@@ -467,10 +491,15 @@ export class DynamicFormBuilderComponent implements OnInit {
     }
     let len = this.fields.length + 1;
     var obj = {};
+
+    console.log(action,"calling from child copy",ele);
+    debugger;
     if (action == "copy") {
+
+
       let copyObj = {
         "position": len,
-        "field": len + "question",
+        "field": ele.field ? ele.field: len + "question",
         "type": ele.type,
         "label": ele.label,
         "placeholder": ele.placeholder,
@@ -547,7 +576,7 @@ export class DynamicFormBuilderComponent implements OnInit {
 
     // this.questionTrigger.emit(trnasformData);
 
-    // this.questionTrigger.emit(trnasformData);
+    this.questionTrigger.emit(trnasformData);
 
     // console.log("fields controls", this.form);
 
@@ -640,6 +669,13 @@ export class DynamicFormBuilderComponent implements OnInit {
     if ($event.action == "copy") {
       this.onDrop($event.data, "copy");
     } else if ($event.action == "delete") {
+
+
+      // this.fields = this.fields.filter( each => {
+      //   return each.field != $event.data.field
+      // })
+
+      // console.log("$event",$event.data.field); 
       trnasformData = {
         action: 'delete',
         data: $event
@@ -667,6 +703,10 @@ export class DynamicFormBuilderComponent implements OnInit {
             // }
 
             item.child.push(obj);
+            trnasformData = {
+              action: 'childDroped',
+              data: $event
+            }
             return item;
           } else {
             return item;

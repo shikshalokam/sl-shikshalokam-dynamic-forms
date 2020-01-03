@@ -29,8 +29,9 @@ import { MatTabChangeEvent, MatPaginator, MatTableDataSource, MatSort, MatSnackB
     position: relative;
     flex: auto;
     min-width: 0;
-    width: 372px;
+    width: 100%;
   }
+
   .input-group {
     position: relative;
      border-collapse: separate;
@@ -56,8 +57,23 @@ span.cursor-pntr {
   visibility: hidden;
 
 }
+.addicon {
+  margin-left: 90%
+}
+.spacearoundbtn{
+  margin-top: 10px;
+  margin-bottom: 15px;
+}
 .label.col-md-8.form-control-label {
   text-decoration: underline;
+}
+@media only screen and (max-width: 600px) {
+  .col-sm-12 {
+    padding: 0px
+  }
+  .col-sm-6 {
+    padding: 0px
+  }
 }
 
   </style>
@@ -104,7 +120,7 @@ span.cursor-pntr {
       </mat-form-field>
     </div>
     <div class="col-sm-1">
-      <span style="float:right;padding-top:15px" class="cursor-pntr"><i title="Add Page" class="fa fa-plus"
+      <span class="cursor-pntr addicon"><i title="Add Page" class="fa fa-plus"
           (click)="add(pages)"></i></span>
     </div>
   
@@ -175,7 +191,7 @@ span.cursor-pntr {
               name="newOption">
           </mat-form-field>
         </div>
-        <button mat-flat-button color="primary" style="margin-top: 10px;" (click)="AddNewOptions()">
+        <button mat-flat-button color="primary" class = "spacearoundbtn" (click)="AddNewOptions()">
           Add
         </button>
       </div>
@@ -213,12 +229,12 @@ span.cursor-pntr {
   
       <div class="col-sm-6" *ngIf="type=='text' || type=='date' || type=='number'">
         <mat-form-field>
-          <input type="tex" matInput name="conditionMatchValue" placeholder="" [(ngModel)]="conditionMatchValue">
+          <input type="text" matInput name="conditionMatchValue" placeholder="Value" [(ngModel)]="conditionMatchValue">
         </mat-form-field>
       </div>
   
       <div class="col-sm-2">
-        <button mat-flat-button color="primary" style="margin-top: 10px;" (click)="parentMapping()">
+        <button mat-flat-button color="primary" class = "spacearoundbtn" (click)="parentMapping()">
           Add
         </button>
       </div>
@@ -849,10 +865,14 @@ export class FieldBuilderComponent implements OnInit {
   }
 
   eventFromChild($event) {
-    console.log('sri==========', $event);
-     $event.action = 'childDelete';
+    if ($event.action == 'copy') {
+      // $event.action = 'copy';
+    } else {
+      $event.action = 'childDelete';
+    }
+
     this.copyOrDeleteEvent.emit($event);
-   }
+  }
 
   //  deleteDraftCriteria() {
   //   let message = `Are you sure you delete criteria?`;

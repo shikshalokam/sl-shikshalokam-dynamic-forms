@@ -6,7 +6,7 @@ import { FormGroup } from '@angular/forms';
   selector: 'textbox',
   template: `
       <div [formGroup]="form">
-      <label class="col-md-0 form-control-label" [attr.for]="field.label">
+      <label class="col-md-0 form-control-label labeloverflow" [attr.for]="field.label">
       {{field.label}}
       </label>
     
@@ -19,6 +19,9 @@ import { FormGroup } from '@angular/forms';
     styles:[`
     .form-control {
       display: none;
+    }
+    .labeloverflow {
+      float: left;
     }
     `]
 })

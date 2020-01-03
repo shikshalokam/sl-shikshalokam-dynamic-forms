@@ -5,10 +5,10 @@ import { FormGroup } from '@angular/forms';
     selector: 'radio',
     template: `
       <div [formGroup]="form">
-      <label class="col-sm-12 form-control-label" [attr.for]="field.label">
+      <label class="col-sm-12 form-control-label labeloverflow" [attr.for]="field.label">
       {{field.label}}
     </label>
-        <div class="form-check" *ngFor="let opt of field.options">
+        <div class="form-check rnxtline" *ngFor="let opt of field.options">
           <input class="form-check-input" type="radio" [id]="field.field" [value]="opt.key">
           <label class="form-check-label space">
             {{opt.label}}
@@ -23,6 +23,14 @@ import { FormGroup } from '@angular/forms';
     .space {
       padding-left: 5px
     }
+    .labeloverflow {
+      float: left;
+      padding-top: 5px;
+    }
+     .rnxtline {
+       float: left;
+       width: 100%
+     }
     `]
 })
 export class RadioComponent {

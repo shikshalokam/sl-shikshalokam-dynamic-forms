@@ -5,12 +5,12 @@ import { FormGroup } from '@angular/forms';
     selector: 'checkbox',
     template: `
       <div [formGroup]="form">
-      <label class="col-sm -12 form-control-label" [attr.for]="field.label">
+      <label class="col-sm -12 form-control-label labeloverflow" [attr.for]="field.label">
       {{field.label}}
     </label>
         <div [formGroupName]="field.field" >
           <div *ngFor="let opt of field.options" class="form-check form-check">
-          <label class="form-check-label">
+          <label class="form-check-label checkflow">
              <input class="form-check-input" type="checkbox" id="inlineCheckbox1" value="option1" />
              {{opt.label}}</label>
           </div>
@@ -21,6 +21,14 @@ import { FormGroup } from '@angular/forms';
     styles:[`
     .form-control {
       display: none;
+    }
+    .labeloverflow {
+      float: left;
+      padding-top: 5px;
+    }
+    .checkflow {
+      float: left;
+      width: 100%
     }
     `]
 })

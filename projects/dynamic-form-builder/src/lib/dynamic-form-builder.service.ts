@@ -14,7 +14,7 @@ export class DynamicFormBuilderService {
   // currentMessage = this.messageSource.asObservable();
 
   list: any = [];
-  pagelist: any;
+  pagelist: any = [];
 
   all: any = [];
   criteriaList: any = [];
@@ -35,9 +35,14 @@ export class DynamicFormBuilderService {
 
   setPageNumber(data) {
     this.pagelist = data;
-    this.communicateSubject.next();
+
+    console.log("data=====page",data);
+     this.communicateSubject.next();
   }
 
+  getPages(){
+    return this.pagelist; 
+  }
   getPageNumbers(): Observable<any> {
     return this.pagelist;
 
