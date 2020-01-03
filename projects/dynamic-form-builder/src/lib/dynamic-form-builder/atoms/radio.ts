@@ -28,7 +28,6 @@ import { FormGroup } from '@angular/forms';
       padding-top: 5px;
     }
      .rnxtline {
-       float: left;
        width: 100%
      }
     `]

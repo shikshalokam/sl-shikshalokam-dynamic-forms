@@ -20,9 +20,6 @@ import { FormGroup } from '@angular/forms';
     .form-control {
       display: none;
     }
-    .labeloverflow {
-      float: left;
-    }
     `]
 })
 export class TextBoxComponent {

@@ -403,7 +403,7 @@ class DynamicFormBuilderComponent {
                 type: 'slider',
                 "position": len,
                 name: len + ". question",
-                label: len + ". question",
+                label: ". question",
                 description: "",
                 required: true,
                 "validations": {
@@ -644,109 +644,109 @@ DynamicFormBuilderComponent.decorators = [
     { type: Component, args: [{
                 selector: 'lib-dynamic-form-builder',
                 template: `<style>
-  p {
-      font-family: Lato;
-    }
-    .noPadding {
-        padding: 0px;
-    }
-    .margin-5 {
-        margin-top:5%;
-    }
-    .element {
-      border: 1px solid midnightblue;
-    list-style: none;
-    padding: 10px;
-    margin-bottom: 10px;
-    color: midnightblue;
-    width: 100%;
-    text-align: left;
-    cursor: pointer;  
-    text-transform: capitalize;
-  }
-  .element-old {
-    border: 1px solid #ccc;
-    padding: 10px;
-    margin-bottom: 10px;
-    color: #333;
-    text-align: left;
-    text-transform: capitalize;
-  }
+  /* created own file */
 
-   .toolbar {
-    list-style: none;
-    padding: 10px;
-    margin-bottom: 10px;
-    color: midnightblue;
-    width: 98%;
-    text-align: left;
-    display: block;
-    margin: 1%;
-    font-size: 16px;
+
+p {
+    font-family: Lato;
+  }
+  .noPadding {
+      padding: 0px;
+  }
+  .margin-5 {
+      margin-top:5%;
+  }
+  .element {
     border: 1px solid midnightblue;
-    padding: 6px;
-    cursor: pointer;
-    text-transform: capitalize;
-   }
-    .element span {
-      text-transform: uppercase !important;
-    }
-    .form-group {
-        margin-bottom: 0.5rem;
-        border: 1px solid #ece7e7;
-    }
-    .cursor-pntr {
-        cursor: pointer;
-    }
+  list-style: none;
+  padding: 10px;
+  margin-bottom: 10px;
+  color: midnightblue;
+  width: 100%;
+  text-align: left;
+  cursor: pointer;  
+  text-transform: capitalize;
+}
+.element-old {
+  border: 1px solid #ccc;
+  padding: 10px;
+  margin-bottom: 10px;
+  color: #333;
+  text-align: left;
+  text-transform: capitalize;
+}
 
-    .showQBlock {
-      background: #a5f1d7;
-      padding: 50px;
-      opacity: 0.75;
-      min-height: 390px;
-    }
+ .toolbar {
+  list-style: none;
+  padding: 10px;
+  margin-bottom: 10px;
+  color: midnightblue;
+  width: 98%;
+  text-align: left;
+  display: block;
+  margin: 1%;
+  font-size: 16px;
+  border: 1px solid midnightblue;
+  padding: 6px;
+  cursor: pointer;
+  text-transform: capitalize;
+ }
+  .element span {
+    text-transform: uppercase !important;
+  }
+  .form-group {
+      margin-bottom: 0.5rem;
+      border: 1px solid #ece7e7;
+  }
+  .cursor-pntr {
+      cursor: pointer;
+  }
 
+  .showQBlock {
+    background: #a5f1d7;
+    padding: 50px;
+    opacity: 0.75;
+    min-height: 390px;
+  }
+
+  .start-create {
+    width: 50%;
+    margin:auto;
+    padding:20px;
+  }
+  .start-create:hover .add-qicons{
+    display:block;
+  }
+  .toolbar i.material-icons {
+    vertical-align: middle;
+    padding: 0 px;
+    float: right;
+  }
+  .element i.material-icons {
+    vertical-align: middle;
+    float: right;
+  }
+  .add-qicons{
+    padding: 5px;
+    text-align: center;
+    width:100%;
+    margin:auto;
+   
+  }
+  .qtype {
+    float: left;
+    width: 50%
+  }
+  .space {
+    padding-top:20px;
+  }
+
+  @media only screen and (max-width:600px) {
     .start-create {
-      width: 50%;
-      margin:auto;
-      padding:20px;
+      width: 100%;
+      padding: 0px;
     }
-    .start-create:hover .add-qicons{
-      display:block;
-    }
-    .toolbar i.material-icons {
-      vertical-align: middle;
-      padding: 0 px;
-      float: right;
-    }
-    .element i.material-icons {
-      vertical-align: middle;
-      float: right;
-    }
-    .add-qicons{
-     
-      // background: #d9d9f9;
-      padding: 5px;
-      text-align: center;
-      width:100%
-      margin: auto;
-      // box-shadow: 1px 1px 4px 1px rgba(0,0,0,0.19);
-    }
-    .qtype {
-      float: left;
-      width: 50%
-    }
-    .space {
-      padding-top:20px;
-    }
-
-    @media only screen and (max-width:600px) {
-      .start-create {
-        width: 100%;
-        padding: 0px;
-      }
-    }
-    
+  }
   </style>
   <div class="col-sm-12">
       
@@ -1627,6 +1627,9 @@ span.cursor-pntr {
 .label.col-md-8.form-control-label {
   text-decoration: underline;
 }
+.labeloverflow {
+  float: left;
+}
 @media only screen and (max-width: 600px) {
   .col-sm-12 {
     padding: 0px
@@ -2016,9 +2019,6 @@ TextBoxComponent.decorators = [
     .form-control {
       display: none;
     }
-    .labeloverflow {
-      float: left;
-    }
     `]
             },] },
 ];
@@ -2064,6 +2064,7 @@ DropDownComponent.decorators = [
     }
     .labeloverflow {
       float: left;
+      padding-top: 5px;
     }
     `]
             },] },
@@ -2235,9 +2236,9 @@ CheckBoxComponent.decorators = [
       display: none;
     }
     .labeloverflow {
-      float: left;
-    } .checkflow {
-      float: left;
+      padding-top: 5px;
+    }
+    .checkflow {
       width: 100%
     }
     `]
@@ -2289,9 +2290,9 @@ RadioComponent.decorators = [
     }
     .labeloverflow {
       float: left;
+      padding-top: 5px;
     }
      .rnxtline {
-       float: left;
        width: 100%
      }
     `]
@@ -2349,6 +2350,7 @@ DateComponent.decorators = [
       display: none;
     } .labeloverflow {
       float: left;
+      padding-top: 5px;
     }
     `]
             },] },
@@ -2720,21 +2722,15 @@ class MultiSelectComponent {
         this.currentItem = item;
         this.allData = this.dynamicServe.getALl();
         console.log('this.field', this.field);
-        // for(let i = 0; i < this.allData['questionList']['questionList'][0].child.length; i++) {
         this.filtereddata = this.field.child.filter((/**
          * @param {?} t
          * @return {?}
          */
         t => t.field !== item.field));
-        // }
-        // this.filtereddata = this.field.child;
-        console.log('multi select', this.allData);
-        console.log('this.filtereddata', this.filtereddata);
         this.type = item.type;
         this.placeholder = item.placeholder;
         this.options = item.options;
         this._id = item._id;
-        // this.required = item.validations.required;
         this.description = item.description;
         if (item.type == "date") {
             this.minDate = item.validations.minDate;
@@ -2745,54 +2741,37 @@ class MultiSelectComponent {
             this.min = item.validations.min;
             this.max = item.validations.max;
         }
-        // this.required = this.field.validations.required;
-        // console.log(item.validations.required, "item.validations.required",
-        // this.required, "label", this.label);
-        // console.log("label",this.label);
         this.openEditChild = this.openEditChild ? false : true;
         this.cdr.detectChanges();
-        // document.getElementById("openModalButton").click();
-        // this.open(this.myModal);
-        // this.myModal.show();
-        // this.myModal.nativeElement.className = 'modal fade show';
     }
+    // To delete questions
     /**
      * @param {?} data
      * @param {?} value
      * @return {?}
      */
     deleteCondition(data, value) {
-        // var index = this.listOfRelation.indexOf(value);
-        // if (index > -1) {
         this.listOfRelation.splice(value, 1);
         this.getSelectQuestion[0].child.splice(value, 1);
-        // }
-        console.log('after delete data', this.listOfRelation);
     }
+    // To Delete the element in the matrix
     /**
      * @param {?} item
      * @param {?} index
      * @return {?}
      */
     deleteElement(item, index) {
-        console.log('deleteElement', item);
         this.field.deleteindex = index;
         this.field.isDelete = true;
-        // this.field.child.splice(index, 1);
-        console.log('deleteElement', this.field);
         this.sendDataToParent.emit(this.field);
-        // this.childrenDropEvent.emit(item);
-        // console.log("field delete", this.field, 'index', index);
-        // console.log('after delete', this.allData);
     }
+    // To copy the element in the matrix
     /**
      * @param {?} item
      * @param {?} index
      * @return {?}
      */
     copyElement(item, index) {
-        // this.field.push(item);
-        console.log("before copy field ----------", item);
         /** @type {?} */
         let newobj = {
             action: "copy",
@@ -2803,10 +2782,7 @@ class MultiSelectComponent {
             position: item.pointer,
             type: item.type
         };
-        console.log("after copy field ----------", newobj, 'index', index);
         this.field.child.push(item);
-        // this.copyOrDeleteEvent.emit(item);
-        this.sendDataToParent.emit(newobj);
     }
     /**
      * @param {?} event
@@ -2824,7 +2800,7 @@ MultiSelectComponent.decorators = [
     { type: Component, args: [{
                 selector: 'lib-multi-select',
                 template: `<div [formGroup]="form" dndDropzone (dndDrop)="onDropNew($event,field)" class="card-body">
-  <label class="col-md-0 form-control-label labeloverflow" [attr.for]="field.label">
+  <label class="col-md-0 form-control-label" [attr.for]="field.label">
     {{field.label}}
   </label>
   <textarea rows="2" class="form-control">
@@ -2840,9 +2816,7 @@ MultiSelectComponent.decorators = [
         <i class="fa fa-copy" title = "copy" (click)="copyElement(obj, i)"></i>
         <i class="fa fa-edit" title = "edit" (click)="loadFormElement(obj, i)"></i>
       </div>
-      <div class="row" *ngIf="obj.expand" style="padding: 20px;
-      border: 1px solid #ccc;margin-top:10px; margin:40px; margin-left: 20%;
-      box-shadow: 1px 1px 4px 1px rgba(0,0,0,0.19); margin-top:20px;">
+      <div class="row editmatrix" *ngIf="obj.expand">
 
         <div class="col-sm-6">
           <mat-form-field>
@@ -2921,7 +2895,7 @@ MultiSelectComponent.decorators = [
             <label id="example-radio-group-label">Do you want to related the question based on below options ?</label>
             <mat-radio-group aria-labelledby="example-radio-group-label" class="example-radio-group"
               [(ngModel)]="selectedOption" [ngModelOptions]="{standalone: true}">
-              <mat-radio-button style="padding: 10px" class="example-radio-button" *ngFor="let ele of options"
+              <mat-radio-button class="example-radio-button space" *ngFor="let ele of options"
                 [value]="ele">
                 {{ ele.label }}
               </mat-radio-button>
@@ -2952,7 +2926,7 @@ MultiSelectComponent.decorators = [
           </div>
 
           <div class="col-sm-2">
-            <button mat-flat-button color="primary" style="margin-top: 10px;" (click)="parentMapping()">
+            <button mat-flat-button color="primary" class = "addbtn" (click)="parentMapping()">
               Add
             </button>
           </div>
@@ -2995,7 +2969,6 @@ MultiSelectComponent.decorators = [
 
 
         <div class="col-sm-12">
-
           <button mat-flat-button color="primary" style="margin-right:10px;" (click)="closeModelChild('save', obj)">
             Save
           </button>
@@ -3003,28 +2976,23 @@ MultiSelectComponent.decorators = [
         </div>
       </div>
 
-      <div class="col-md-0" [ngSwitch]="obj.type" style="width: 80%;
-          margin-left: 20%;
-          padding-left: 10px;
-          margin-top: 10px;
-          box-shadow: 1px 1px 2px 1px rgba(0,0,0,0.19);
-          padding-bottom: 10px;">
+      <div class="col-md-0 matrixmain" [ngSwitch]="obj.type">
 
-        <textbox style="padding-left:30px" *ngSwitchCase="'number'" [field]="obj" [form]="form"></textbox>
+        <textbox class = "mchild" *ngSwitchCase="'number'" [field]="obj" [form]="form"></textbox>
 
-        <textbox style="padding-left:30px" *ngSwitchCase="'text'" [field]="obj" [form]="form"></textbox>
+        <textbox class = "mchild" *ngSwitchCase="'text'" [field]="obj" [form]="form"></textbox>
 
-        <date style="padding-left:30px" *ngSwitchCase="'date'" [field]="obj" [form]="form"></date>
+        <date class = "mchild" *ngSwitchCase="'date'" [field]="obj" [form]="form"></date>
 
-        <slider style="padding-left:30px" *ngSwitchCase="'slider'" [field]="obj" [form]="form"></slider>
+        <slider class = "mchild" *ngSwitchCase="'slider'" [field]="obj" [form]="form"></slider>
 
-        <dropdown style="padding-left:30px" *ngSwitchCase="'dropdown'" [field]="obj" [form]="form"></dropdown>
+        <dropdown class = "mchild" *ngSwitchCase="'dropdown'" [field]="obj" [form]="form"></dropdown>
 
-        <checkbox style="padding-left:30px" *ngSwitchCase="'checkbox'" [field]="obj" [form]="form"></checkbox>
+        <checkbox class = "mchild" *ngSwitchCase="'checkbox'" [field]="obj" [form]="form"></checkbox>
 
-        <radio style="padding-left:30px" *ngSwitchCase="'radio'" [field]="obj" [form]="form"></radio>
+        <radio class = "mchild" *ngSwitchCase="'radio'" [field]="obj" [form]="form"></radio>
 
-        <file style="padding-left:30px" *ngSwitchCase="'file'" [field]="obj" [form]="form"></file>
+        <file class = "mchild" *ngSwitchCase="'file'" [field]="obj" [form]="form"></file>
 
 
       </div>
@@ -3045,17 +3013,51 @@ MultiSelectComponent.decorators = [
       padding: 3px;
     }
     .actions {
-      float: right;
-      cursor: pointer;
-     padding-top: 10px;
-     right: -70px;
+    float: right;
+    cursor: pointer;
+    padding: 0px;
+    text-align: right;
+    }
+    .space {
+      padding: 10px
+    }
+    .matrixmain {
+      width: 80%;
+      margin-left: 20%;
+      padding-left: 10px;
+      margin-top: 10px;
+      box-shadow: 1px 1px 2px 1px rgba(0,0,0,0.19);
+      padding-bottom: 10px;
+    }
+    .editmatrix {
+      padding: 20px;
+      border: 1px solid #ccc;
+      margin-top:10px;
+      margin:40px;
+      margin-left: 20%;
+      box-shadow: 1px 1px 4px 1px rgba(0,0,0,0.19);
+      margin-top:20px;"
+    }
+    .addbtn {
+      margin-top: 10px;
+    }
+    .mchild {
+      padding-left:30px;
     }
     .labeloverflow {
-      float: left;
+      float: none !important;
     }
     @media only screen and (max-width: 600px) {
       .actions {
        position: inherit
+      }
+      .editmatrix {
+        border: 1px solid rgb(204, 204, 204);
+        margin: 33px 0px 7px 0px;
+        box-shadow: rgba(0, 0, 0, 0.19) 1px 1px 4px 1px;
+      }
+      .labeloverflow {
+        float: none !important;
       }
     }
     `]

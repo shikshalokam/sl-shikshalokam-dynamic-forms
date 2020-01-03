@@ -12,109 +12,109 @@ import { Observable } from 'rxjs';
 @Component({
   selector: 'lib-dynamic-form-builder',
   template: `<style>
-  p {
-      font-family: Lato;
-    }
-    .noPadding {
-        padding: 0px;
-    }
-    .margin-5 {
-        margin-top:5%;
-    }
-    .element {
-      border: 1px solid midnightblue;
-    list-style: none;
-    padding: 10px;
-    margin-bottom: 10px;
-    color: midnightblue;
-    width: 100%;
-    text-align: left;
-    cursor: pointer;  
-    text-transform: capitalize;
-  }
-  .element-old {
-    border: 1px solid #ccc;
-    padding: 10px;
-    margin-bottom: 10px;
-    color: #333;
-    text-align: left;
-    text-transform: capitalize;
-  }
+  /* created own file */
 
-   .toolbar {
-    list-style: none;
-    padding: 10px;
-    margin-bottom: 10px;
-    color: midnightblue;
-    width: 98%;
-    text-align: left;
-    display: block;
-    margin: 1%;
-    font-size: 16px;
+
+p {
+    font-family: Lato;
+  }
+  .noPadding {
+      padding: 0px;
+  }
+  .margin-5 {
+      margin-top:5%;
+  }
+  .element {
     border: 1px solid midnightblue;
-    padding: 6px;
-    cursor: pointer;
-    text-transform: capitalize;
-   }
-    .element span {
-      text-transform: uppercase !important;
-    }
-    .form-group {
-        margin-bottom: 0.5rem;
-        border: 1px solid #ece7e7;
-    }
-    .cursor-pntr {
-        cursor: pointer;
-    }
+  list-style: none;
+  padding: 10px;
+  margin-bottom: 10px;
+  color: midnightblue;
+  width: 100%;
+  text-align: left;
+  cursor: pointer;  
+  text-transform: capitalize;
+}
+.element-old {
+  border: 1px solid #ccc;
+  padding: 10px;
+  margin-bottom: 10px;
+  color: #333;
+  text-align: left;
+  text-transform: capitalize;
+}
 
-    .showQBlock {
-      background: #a5f1d7;
-      padding: 50px;
-      opacity: 0.75;
-      min-height: 390px;
-    }
+ .toolbar {
+  list-style: none;
+  padding: 10px;
+  margin-bottom: 10px;
+  color: midnightblue;
+  width: 98%;
+  text-align: left;
+  display: block;
+  margin: 1%;
+  font-size: 16px;
+  border: 1px solid midnightblue;
+  padding: 6px;
+  cursor: pointer;
+  text-transform: capitalize;
+ }
+  .element span {
+    text-transform: uppercase !important;
+  }
+  .form-group {
+      margin-bottom: 0.5rem;
+      border: 1px solid #ece7e7;
+  }
+  .cursor-pntr {
+      cursor: pointer;
+  }
 
+  .showQBlock {
+    background: #a5f1d7;
+    padding: 50px;
+    opacity: 0.75;
+    min-height: 390px;
+  }
+
+  .start-create {
+    width: 50%;
+    margin:auto;
+    padding:20px;
+  }
+  .start-create:hover .add-qicons{
+    display:block;
+  }
+  .toolbar i.material-icons {
+    vertical-align: middle;
+    padding: 0 px;
+    float: right;
+  }
+  .element i.material-icons {
+    vertical-align: middle;
+    float: right;
+  }
+  .add-qicons{
+    padding: 5px;
+    text-align: center;
+    width:100%;
+    margin:auto;
+   
+  }
+  .qtype {
+    float: left;
+    width: 50%
+  }
+  .space {
+    padding-top:20px;
+  }
+
+  @media only screen and (max-width:600px) {
     .start-create {
-      width: 50%;
-      margin:auto;
-      padding:20px;
+      width: 100%;
+      padding: 0px;
     }
-    .start-create:hover .add-qicons{
-      display:block;
-    }
-    .toolbar i.material-icons {
-      vertical-align: middle;
-      padding: 0 px;
-      float: right;
-    }
-    .element i.material-icons {
-      vertical-align: middle;
-      float: right;
-    }
-    .add-qicons{
-     
-      // background: #d9d9f9;
-      padding: 5px;
-      text-align: center;
-      width:100%
-      margin: auto;
-      // box-shadow: 1px 1px 4px 1px rgba(0,0,0,0.19);
-    }
-    .qtype {
-      float: left;
-      width: 50%
-    }
-    .space {
-      padding-top:20px;
-    }
-
-    @media only screen and (max-width:600px) {
-      .start-create {
-        width: 100%;
-        padding: 0px;
-      }
-    }
-    
+  }
   </style>
   <div class="col-sm-12">
       
