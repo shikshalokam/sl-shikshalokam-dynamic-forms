@@ -1,17 +1,16 @@
-import { Subject } from 'rxjs';
-import { EventEmitter, Component, Input, Output, ViewChild, NgModule, ChangeDetectorRef } from '@angular/core';
 import { __values } from 'tslib';
-import { FormGroup, FormControl, FormBuilder, ReactiveFormsModule, FormsModule } from '@angular/forms';
-import { HttpClient, HttpClientModule } from '@angular/common/http';
+import { Subject } from 'rxjs';
 import { CommonModule } from '@angular/common';
-import { moveItemInArray, DragDropModule } from '@angular/cdk/drag-drop';
-import { MatSnackBar, MatDialog, MatButtonModule, MatRadioModule, MatDatepickerModule, MatFormFieldModule, MatInputModule, MatSliderModule, MatSelectModule, MatTabsModule, MatDialogModule, MatTooltipModule, MatCardModule, MatTableModule, MatExpansionModule, MatPaginatorModule, MatNativeDateModule, MatToolbarModule, MatStepperModule } from '@angular/material';
 import { AngularFontAwesomeModule } from 'angular-font-awesome';
+import { Component, EventEmitter, Output, Input, ViewChild, NgModule, ChangeDetectorRef } from '@angular/core';
+import { FormGroup, FormControl, FormBuilder, ReactiveFormsModule, FormsModule } from '@angular/forms';
+import { moveItemInArray, DragDropModule } from '@angular/cdk/drag-drop';
+import { HttpClient, HttpClientModule } from '@angular/common/http';
+import { MatSnackBar, MatDialog, MatButtonModule, MatRadioModule, MatDatepickerModule, MatFormFieldModule, MatInputModule, MatSliderModule, MatSelectModule, MatTooltipModule, MatTabsModule, MatCardModule, MatDialogModule, MatStepperModule, MatTableModule, MatExpansionModule, MatPaginatorModule, MatNativeDateModule, MatToolbarModule } from '@angular/material';
 import { DndModule } from 'ngx-drag-drop';
 
 /**
  * @fileoverview added by tsickle
- * Generated from: lib/dynamic-form-builder.service.ts
  * @suppress {checkTypes,constantProperty,extraRequire,missingOverride,missingReturn,unusedPrivateMembers,uselessCode} checked by tsc
  */
 // @Injectable({
@@ -106,8 +105,18 @@ DynamicFormBuilderService = /** @class */ (function () {
             criteriaList: this.criteriaList,
             questionList: this.list
         };
+        console.log("executing in service", this.all);
         // return this.communicateSubject.asObservable();
         return this.all;
+    };
+    /**
+     * @return {?}
+     */
+    DynamicFormBuilderService.prototype.getQuestions = /**
+     * @return {?}
+     */
+    function () {
+        return this.list;
     };
     /**
      * @param {?} list
@@ -120,24 +129,34 @@ DynamicFormBuilderService = /** @class */ (function () {
     function (list) {
         this.criteriaList = list;
     };
+    /**
+     * @param {?} questionEle
+     * @return {?}
+     */
+    DynamicFormBuilderService.prototype.updateQuestion = /**
+     * @param {?} questionEle
+     * @return {?}
+     */
+    function (questionEle) {
+        console.log("update question", questionEle);
+        this.list = this.list['questionList'].filter((/**
+         * @param {?} item
+         * @return {?}
+         */
+        function (item) {
+            if (item.field == questionEle.field) {
+                return questionEle;
+            }
+            else {
+                return item;
+            }
+        }));
+    };
     return DynamicFormBuilderService;
 }());
-if (false) {
-    /** @type {?} */
-    DynamicFormBuilderService.prototype.communicateSubject;
-    /** @type {?} */
-    DynamicFormBuilderService.prototype.list;
-    /** @type {?} */
-    DynamicFormBuilderService.prototype.pagelist;
-    /** @type {?} */
-    DynamicFormBuilderService.prototype.all;
-    /** @type {?} */
-    DynamicFormBuilderService.prototype.criteriaList;
-}
 
 /**
  * @fileoverview added by tsickle
- * Generated from: lib/dynamic-form-builder.component.ts
  * @suppress {checkTypes,constantProperty,extraRequire,missingOverride,missingReturn,unusedPrivateMembers,uselessCode} checked by tsc
  */
 var DynamicFormBuilderComponent = /** @class */ (function () {
@@ -442,9 +461,6 @@ var DynamicFormBuilderComponent = /** @class */ (function () {
                     }
                 };
             }
-            /** @type {?} */
-            var finalchild = [];
-            finalchild.push();
             obj = {
                 "field": len + "question",
                 "type": "matrix",
@@ -492,8 +508,8 @@ var DynamicFormBuilderComponent = /** @class */ (function () {
      * @return {?}
      */
     function (ele, action) {
-        var e_1, _a, e_2, _b;
         if (action === void 0) { action = ""; }
+        var e_1, _a, e_2, _b;
         this.showQuestionBlock = false;
         console.log("drop ele", ele);
         if (ele.data) {
@@ -529,7 +545,6 @@ var DynamicFormBuilderComponent = /** @class */ (function () {
             data: obj
         };
         console.log("transf", trnasformData);
-        this.questionTrigger.emit(trnasformData);
         this.formData.push(obj);
         /** @type {?} */
         var fieldsCtrls = {};
@@ -584,8 +599,9 @@ var DynamicFormBuilderComponent = /** @class */ (function () {
         };
         console.log("completeData", completeData);
         this.sendToService(completeData);
-        this.questionTrigger.emit(trnasformData);
-        console.log("fields controls", this.form);
+        // this.questionTrigger.emit(trnasformData);
+        // this.questionTrigger.emit(trnasformData);
+        // console.log("fields controls", this.form);
     };
     /**
      * @param {?} data
@@ -789,54 +805,9 @@ var DynamicFormBuilderComponent = /** @class */ (function () {
     };
     return DynamicFormBuilderComponent;
 }());
-if (false) {
-    /** @type {?} */
-    DynamicFormBuilderComponent.prototype.form;
-    /** @type {?} */
-    DynamicFormBuilderComponent.prototype.unsubcribe;
-    /** @type {?} */
-    DynamicFormBuilderComponent.prototype.jsonData;
-    /** @type {?} */
-    DynamicFormBuilderComponent.prototype.formData;
-    /** @type {?} */
-    DynamicFormBuilderComponent.prototype.pageNumber;
-    /** @type {?} */
-    DynamicFormBuilderComponent.prototype.events;
-    /** @type {?} */
-    DynamicFormBuilderComponent.prototype.questionTrigger;
-    /** @type {?} */
-    DynamicFormBuilderComponent.prototype.eventsSubscription;
-    /** @type {?} */
-    DynamicFormBuilderComponent.prototype.criteriaList;
-    /** @type {?} */
-    DynamicFormBuilderComponent.prototype.fields;
-    /** @type {?} */
-    DynamicFormBuilderComponent.prototype.showQuestionBlock;
-    /**
-     * @type {?}
-     * @private
-     */
-    DynamicFormBuilderComponent.prototype.http;
-    /**
-     * @type {?}
-     * @private
-     */
-    DynamicFormBuilderComponent.prototype._formBuilder;
-    /**
-     * @type {?}
-     * @private
-     */
-    DynamicFormBuilderComponent.prototype.fb;
-    /**
-     * @type {?}
-     * @private
-     */
-    DynamicFormBuilderComponent.prototype.dynamicServe;
-}
 
 /**
  * @fileoverview added by tsickle
- * Generated from: lib/dynamic-form-builder/dynamic-form-builder.component.ts
  * @suppress {checkTypes,constantProperty,extraRequire,missingOverride,missingReturn,unusedPrivateMembers,uselessCode} checked by tsc
  */
 var DynamicFormBuilderComponent$1 = /** @class */ (function () {
@@ -875,7 +846,6 @@ var DynamicFormBuilderComponent$1 = /** @class */ (function () {
             }
         ];
     }
-    ;
     /**
      * @param {?} element
      * @return {?}
@@ -1008,23 +978,9 @@ var DynamicFormBuilderComponent$1 = /** @class */ (function () {
     };
     return DynamicFormBuilderComponent;
 }());
-if (false) {
-    /** @type {?} */
-    DynamicFormBuilderComponent$1.prototype.onFieldUpdate;
-    /** @type {?} */
-    DynamicFormBuilderComponent$1.prototype.fields;
-    /** @type {?} */
-    DynamicFormBuilderComponent$1.prototype.form;
-    /** @type {?} */
-    DynamicFormBuilderComponent$1.prototype.formData;
-    /** @type {?} */
-    DynamicFormBuilderComponent$1.prototype.jsonData;
-    /* Skipping unhandled member: ;*/
-}
 
 /**
  * @fileoverview added by tsickle
- * Generated from: lib/dynamic-form-builder/field-builder/field-builder.component.ts
  * @suppress {checkTypes,constantProperty,extraRequire,missingOverride,missingReturn,unusedPrivateMembers,uselessCode} checked by tsc
  */
 var FieldBuilderComponent = /** @class */ (function () {
@@ -1114,12 +1070,6 @@ var FieldBuilderComponent = /** @class */ (function () {
     function () {
         var _this = this;
         console.log(this.condition, "condition", this.currentSelectedQtn, "selectedOption", this.selectedOption);
-        /** @type {?} */
-        var obj = {}
-        // option:this.selectedOption,
-        // question:this.currentSelectedQtn
-        // obj['visibleIf'] = [];
-        ;
         // option:this.selectedOption,
         // question:this.currentSelectedQtn
         // obj['visibleIf'] = [];
@@ -1218,8 +1168,7 @@ var FieldBuilderComponent = /** @class */ (function () {
                 this.listOfRelation.push(condiObj);
             }
         }
-        if (this.condition) {
-        }
+        if (this.condition) ;
         // 'option':this.selectedOption,
         //       'question':this.currentSelectedQtn
         // this.field.childQnt = this.currentSelectedQtn.field;
@@ -1352,6 +1301,7 @@ var FieldBuilderComponent = /** @class */ (function () {
             this.field.description = this.description;
             this.field.pageNumber = this.pageNumber;
             this.field.draftCriteriaId = this.draftCriteriaId;
+            // this.field.field = this.field.field;
             if (this.type == 'date') {
                 this.field.validations.minDate = this.minDate;
                 this.field.validations.maxDate = this.maxDate;
@@ -1377,6 +1327,7 @@ var FieldBuilderComponent = /** @class */ (function () {
                 action: "save",
                 data: obj
             };
+            this.dynamicServe.updateQuestion(this.field);
             this.sendDataToParent.emit(op);
             // this.sendDataToParent.emit(JSON.stringify(obj));
             // console.log(" this.field", this.field);
@@ -1473,8 +1424,7 @@ var FieldBuilderComponent = /** @class */ (function () {
         if (this.newOptionLabel != "") {
             this.newOptionKey = 'R' + this.options.length;
             console.log("this.newOption", this.newOptionLabel);
-            if (Array.isArray(this.options)) {
-            }
+            if (Array.isArray(this.options)) ;
             else {
                 this.options = [];
             }
@@ -1586,8 +1536,8 @@ var FieldBuilderComponent = /** @class */ (function () {
     FieldBuilderComponent.decorators = [
         { type: Component, args: [{
                     selector: 'field-builder',
-                    template: "\n  <style>\n  .mat-slider-horizontal {\n    min-width: 80% !important;\n  }\n  .example-radio-group {\n    display: flex;\n    flex-direction: block;\n    margin: 15px 0; \n  }\n\n  .mat-form-field {\n    display: block;\n    position: relative;\n    flex: auto;\n    min-width: 0;\n    width: 372px;\n  }\n  .input-group {\n    position: relative;\n     border-collapse: separate;\n     display: block;\n  }\n  \n  .example-radio-button {\n    margin: 5px;\n  }\n  .action-component {\n    padding:10px 10px 0px 0px;\n    right: 0px;\n    cursor: pointer;\n    float: right;\n  \n}\nspan.cursor-pntr {\n  cursor: pointer;\n  padding: 3px;\n}\n.form-control {\n  display: block;\n  visibility: hidden;\n\n}\n.label.col-md-8.form-control-label {\n  text-decoration: underline;\n}\n\n  </style>\n  <div class=\"row\" *ngIf=\"openEdit\" style=\"padding: 15px;\n  border: 1px solid #ccc;margin-top:10px;width:85%;margin-top:40px;margin: auto;\n  box-shadow: 1px 1px 1px 1px rgba(0,0,0,0.19);margin-top:20px;\">\n    <div class=\"col-sm-6\">\n      <mat-form-field>\n        <input matInput placeholder=\"Label\" [(ngModel)]=\"label\" name=\"label\">\n      </mat-form-field>\n    </div>\n  \n    <div class=\"col-sm-6\">\n      <mat-form-field>\n        <input matInput placeholder=\"Input Place Holder\" [(ngModel)]=\"placeholder\" name=\"placeholder\">\n      </mat-form-field>\n    </div>\n  \n    <div class=\"col-sm-6\">\n      <mat-form-field>\n        <input matInput placeholder=\"Hint/Description\" [(ngModel)]=\"description\" name=\"Description\">\n      </mat-form-field>\n    </div>\n  \n    <div class=\"col-sm-6 \" style=\"display:none\">\n      <mat-form-field>\n        <mat-label>Input Type</mat-label>\n        <mat-select [(ngModel)]=\"type\">\n          <mat-option value=\"text\">text</mat-option>\n          <mat-option value=\"number\">number</mat-option>\n          <mat-option value=\"radio\">radio</mat-option>\n          <mat-option value=\"date\">date</mat-option>\n        </mat-select>\n      </mat-form-field>\n    </div>\n  \n    <div class=\"col-sm-5\">\n      <mat-form-field>\n        <mat-label>Pages</mat-label>\n  \n        <mat-select [(ngModel)]=\"pageNumber\">\n          <mat-option *ngFor=\"let page of pages; let i = index\" value=\"{{page.value}}\">{{page.label}}</mat-option>\n        </mat-select>\n      </mat-form-field>\n    </div>\n    <div class=\"col-sm-1\">\n      <span style=\"float:right;padding-top:15px\" class=\"cursor-pntr\"><i title=\"Add Page\" class=\"fa fa-plus\"\n          (click)=\"add(pages)\"></i></span>\n    </div>\n  \n    <div class=\"col-sm-6\">\n      <mat-form-field>\n        <mat-label>Criteria</mat-label>\n        <mat-select [(ngModel)]=\"draftCriteriaId\">\n          <mat-option *ngFor=\"let item of criteriaList\" [value]=\"item._id\">{{ item.name}}</mat-option>\n        </mat-select>\n      </mat-form-field>\n    </div>\n  \n  \n  \n    <div class=\"col-sm-6\" *ngIf=\"type=='slider'\">\n      <mat-form-field>\n        <input type=\"text\" placeholder=\"Min\" matInput [(ngModel)]=\"min\" name=\"min value\">\n      </mat-form-field>\n    </div>\n  \n    <div class=\"col-sm-6\" *ngIf=\"type=='slider'\">\n      <mat-form-field>\n        <input type=\"text\" placeholder=\"Max\" matInput [(ngModel)]=\"max\" name=\"min value\">\n      </mat-form-field>\n    </div>\n  \n    <div class=\"col-sm-6\" *ngIf=\"type=='date'\">\n      <mat-form-field>\n        <input matInput [matDatepicker]=\"picker\" [(ngModel)]=\"minDate\" placeholder=\"Choose a min date\">\n        <mat-datepicker-toggle matSuffix [for]=\"picker\"></mat-datepicker-toggle>\n        <mat-datepicker #picker></mat-datepicker>\n      </mat-form-field>\n  \n      <mat-form-field>\n        <input matInput [matDatepicker]=\"pickerMaxDate\" [(ngModel)]=\"maxDate\" placeholder=\"Choose a max date\">\n        <mat-datepicker-toggle matSuffix [for]=\"pickerMaxDate\"></mat-datepicker-toggle>\n        <mat-datepicker #pickerMaxDate></mat-datepicker>\n      </mat-form-field>\n  \n  \n    </div>\n    <div class=\"col-sm-12\" *ngIf=\"type=='radio' || type=='checkbox' || type=='dropdown'\">\n      <label for=\"label\" class=\"col-sm-12\">Options</label>\n  \n      <ul class=\"col\" *ngFor=\"let opt of options;let i = index\">\n        <li class=\"\">\n          <span>{{opt.label}} </span><span style=\"\n      margin-left: 30px;cursor: pointer\" title = \"delete\" (click)=\"deleteOption(opt,i)\">\n            <i class=\"fa fa-trash\"></i></span>\n        </li>\n      </ul>\n  \n      <div class=\"col-sm-6\">\n        <div class=\"input-group\">\n          <mat-form-field>\n            <input type=\"text\" placeholder=\"Label\" matInput style=\"margin-bottom: 10px;\" [(ngModel)]=\"newOptionLabel\"\n              name=\"newOption\">\n          </mat-form-field>\n        </div>\n        <button mat-flat-button color=\"primary\" style=\"margin-top: 10px;\" (click)=\"AddNewOptions()\">\n          Add\n        </button>\n      </div>\n    </div>\n  \n    <div *ngIf=\"filtereddata && filtereddata.length > 0\">\n      <div class=\"col-sm-12\">\n        <label id=\"example-radio-group-label\">Do you want to related the question based on below options ?</label>\n        <mat-radio-group aria-labelledby=\"example-radio-group-label\" class=\"example-radio-group\"\n          [(ngModel)]=\"selectedOption\">\n          <mat-radio-button class=\"example-radio-button\" *ngFor=\"let ele of options\" [value]=\"ele\">\n            {{ ele.label }}\n          </mat-radio-button>\n        </mat-radio-group>\n      </div>\n  \n  \n      <div class=\"col-sm-6\">\n        <mat-form-field>\n          <mat-label>Select Question to add </mat-label>\n          <select matNativeControl [(ngModel)]=\"currentSelectedQtn\">\n            <option *ngFor=\"let values of filtereddata\" [ngValue]=\"values\"> {{ values.label }} </option>\n          </select>\n        </mat-form-field>\n      </div>\n  \n      <div class=\"col-sm-6\" *ngIf=\"type=='text' || type=='date' || type=='number'\">\n        <mat-form-field>\n          <mat-label>Select Condition </mat-label>\n          <select matNativeControl [(ngModel)]=\"condition\">\n            <option *ngFor=\"let values of conditionArray\" [ngValue]=\"values.condition\"> {{ values.label }} </option>\n          </select>\n        </mat-form-field>\n      </div>\n  \n      <div class=\"col-sm-6\" *ngIf=\"type=='text' || type=='date' || type=='number'\">\n        <mat-form-field>\n          <input type=\"tex\" matInput name=\"conditionMatchValue\" placeholder=\"\" [(ngModel)]=\"conditionMatchValue\">\n        </mat-form-field>\n      </div>\n  \n      <div class=\"col-sm-2\">\n        <button mat-flat-button color=\"primary\" style=\"margin-top: 10px;\" (click)=\"parentMapping()\">\n          Add\n        </button>\n      </div>\n    </div>\n  \n    <ul class=\"col-sm-12\" *ngFor=\"let relate of listOfRelation;let i = index\">\n      <li class=\"col-sm-12\">\n        <span>{{relate.label}} </span><span style=\"\n  margin-left: 30px;\" (click)=\"deleteCondition(relate,i)\">\n          <i class=\"fa fa-trash\"></i></span>\n      </li>\n    </ul>\n  \n  \n    <div class=\"col-sm-12\">\n      <label id=\"example-radio-group-label\">is Reqired ?</label>\n      <mat-radio-group aria-labelledby=\"example-radio-group-label\" class=\"example-radio-group\" [(ngModel)]=\"required\">\n        <mat-radio-button class=\"example-radio-button\" [value]=true>\n          Yes\n        </mat-radio-button>\n        <mat-radio-button class=\"example-radio-button\" [value]=false>\n          No\n        </mat-radio-button>\n      </mat-radio-group>\n    </div>\n  \n    <div class=\"col-sm-12\" *ngIf=\"type=='date'\">  \n    <label id=\"example-radio-group-label\">is autoCollect</label>\n      <mat-radio-group aria-labelledby=\"example-radio-group-label\" class=\"example-radio-group\" [(ngModel)]=\"autoCollect\">\n        <mat-radio-button class=\"example-radio-button\" [value]=true>\n          True\n        </mat-radio-button>\n        <mat-radio-button class=\"example-radio-button\" [value]=false>\n          False\n        </mat-radio-button>\n      </mat-radio-group>\n    </div>\n  \n  \n    <div class=\"col-sm-12\">\n  \n      <button mat-flat-button color=\"primary\" style=\"margin-right:10px;\" (click)=\"closeModel('save')\">\n        Save\n      </button>\n  \n    </div>\n  \n  </div>\n  <div class=\"form-group row\" [formGroup]=\"form\"\n    style=\"padding:0px;margin:0px;margin-top:10px;box-shadow: 1px 1px 2px 1px rgba(0,0,0,0.19);padding-bottom:10px;\">\n    <span class=\"qtn_position\"><span class=\"\">#{{ field.position }}</span></span>\n  \n    <div class=\"action-component\">\n  \n      <span class=\"cursor-pntr\" title = \"delete\" (click)=\"deleteElement(field)\"><i class=\"fa fa-trash\"></i> </span>\n      <span class=\"cursor-pntr\" title = \"copy\" (click)=\"copyElement(field)\"><i class=\"fa fa-copy\"></i></span>\n      <span class=\"cursor-pntr\" title = \"edit\"><i class=\"fa fa-edit\" (click)=\"loadFormElement(field)\"></i></span>\n  \n    </div>\n    <div class=\"col-md-12\" [ngSwitch]=\"field.type\">\n      <textbox *ngSwitchCase=\"'number'\" [field]=\"field\" [form]=\"form\"></textbox>\n      <textbox *ngSwitchCase=\"'text'\" [field]=\"field\" [form]=\"form\"></textbox>\n      <date *ngSwitchCase=\"'date'\" [field]=\"field\" [form]=\"form\"></date>\n      <slider *ngSwitchCase=\"'slider'\" [field]=\"field\" [form]=\"form\"></slider>\n      <dropdown *ngSwitchCase=\"'dropdown'\" [field]=\"field\" [form]=\"form\"></dropdown>\n      <checkbox *ngSwitchCase=\"'checkbox'\" [field]=\"field\" [form]=\"form\"></checkbox>\n      <radio *ngSwitchCase=\"'radio'\" [field]=\"field\" [form]=\"form\"></radio>\n      <lib-multi-select *ngSwitchCase=\"'matrix'\" cdkDrag   (sendDataToParent)=\"eventFromChild($event)\" \n      (childrenDropEvent)=\"childrenDropEvent($event)\" [field]=\"field\" [form]=\"form\"></lib-multi-select>\n      <file *ngSwitchCase=\"'file'\" [field]=\"field\" [form]=\"form\"></file>\n      <div style=\"float:right\">\n      </div>\n    </div>\n    </div>",
-                    styles: ["\n  .qtn_position {\n    float: left;\n    width: 40px;\n    padding: 5px 0px 0px 5px;\n    color: #ccc;\n  } "
+                    template: "\n  <style>\n  .mat-slider-horizontal {\n    min-width: 80% !important;\n  }\n  .example-radio-group {\n    display: flex;\n    flex-direction: block;\n    margin: 15px 0; \n  }\n\n  .mat-form-field {\n    display: block;\n    position: relative;\n    flex: auto;\n    min-width: 0;\n    width: 372px;\n  }\n  .input-group {\n    position: relative;\n     border-collapse: separate;\n     display: block;\n  }\n  \n  .example-radio-button {\n    margin: 5px;\n  }\n  .action-component {\n    padding:10px 10px 0px 0px;\n    right: 0px;\n    cursor: pointer;\n    float: right;\n  \n}\nspan.cursor-pntr {\n  cursor: pointer;\n  padding: 3px;\n}\n.form-control {\n  display: block;\n  visibility: hidden;\n\n}\n.label.col-md-8.form-control-label {\n  text-decoration: underline;\n}\n\n  </style>\n  <div class=\"row\" *ngIf=\"openEdit\" style=\"padding: 15px;\n  border: 1px solid #ccc;margin-top:10px;width:85%;margin-top:40px;margin: auto;\n  box-shadow: 1px 1px 1px 1px rgba(0,0,0,0.19);margin-top:20px;\">\n    <div class=\"col-sm-6\">\n      <mat-form-field>\n        <input matInput placeholder=\"Label\" [(ngModel)]=\"label\" name=\"label\">\n      </mat-form-field>\n    </div>\n  \n    <div class=\"col-sm-6\">\n      <mat-form-field>\n        <input matInput placeholder=\"Input Place Holder\" [(ngModel)]=\"placeholder\" name=\"placeholder\">\n      </mat-form-field>\n    </div>\n  \n    <div class=\"col-sm-6\">\n      <mat-form-field>\n        <input matInput placeholder=\"Hint/Description\" [(ngModel)]=\"description\" name=\"Description\">\n      </mat-form-field>\n    </div>\n  \n    <div class=\"col-sm-6 \" style=\"display:none\">\n      <mat-form-field>\n        <mat-label>Input Type</mat-label>\n        <mat-select [(ngModel)]=\"type\">\n          <mat-option value=\"text\">text</mat-option>\n          <mat-option value=\"number\">number</mat-option>\n          <mat-option value=\"radio\">radio</mat-option>\n          <mat-option value=\"date\">date</mat-option>\n        </mat-select>\n      </mat-form-field>\n    </div>\n  \n    <div class=\"col-sm-5\">\n      <mat-form-field>\n        <mat-label>Pages</mat-label>\n  \n        <mat-select [(ngModel)]=\"pageNumber\">\n          <mat-option *ngFor=\"let page of pages; let i = index\" value=\"{{page.value}}\">{{page.label}}</mat-option>\n        </mat-select>\n      </mat-form-field>\n    </div>\n    <div class=\"col-sm-1\">\n      <span style=\"float:right;padding-top:15px\" class=\"cursor-pntr\"><i title=\"Add Page\" class=\"fa fa-plus\"\n          (click)=\"add(pages)\"></i></span>\n    </div>\n  \n    <div class=\"col-sm-6\">\n      <mat-form-field>\n        <mat-label>Criteria</mat-label>\n        <mat-select [(ngModel)]=\"draftCriteriaId\">\n          <mat-option *ngFor=\"let item of criteriaList\" [value]=\"item._id\">{{ item.name}}</mat-option>\n        </mat-select>\n      </mat-form-field>\n    </div>\n    <div class=\"col-sm-6\">\n    <label id=\"example-radio-group-label\">is Reqired ?</label>\n    <mat-radio-group aria-labelledby=\"radio-group-label\" class=\"radio-group\" [(ngModel)]=\"required\">\n      <mat-radio-button class=\"example-radio-button\" [value]=true>\n        Yes\n      </mat-radio-button>\n      <mat-radio-button class=\"example-radio-button\" [value]=false>\n        No\n      </mat-radio-button>\n    </mat-radio-group>\n  </div>\n  \n  \n  \n    <div class=\"col-sm-6\" *ngIf=\"type=='slider'\">\n      <mat-form-field>\n        <input type=\"text\" placeholder=\"Min\" matInput [(ngModel)]=\"min\" name=\"min value\">\n      </mat-form-field>\n    </div>\n  \n    <div class=\"col-sm-6\" *ngIf=\"type=='slider'\">\n      <mat-form-field>\n        <input type=\"text\" placeholder=\"Max\" matInput [(ngModel)]=\"max\" name=\"min value\">\n      </mat-form-field>\n    </div>\n  \n    <div class=\"col-sm-6\" *ngIf=\"type=='date'\">\n      <mat-form-field>\n        <input matInput [matDatepicker]=\"picker\" [(ngModel)]=\"minDate\" placeholder=\"Choose a min date\">\n        <mat-datepicker-toggle matSuffix [for]=\"picker\"></mat-datepicker-toggle>\n        <mat-datepicker #picker></mat-datepicker>\n      </mat-form-field>\n  \n      <mat-form-field>\n        <input matInput [matDatepicker]=\"pickerMaxDate\" [(ngModel)]=\"maxDate\" placeholder=\"Choose a max date\">\n        <mat-datepicker-toggle matSuffix [for]=\"pickerMaxDate\"></mat-datepicker-toggle>\n        <mat-datepicker #pickerMaxDate></mat-datepicker>\n      </mat-form-field>\n  \n  \n    </div>\n    <div class=\"\" *ngIf=\"type=='radio' || type=='checkbox' || type=='dropdown'\">\n      <label for=\"label\" class=\"col-sm-12\">Options</label>\n  \n      <ul class=\"col-sm-12 option-ul\" *ngFor=\"let opt of options;let i = index\">\n        <li class=\"\">\n          <span>{{opt.label}} </span><span style=\"\n      margin-left: 30px;cursor: pointer\" title = \"delete\" (click)=\"deleteOption(opt,i)\">\n            <i class=\"fa fa-trash\"></i></span>\n        </li>\n      </ul>\n  \n      <div class=\"col-sm-12\">\n        <div class=\"input-group pull-left col-sm-6\">\n          <mat-form-field>\n            <input type=\"text\" placeholder=\"Label\" matInput style=\"\" [(ngModel)]=\"newOptionLabel\"\n              name=\"newOption\">\n          </mat-form-field>\n        </div>\n        <button mat-flat-button color=\"primary\" style=\"margin-top: 10px;\" (click)=\"AddNewOptions()\">\n          Add\n        </button>\n      </div>\n    </div>\n  \n    <div *ngIf=\"filtereddata && filtereddata.length > 0\">\n      <div class=\"col-sm-12\">\n        <label id=\"example-radio-group-label\">Do you want to related the question based on below options ?</label>\n        <mat-radio-group aria-labelledby=\"example-radio-group-label\" class=\"example-radio-group\"\n          [(ngModel)]=\"selectedOption\">\n          <mat-radio-button class=\"example-radio-button\" *ngFor=\"let ele of options\" [value]=\"ele\">\n            {{ ele.label }}\n          </mat-radio-button>\n        </mat-radio-group>\n      </div>\n  \n  \n      <div class=\"col-sm-6\">\n        <mat-form-field>\n          <mat-label>Select Question to add </mat-label>\n          <select matNativeControl [(ngModel)]=\"currentSelectedQtn\">\n            <option *ngFor=\"let values of filtereddata\" [ngValue]=\"values\"> {{ values.label }} </option>\n          </select>\n        </mat-form-field>\n      </div>\n  \n      <div class=\"col-sm-6\" *ngIf=\"type=='text' || type=='date' || type=='number'\">\n        <mat-form-field>\n          <mat-label>Select Condition </mat-label>\n          <select matNativeControl [(ngModel)]=\"condition\">\n            <option *ngFor=\"let values of conditionArray\" [ngValue]=\"values.condition\"> {{ values.label }} </option>\n          </select>\n        </mat-form-field>\n      </div>\n  \n      <div class=\"col-sm-6\" *ngIf=\"type=='text' || type=='date' || type=='number'\">\n        <mat-form-field>\n          <input type=\"tex\" matInput name=\"conditionMatchValue\" placeholder=\"\" [(ngModel)]=\"conditionMatchValue\">\n        </mat-form-field>\n      </div>\n  \n      <div class=\"col-sm-2\">\n        <button mat-flat-button color=\"primary\" style=\"margin-top: 10px;\" (click)=\"parentMapping()\">\n          Add\n        </button>\n      </div>\n    </div>\n  \n    <ul class=\"col-sm-12\" *ngFor=\"let relate of listOfRelation;let i = index\">\n      <li class=\"col-sm-12\">\n        <span>{{relate.label}} </span><span style=\"\n  margin-left: 30px;\" (click)=\"deleteCondition(relate,i)\">\n          <i class=\"fa fa-trash\"></i></span>\n      </li>\n    </ul>\n  \n  \n   \n  \n    <div class=\"col-sm-12\" *ngIf=\"type=='date'\">  \n    <label id=\"example-radio-group-label\">is autoCollect</label>\n      <mat-radio-group aria-labelledby=\"example-radio-group-label\" class=\"example-radio-group\" [(ngModel)]=\"autoCollect\">\n        <mat-radio-button class=\"example-radio-button\" [value]=true>\n          True\n        </mat-radio-button>\n        <mat-radio-button class=\"example-radio-button\" [value]=false>\n          False\n        </mat-radio-button>\n      </mat-radio-group>\n    </div>\n  \n  \n    <div class=\"col-sm-12\">\n  \n      <button mat-flat-button color=\"primary\" style=\"margin-right:10px;\" (click)=\"closeModel('save')\">\n        Save\n      </button>\n  \n    </div>\n  \n  </div>\n  <div class=\"form-group row\" [formGroup]=\"form\"\n    style=\"padding:0px;margin:0px;margin-top:10px;box-shadow: 1px 1px 2px 1px rgba(0,0,0,0.19);padding-bottom:10px;\">\n    <span class=\"qtn_position\"><span class=\"\">#{{ field.position }}</span></span>\n  \n    <div class=\"action-component\">\n  \n      <span class=\"cursor-pntr\" title = \"delete\" (click)=\"deleteElement(field)\"><i class=\"fa fa-trash\"></i> </span>\n      <span class=\"cursor-pntr\" title = \"copy\" (click)=\"copyElement(field)\"><i class=\"fa fa-copy\"></i></span>\n      <span class=\"cursor-pntr\" title = \"edit\"><i class=\"fa fa-edit\" (click)=\"loadFormElement(field)\"></i></span>\n  \n    </div>\n    <div class=\"col-md-12\" [ngSwitch]=\"field.type\">\n      <textbox *ngSwitchCase=\"'number'\" [field]=\"field\" [form]=\"form\"></textbox>\n      <textbox *ngSwitchCase=\"'text'\" [field]=\"field\" [form]=\"form\"></textbox>\n      <date *ngSwitchCase=\"'date'\" [field]=\"field\" [form]=\"form\"></date>\n      <slider *ngSwitchCase=\"'slider'\" [field]=\"field\" [form]=\"form\"></slider>\n      <dropdown *ngSwitchCase=\"'dropdown'\" [field]=\"field\" [form]=\"form\"></dropdown>\n      <checkbox *ngSwitchCase=\"'checkbox'\" [field]=\"field\" [form]=\"form\"></checkbox>\n      <radio *ngSwitchCase=\"'radio'\" [field]=\"field\" [form]=\"form\"></radio>\n      <lib-multi-select *ngSwitchCase=\"'matrix'\" cdkDrag   (sendDataToParent)=\"eventFromChild($event)\" \n      (childrenDropEvent)=\"childrenDropEvent($event)\" [field]=\"field\" [form]=\"form\"></lib-multi-select>\n      <file *ngSwitchCase=\"'file'\" [field]=\"field\" [form]=\"form\"></file>\n      <div style=\"float:right\">\n      </div>\n    </div>\n    </div>",
+                    styles: ["\n  .qtn_position {\n    float: left;\n    width: 40px;\n    padding: 5px 0px 0px 5px;\n    color: #ccc;\n  }\n  .radio-group {\n    display: inline-block;\n    margin: 15px 0; \n  }\n   .option-ul {\n    padding-left: 44px;\n    padding-top: 5px;\n   }\n  \n  "
                     ]
                 },] },
     ];
@@ -1607,103 +1557,9 @@ var FieldBuilderComponent = /** @class */ (function () {
     };
     return FieldBuilderComponent;
 }());
-if (false) {
-    /** @type {?} */
-    FieldBuilderComponent.prototype.field;
-    /** @type {?} */
-    FieldBuilderComponent.prototype.criteriaList;
-    /** @type {?} */
-    FieldBuilderComponent.prototype.form;
-    /** @type {?} */
-    FieldBuilderComponent.prototype.sendDataToParent;
-    /** @type {?} */
-    FieldBuilderComponent.prototype.copyOrDeleteEvent;
-    /** @type {?} */
-    FieldBuilderComponent.prototype.filtereddata;
-    /** @type {?} */
-    FieldBuilderComponent.prototype.getSelectQuestion;
-    /** @type {?} */
-    FieldBuilderComponent.prototype.closeResult;
-    /** @type {?} */
-    FieldBuilderComponent.prototype.modalReference;
-    /** @type {?} */
-    FieldBuilderComponent.prototype.label;
-    /** @type {?} */
-    FieldBuilderComponent.prototype.type;
-    /** @type {?} */
-    FieldBuilderComponent.prototype.placeholder;
-    /** @type {?} */
-    FieldBuilderComponent.prototype.options;
-    /** @type {?} */
-    FieldBuilderComponent.prototype.newOptionKey;
-    /** @type {?} */
-    FieldBuilderComponent.prototype.newOptionLabel;
-    /** @type {?} */
-    FieldBuilderComponent.prototype.pages;
-    /** @type {?} */
-    FieldBuilderComponent.prototype.activeModelData;
-    /** @type {?} */
-    FieldBuilderComponent.prototype.validations;
-    /** @type {?} */
-    FieldBuilderComponent.prototype.required;
-    /** @type {?} */
-    FieldBuilderComponent.prototype.autoCollect;
-    /** @type {?} */
-    FieldBuilderComponent.prototype.openEdit;
-    /** @type {?} */
-    FieldBuilderComponent.prototype._id;
-    /** @type {?} */
-    FieldBuilderComponent.prototype.description;
-    /** @type {?} */
-    FieldBuilderComponent.prototype.pageNumber;
-    /** @type {?} */
-    FieldBuilderComponent.prototype.minDate;
-    /** @type {?} */
-    FieldBuilderComponent.prototype.maxDate;
-    /** @type {?} */
-    FieldBuilderComponent.prototype.min;
-    /** @type {?} */
-    FieldBuilderComponent.prototype.max;
-    /** @type {?} */
-    FieldBuilderComponent.prototype.draftCriteriaId;
-    /** @type {?} */
-    FieldBuilderComponent.prototype.subscription;
-    /** @type {?} */
-    FieldBuilderComponent.prototype.allData;
-    /** @type {?} */
-    FieldBuilderComponent.prototype.currentSelectedQtn;
-    /** @type {?} */
-    FieldBuilderComponent.prototype.selectedOption;
-    /** @type {?} */
-    FieldBuilderComponent.prototype.listOfRelation;
-    /** @type {?} */
-    FieldBuilderComponent.prototype.condition;
-    /** @type {?} */
-    FieldBuilderComponent.prototype.conditionMatchValue;
-    /** @type {?} */
-    FieldBuilderComponent.prototype.conditionArray;
-    /** @type {?} */
-    FieldBuilderComponent.prototype.myModal;
-    /**
-     * @type {?}
-     * @private
-     */
-    FieldBuilderComponent.prototype.dynamicServe;
-    /**
-     * @type {?}
-     * @private
-     */
-    FieldBuilderComponent.prototype._snackBar;
-    /**
-     * @type {?}
-     * @private
-     */
-    FieldBuilderComponent.prototype.dialog;
-}
 
 /**
  * @fileoverview added by tsickle
- * Generated from: lib/dynamic-form-builder/atoms/textbox.ts
  * @suppress {checkTypes,constantProperty,extraRequire,missingOverride,missingReturn,unusedPrivateMembers,uselessCode} checked by tsc
  */
 // text,email,tel,textarea,password, 
@@ -1744,16 +1600,9 @@ var TextBoxComponent = /** @class */ (function () {
     };
     return TextBoxComponent;
 }());
-if (false) {
-    /** @type {?} */
-    TextBoxComponent.prototype.field;
-    /** @type {?} */
-    TextBoxComponent.prototype.form;
-}
 
 /**
  * @fileoverview added by tsickle
- * Generated from: lib/dynamic-form-builder/atoms/dropdown.ts
  * @suppress {checkTypes,constantProperty,extraRequire,missingOverride,missingReturn,unusedPrivateMembers,uselessCode} checked by tsc
  */
 var DropDownComponent = /** @class */ (function () {
@@ -1775,16 +1624,9 @@ var DropDownComponent = /** @class */ (function () {
     };
     return DropDownComponent;
 }());
-if (false) {
-    /** @type {?} */
-    DropDownComponent.prototype.field;
-    /** @type {?} */
-    DropDownComponent.prototype.form;
-}
 
 /**
  * @fileoverview added by tsickle
- * Generated from: lib/dynamic-form-builder/atoms/file.ts
  * @suppress {checkTypes,constantProperty,extraRequire,missingOverride,missingReturn,unusedPrivateMembers,uselessCode} checked by tsc
  */
 // text,email,tel,textarea,password, 
@@ -1835,16 +1677,9 @@ var FileComponent = /** @class */ (function () {
     };
     return FileComponent;
 }());
-if (false) {
-    /** @type {?} */
-    FileComponent.prototype.field;
-    /** @type {?} */
-    FileComponent.prototype.form;
-}
 
 /**
  * @fileoverview added by tsickle
- * Generated from: lib/dynamic-form-builder/atoms/checkbox.ts
  * @suppress {checkTypes,constantProperty,extraRequire,missingOverride,missingReturn,unusedPrivateMembers,uselessCode} checked by tsc
  */
 var CheckBoxComponent = /** @class */ (function () {
@@ -1880,16 +1715,9 @@ var CheckBoxComponent = /** @class */ (function () {
     };
     return CheckBoxComponent;
 }());
-if (false) {
-    /** @type {?} */
-    CheckBoxComponent.prototype.field;
-    /** @type {?} */
-    CheckBoxComponent.prototype.form;
-}
 
 /**
  * @fileoverview added by tsickle
- * Generated from: lib/dynamic-form-builder/atoms/radio.ts
  * @suppress {checkTypes,constantProperty,extraRequire,missingOverride,missingReturn,unusedPrivateMembers,uselessCode} checked by tsc
  */
 var RadioComponent = /** @class */ (function () {
@@ -1909,16 +1737,9 @@ var RadioComponent = /** @class */ (function () {
     };
     return RadioComponent;
 }());
-if (false) {
-    /** @type {?} */
-    RadioComponent.prototype.field;
-    /** @type {?} */
-    RadioComponent.prototype.form;
-}
 
 /**
  * @fileoverview added by tsickle
- * Generated from: lib/dynamic-form-builder/atoms/date.ts
  * @suppress {checkTypes,constantProperty,extraRequire,missingOverride,missingReturn,unusedPrivateMembers,uselessCode} checked by tsc
  */
 // text,email,tel,textarea,password, 
@@ -1959,16 +1780,9 @@ var DateComponent = /** @class */ (function () {
     };
     return DateComponent;
 }());
-if (false) {
-    /** @type {?} */
-    DateComponent.prototype.field;
-    /** @type {?} */
-    DateComponent.prototype.form;
-}
 
 /**
  * @fileoverview added by tsickle
- * Generated from: lib/dynamic-form-builder/atoms/slider.ts
  * @suppress {checkTypes,constantProperty,extraRequire,missingOverride,missingReturn,unusedPrivateMembers,uselessCode} checked by tsc
  */
 // text,email,tel,textarea,password, 
@@ -2009,16 +1823,9 @@ var SliderComponent = /** @class */ (function () {
     };
     return SliderComponent;
 }());
-if (false) {
-    /** @type {?} */
-    SliderComponent.prototype.field;
-    /** @type {?} */
-    SliderComponent.prototype.form;
-}
 
 /**
  * @fileoverview added by tsickle
- * Generated from: lib/dynamic-form-builder/atoms/multi-select.ts
  * @suppress {checkTypes,constantProperty,extraRequire,missingOverride,missingReturn,unusedPrivateMembers,uselessCode} checked by tsc
  */
 var MultiSelectComponent = /** @class */ (function () {
@@ -2106,12 +1913,6 @@ var MultiSelectComponent = /** @class */ (function () {
     function () {
         var _this = this;
         console.log(this.condition, "condition", this.currentSelectedQtn, "selectedOption", this.selectedOption);
-        /** @type {?} */
-        var obj = {}
-        // option:this.selectedOption,
-        // question:this.currentSelectedQtn
-        // obj['visibleIf'] = [];
-        ;
         // option:this.selectedOption,
         // question:this.currentSelectedQtn
         // obj['visibleIf'] = [];
@@ -2210,8 +2011,7 @@ var MultiSelectComponent = /** @class */ (function () {
                 this.listOfRelation.push(condiObj);
             }
         }
-        if (this.condition) {
-        }
+        if (this.condition) ;
         // 'option':this.selectedOption,
         //       'question':this.currentSelectedQtn
         // this.field.childQnt = this.currentSelectedQtn.field;
@@ -2457,83 +2257,9 @@ var MultiSelectComponent = /** @class */ (function () {
     };
     return MultiSelectComponent;
 }());
-if (false) {
-    /** @type {?} */
-    MultiSelectComponent.prototype.field;
-    /** @type {?} */
-    MultiSelectComponent.prototype.form;
-    /** @type {?} */
-    MultiSelectComponent.prototype.sendDataToParent;
-    /** @type {?} */
-    MultiSelectComponent.prototype.childrenDropEvent;
-    /** @type {?} */
-    MultiSelectComponent.prototype.copyOrDeleteEvent;
-    /** @type {?} */
-    MultiSelectComponent.prototype.onFieldUpdate;
-    /** @type {?} */
-    MultiSelectComponent.prototype.activeModelData;
-    /** @type {?} */
-    MultiSelectComponent.prototype.validations;
-    /** @type {?} */
-    MultiSelectComponent.prototype.required;
-    /** @type {?} */
-    MultiSelectComponent.prototype.autoCollect;
-    /** @type {?} */
-    MultiSelectComponent.prototype.openEditChild;
-    /** @type {?} */
-    MultiSelectComponent.prototype._id;
-    /** @type {?} */
-    MultiSelectComponent.prototype.description;
-    /** @type {?} */
-    MultiSelectComponent.prototype.minDate;
-    /** @type {?} */
-    MultiSelectComponent.prototype.maxDate;
-    /** @type {?} */
-    MultiSelectComponent.prototype.min;
-    /** @type {?} */
-    MultiSelectComponent.prototype.max;
-    /** @type {?} */
-    MultiSelectComponent.prototype.label;
-    /** @type {?} */
-    MultiSelectComponent.prototype.type;
-    /** @type {?} */
-    MultiSelectComponent.prototype.placeholder;
-    /** @type {?} */
-    MultiSelectComponent.prototype.options;
-    /** @type {?} */
-    MultiSelectComponent.prototype.pageNumber;
-    /** @type {?} */
-    MultiSelectComponent.prototype.allData;
-    /** @type {?} */
-    MultiSelectComponent.prototype.filtereddata;
-    /** @type {?} */
-    MultiSelectComponent.prototype.conditionMatchValue;
-    /** @type {?} */
-    MultiSelectComponent.prototype.selectedOption;
-    /** @type {?} */
-    MultiSelectComponent.prototype.currentSelectedQtn;
-    /** @type {?} */
-    MultiSelectComponent.prototype.listOfRelation;
-    /** @type {?} */
-    MultiSelectComponent.prototype.condition;
-    /** @type {?} */
-    MultiSelectComponent.prototype.getSelectQuestion;
-    /** @type {?} */
-    MultiSelectComponent.prototype.conditionArray;
-    /** @type {?} */
-    MultiSelectComponent.prototype.currentItem;
-    /** @type {?} */
-    MultiSelectComponent.prototype.cdr;
-    /**
-     * @type {?}
-     * @private
-     */
-    MultiSelectComponent.prototype.dynamicServe;
-}
 
 /**
  * @fileoverview added by tsickle
- * Generated from: lib/dynamic-form-builder/dynamic-form-builder.module.ts
  * @suppress {checkTypes,constantProperty,extraRequire,missingOverride,missingReturn,unusedPrivateMembers,uselessCode} checked by tsc
  */
 // import {  } from '@angular/cdk/'
@@ -2579,7 +2305,6 @@ var DynamicFormBuilderModule = /** @class */ (function () {
 
 /**
  * @fileoverview added by tsickle
- * Generated from: lib/dynamic-form-builder.module.ts
  * @suppress {checkTypes,constantProperty,extraRequire,missingOverride,missingReturn,unusedPrivateMembers,uselessCode} checked by tsc
  */
 var DynamicFormBuilderModule1 = /** @class */ (function () {
@@ -2622,15 +2347,14 @@ var DynamicFormBuilderModule1 = /** @class */ (function () {
 
 /**
  * @fileoverview added by tsickle
- * Generated from: public_api.ts
  * @suppress {checkTypes,constantProperty,extraRequire,missingOverride,missingReturn,unusedPrivateMembers,uselessCode} checked by tsc
  */
 
 /**
  * @fileoverview added by tsickle
- * Generated from: dynamic-form-builder.ts
  * @suppress {checkTypes,constantProperty,extraRequire,missingOverride,missingReturn,unusedPrivateMembers,uselessCode} checked by tsc
  */
 
-export { DynamicFormBuilderModule1, DynamicFormBuilderService, DynamicFormBuilderComponent as ɵa, DynamicFormBuilderModule as ɵb, DynamicFormBuilderComponent$1 as ɵc, FieldBuilderComponent as ɵd, TextBoxComponent as ɵe, DropDownComponent as ɵf, CheckBoxComponent as ɵg, FileComponent as ɵh, RadioComponent as ɵi, DateComponent as ɵj, SliderComponent as ɵk, MultiSelectComponent as ɵl };
+export { DynamicFormBuilderService, DynamicFormBuilderModule1, DynamicFormBuilderComponent as ɵa, CheckBoxComponent as ɵg, DateComponent as ɵj, DropDownComponent as ɵf, FileComponent as ɵh, MultiSelectComponent as ɵl, RadioComponent as ɵi, SliderComponent as ɵk, TextBoxComponent as ɵe, DynamicFormBuilderComponent$1 as ɵc, DynamicFormBuilderModule as ɵb, FieldBuilderComponent as ɵd };
+
 //# sourceMappingURL=dynamic-form-builder.js.map

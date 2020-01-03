@@ -1,16 +1,15 @@
 import { Subject } from 'rxjs';
-import { EventEmitter, Component, Input, Output, ViewChild, NgModule, ChangeDetectorRef } from '@angular/core';
-import { FormGroup, FormControl, FormBuilder, ReactiveFormsModule, FormsModule } from '@angular/forms';
-import { HttpClient, HttpClientModule } from '@angular/common/http';
 import { CommonModule } from '@angular/common';
-import { moveItemInArray, DragDropModule } from '@angular/cdk/drag-drop';
-import { MatSnackBar, MatDialog, MatButtonModule, MatRadioModule, MatDatepickerModule, MatFormFieldModule, MatInputModule, MatSliderModule, MatSelectModule, MatTabsModule, MatDialogModule, MatTooltipModule, MatCardModule, MatTableModule, MatExpansionModule, MatPaginatorModule, MatNativeDateModule, MatToolbarModule, MatStepperModule } from '@angular/material';
 import { AngularFontAwesomeModule } from 'angular-font-awesome';
+import { Component, EventEmitter, Output, Input, ViewChild, NgModule, ChangeDetectorRef } from '@angular/core';
+import { FormGroup, FormControl, FormBuilder, ReactiveFormsModule, FormsModule } from '@angular/forms';
+import { moveItemInArray, DragDropModule } from '@angular/cdk/drag-drop';
+import { HttpClient, HttpClientModule } from '@angular/common/http';
+import { MatSnackBar, MatDialog, MatButtonModule, MatRadioModule, MatDatepickerModule, MatFormFieldModule, MatInputModule, MatSliderModule, MatSelectModule, MatTooltipModule, MatTabsModule, MatCardModule, MatDialogModule, MatStepperModule, MatTableModule, MatExpansionModule, MatPaginatorModule, MatNativeDateModule, MatToolbarModule } from '@angular/material';
 import { DndModule } from 'ngx-drag-drop';
 
 /**
  * @fileoverview added by tsickle
- * Generated from: lib/dynamic-form-builder.service.ts
  * @suppress {checkTypes,constantProperty,extraRequire,missingOverride,missingReturn,unusedPrivateMembers,uselessCode} checked by tsc
  */
 // @Injectable({
@@ -71,8 +70,15 @@ class DynamicFormBuilderService {
             criteriaList: this.criteriaList,
             questionList: this.list
         };
+        console.log("executing in service", this.all);
         // return this.communicateSubject.asObservable();
         return this.all;
+    }
+    /**
+     * @return {?}
+     */
+    getQuestions() {
+        return this.list;
     }
     /**
      * @param {?} list
@@ -81,23 +87,29 @@ class DynamicFormBuilderService {
     setCriteria(list) {
         this.criteriaList = list;
     }
-}
-if (false) {
-    /** @type {?} */
-    DynamicFormBuilderService.prototype.communicateSubject;
-    /** @type {?} */
-    DynamicFormBuilderService.prototype.list;
-    /** @type {?} */
-    DynamicFormBuilderService.prototype.pagelist;
-    /** @type {?} */
-    DynamicFormBuilderService.prototype.all;
-    /** @type {?} */
-    DynamicFormBuilderService.prototype.criteriaList;
+    /**
+     * @param {?} questionEle
+     * @return {?}
+     */
+    updateQuestion(questionEle) {
+        console.log("update question", questionEle);
+        this.list = this.list['questionList'].filter((/**
+         * @param {?} item
+         * @return {?}
+         */
+        item => {
+            if (item.field == questionEle.field) {
+                return questionEle;
+            }
+            else {
+                return item;
+            }
+        }));
+    }
 }
 
 /**
  * @fileoverview added by tsickle
- * Generated from: lib/dynamic-form-builder.component.ts
  * @suppress {checkTypes,constantProperty,extraRequire,missingOverride,missingReturn,unusedPrivateMembers,uselessCode} checked by tsc
  */
 class DynamicFormBuilderComponent {
@@ -379,9 +391,6 @@ class DynamicFormBuilderComponent {
                     }
                 };
             }
-            /** @type {?} */
-            let finalchild = [];
-            finalchild.push();
             obj = {
                 "field": len + "question",
                 "type": "matrix",
@@ -459,7 +468,6 @@ class DynamicFormBuilderComponent {
             data: obj
         };
         console.log("transf", trnasformData);
-        this.questionTrigger.emit(trnasformData);
         this.formData.push(obj);
         /** @type {?} */
         let fieldsCtrls = {};
@@ -494,8 +502,9 @@ class DynamicFormBuilderComponent {
         };
         console.log("completeData", completeData);
         this.sendToService(completeData);
-        this.questionTrigger.emit(trnasformData);
-        console.log("fields controls", this.form);
+        // this.questionTrigger.emit(trnasformData);
+        // this.questionTrigger.emit(trnasformData);
+        // console.log("fields controls", this.form);
     }
     /**
      * @param {?} data
@@ -796,54 +805,9 @@ DynamicFormBuilderComponent.propDecorators = {
     events: [{ type: Input }],
     questionTrigger: [{ type: Output }]
 };
-if (false) {
-    /** @type {?} */
-    DynamicFormBuilderComponent.prototype.form;
-    /** @type {?} */
-    DynamicFormBuilderComponent.prototype.unsubcribe;
-    /** @type {?} */
-    DynamicFormBuilderComponent.prototype.jsonData;
-    /** @type {?} */
-    DynamicFormBuilderComponent.prototype.formData;
-    /** @type {?} */
-    DynamicFormBuilderComponent.prototype.pageNumber;
-    /** @type {?} */
-    DynamicFormBuilderComponent.prototype.events;
-    /** @type {?} */
-    DynamicFormBuilderComponent.prototype.questionTrigger;
-    /** @type {?} */
-    DynamicFormBuilderComponent.prototype.eventsSubscription;
-    /** @type {?} */
-    DynamicFormBuilderComponent.prototype.criteriaList;
-    /** @type {?} */
-    DynamicFormBuilderComponent.prototype.fields;
-    /** @type {?} */
-    DynamicFormBuilderComponent.prototype.showQuestionBlock;
-    /**
-     * @type {?}
-     * @private
-     */
-    DynamicFormBuilderComponent.prototype.http;
-    /**
-     * @type {?}
-     * @private
-     */
-    DynamicFormBuilderComponent.prototype._formBuilder;
-    /**
-     * @type {?}
-     * @private
-     */
-    DynamicFormBuilderComponent.prototype.fb;
-    /**
-     * @type {?}
-     * @private
-     */
-    DynamicFormBuilderComponent.prototype.dynamicServe;
-}
 
 /**
  * @fileoverview added by tsickle
- * Generated from: lib/dynamic-form-builder/dynamic-form-builder.component.ts
  * @suppress {checkTypes,constantProperty,extraRequire,missingOverride,missingReturn,unusedPrivateMembers,uselessCode} checked by tsc
  */
 class DynamicFormBuilderComponent$1 {
@@ -1054,23 +1018,9 @@ DynamicFormBuilderComponent$1.propDecorators = {
     fields: [{ type: Input }],
     form: [{ type: Input }]
 };
-if (false) {
-    /** @type {?} */
-    DynamicFormBuilderComponent$1.prototype.onFieldUpdate;
-    /** @type {?} */
-    DynamicFormBuilderComponent$1.prototype.fields;
-    /** @type {?} */
-    DynamicFormBuilderComponent$1.prototype.form;
-    /** @type {?} */
-    DynamicFormBuilderComponent$1.prototype.formData;
-    /** @type {?} */
-    DynamicFormBuilderComponent$1.prototype.jsonData;
-    /* Skipping unhandled member: ;*/
-}
 
 /**
  * @fileoverview added by tsickle
- * Generated from: lib/dynamic-form-builder/field-builder/field-builder.component.ts
  * @suppress {checkTypes,constantProperty,extraRequire,missingOverride,missingReturn,unusedPrivateMembers,uselessCode} checked by tsc
  */
 // <div class="alert alert-danger my-1 p-2 fadeInDown animated" *ngIf="!isValid && isDirty">{{field.label}} is required</div>
@@ -1143,12 +1093,6 @@ class FieldBuilderComponent {
      */
     parentMapping() {
         console.log(this.condition, "condition", this.currentSelectedQtn, "selectedOption", this.selectedOption);
-        /** @type {?} */
-        let obj = {}
-        // option:this.selectedOption,
-        // question:this.currentSelectedQtn
-        // obj['visibleIf'] = [];
-        ;
         // option:this.selectedOption,
         // question:this.currentSelectedQtn
         // obj['visibleIf'] = [];
@@ -1247,8 +1191,7 @@ class FieldBuilderComponent {
                 this.listOfRelation.push(condiObj);
             }
         }
-        if (this.condition) {
-        }
+        if (this.condition) ;
         // 'option':this.selectedOption,
         //       'question':this.currentSelectedQtn
         // this.field.childQnt = this.currentSelectedQtn.field;
@@ -1367,6 +1310,7 @@ class FieldBuilderComponent {
             this.field.description = this.description;
             this.field.pageNumber = this.pageNumber;
             this.field.draftCriteriaId = this.draftCriteriaId;
+            // this.field.field = this.field.field;
             if (this.type == 'date') {
                 this.field.validations.minDate = this.minDate;
                 this.field.validations.maxDate = this.maxDate;
@@ -1392,6 +1336,7 @@ class FieldBuilderComponent {
                 action: "save",
                 data: obj
             };
+            this.dynamicServe.updateQuestion(this.field);
             this.sendDataToParent.emit(op);
             // this.sendDataToParent.emit(JSON.stringify(obj));
             // console.log(" this.field", this.field);
@@ -1457,8 +1402,7 @@ class FieldBuilderComponent {
         if (this.newOptionLabel != "") {
             this.newOptionKey = 'R' + this.options.length;
             console.log("this.newOption", this.newOptionLabel);
-            if (Array.isArray(this.options)) {
-            }
+            if (Array.isArray(this.options)) ;
             else {
                 this.options = [];
             }
@@ -1649,6 +1593,17 @@ span.cursor-pntr {
         </mat-select>
       </mat-form-field>
     </div>
+    <div class="col-sm-6">
+    <label id="example-radio-group-label">is Reqired ?</label>
+    <mat-radio-group aria-labelledby="radio-group-label" class="radio-group" [(ngModel)]="required">
+      <mat-radio-button class="example-radio-button" [value]=true>
+        Yes
+      </mat-radio-button>
+      <mat-radio-button class="example-radio-button" [value]=false>
+        No
+      </mat-radio-button>
+    </mat-radio-group>
+  </div>
   
   
   
@@ -1679,10 +1634,10 @@ span.cursor-pntr {
   
   
     </div>
-    <div class="col-sm-12" *ngIf="type=='radio' || type=='checkbox' || type=='dropdown'">
+    <div class="" *ngIf="type=='radio' || type=='checkbox' || type=='dropdown'">
       <label for="label" class="col-sm-12">Options</label>
   
-      <ul class="col" *ngFor="let opt of options;let i = index">
+      <ul class="col-sm-12 option-ul" *ngFor="let opt of options;let i = index">
         <li class="">
           <span>{{opt.label}} </span><span style="
       margin-left: 30px;cursor: pointer" title = "delete" (click)="deleteOption(opt,i)">
@@ -1690,10 +1645,10 @@ span.cursor-pntr {
         </li>
       </ul>
   
-      <div class="col-sm-6">
-        <div class="input-group">
+      <div class="col-sm-12">
+        <div class="input-group pull-left col-sm-6">
           <mat-form-field>
-            <input type="text" placeholder="Label" matInput style="margin-bottom: 10px;" [(ngModel)]="newOptionLabel"
+            <input type="text" placeholder="Label" matInput style="" [(ngModel)]="newOptionLabel"
               name="newOption">
           </mat-form-field>
         </div>
@@ -1755,17 +1710,7 @@ span.cursor-pntr {
     </ul>
   
   
-    <div class="col-sm-12">
-      <label id="example-radio-group-label">is Reqired ?</label>
-      <mat-radio-group aria-labelledby="example-radio-group-label" class="example-radio-group" [(ngModel)]="required">
-        <mat-radio-button class="example-radio-button" [value]=true>
-          Yes
-        </mat-radio-button>
-        <mat-radio-button class="example-radio-button" [value]=false>
-          No
-        </mat-radio-button>
-      </mat-radio-group>
-    </div>
+   
   
     <div class="col-sm-12" *ngIf="type=='date'">  
     <label id="example-radio-group-label">is autoCollect</label>
@@ -1821,7 +1766,17 @@ span.cursor-pntr {
     width: 40px;
     padding: 5px 0px 0px 5px;
     color: #ccc;
-  } `
+  }
+  .radio-group {
+    display: inline-block;
+    margin: 15px 0; 
+  }
+   .option-ul {
+    padding-left: 44px;
+    padding-top: 5px;
+   }
+  
+  `
                 ]
             },] },
 ];
@@ -1839,103 +1794,9 @@ FieldBuilderComponent.propDecorators = {
     copyOrDeleteEvent: [{ type: Output }],
     myModal: [{ type: ViewChild, args: ['content', { static: false },] }]
 };
-if (false) {
-    /** @type {?} */
-    FieldBuilderComponent.prototype.field;
-    /** @type {?} */
-    FieldBuilderComponent.prototype.criteriaList;
-    /** @type {?} */
-    FieldBuilderComponent.prototype.form;
-    /** @type {?} */
-    FieldBuilderComponent.prototype.sendDataToParent;
-    /** @type {?} */
-    FieldBuilderComponent.prototype.copyOrDeleteEvent;
-    /** @type {?} */
-    FieldBuilderComponent.prototype.filtereddata;
-    /** @type {?} */
-    FieldBuilderComponent.prototype.getSelectQuestion;
-    /** @type {?} */
-    FieldBuilderComponent.prototype.closeResult;
-    /** @type {?} */
-    FieldBuilderComponent.prototype.modalReference;
-    /** @type {?} */
-    FieldBuilderComponent.prototype.label;
-    /** @type {?} */
-    FieldBuilderComponent.prototype.type;
-    /** @type {?} */
-    FieldBuilderComponent.prototype.placeholder;
-    /** @type {?} */
-    FieldBuilderComponent.prototype.options;
-    /** @type {?} */
-    FieldBuilderComponent.prototype.newOptionKey;
-    /** @type {?} */
-    FieldBuilderComponent.prototype.newOptionLabel;
-    /** @type {?} */
-    FieldBuilderComponent.prototype.pages;
-    /** @type {?} */
-    FieldBuilderComponent.prototype.activeModelData;
-    /** @type {?} */
-    FieldBuilderComponent.prototype.validations;
-    /** @type {?} */
-    FieldBuilderComponent.prototype.required;
-    /** @type {?} */
-    FieldBuilderComponent.prototype.autoCollect;
-    /** @type {?} */
-    FieldBuilderComponent.prototype.openEdit;
-    /** @type {?} */
-    FieldBuilderComponent.prototype._id;
-    /** @type {?} */
-    FieldBuilderComponent.prototype.description;
-    /** @type {?} */
-    FieldBuilderComponent.prototype.pageNumber;
-    /** @type {?} */
-    FieldBuilderComponent.prototype.minDate;
-    /** @type {?} */
-    FieldBuilderComponent.prototype.maxDate;
-    /** @type {?} */
-    FieldBuilderComponent.prototype.min;
-    /** @type {?} */
-    FieldBuilderComponent.prototype.max;
-    /** @type {?} */
-    FieldBuilderComponent.prototype.draftCriteriaId;
-    /** @type {?} */
-    FieldBuilderComponent.prototype.subscription;
-    /** @type {?} */
-    FieldBuilderComponent.prototype.allData;
-    /** @type {?} */
-    FieldBuilderComponent.prototype.currentSelectedQtn;
-    /** @type {?} */
-    FieldBuilderComponent.prototype.selectedOption;
-    /** @type {?} */
-    FieldBuilderComponent.prototype.listOfRelation;
-    /** @type {?} */
-    FieldBuilderComponent.prototype.condition;
-    /** @type {?} */
-    FieldBuilderComponent.prototype.conditionMatchValue;
-    /** @type {?} */
-    FieldBuilderComponent.prototype.conditionArray;
-    /** @type {?} */
-    FieldBuilderComponent.prototype.myModal;
-    /**
-     * @type {?}
-     * @private
-     */
-    FieldBuilderComponent.prototype.dynamicServe;
-    /**
-     * @type {?}
-     * @private
-     */
-    FieldBuilderComponent.prototype._snackBar;
-    /**
-     * @type {?}
-     * @private
-     */
-    FieldBuilderComponent.prototype.dialog;
-}
 
 /**
  * @fileoverview added by tsickle
- * Generated from: lib/dynamic-form-builder/atoms/textbox.ts
  * @suppress {checkTypes,constantProperty,extraRequire,missingOverride,missingReturn,unusedPrivateMembers,uselessCode} checked by tsc
  */
 // text,email,tel,textarea,password, 
@@ -1982,16 +1843,9 @@ TextBoxComponent.propDecorators = {
     field: [{ type: Input }],
     form: [{ type: Input }]
 };
-if (false) {
-    /** @type {?} */
-    TextBoxComponent.prototype.field;
-    /** @type {?} */
-    TextBoxComponent.prototype.form;
-}
 
 /**
  * @fileoverview added by tsickle
- * Generated from: lib/dynamic-form-builder/atoms/dropdown.ts
  * @suppress {checkTypes,constantProperty,extraRequire,missingOverride,missingReturn,unusedPrivateMembers,uselessCode} checked by tsc
  */
 class DropDownComponent {
@@ -2025,16 +1879,9 @@ DropDownComponent.propDecorators = {
     field: [{ type: Input }],
     form: [{ type: Input }]
 };
-if (false) {
-    /** @type {?} */
-    DropDownComponent.prototype.field;
-    /** @type {?} */
-    DropDownComponent.prototype.form;
-}
 
 /**
  * @fileoverview added by tsickle
- * Generated from: lib/dynamic-form-builder/atoms/file.ts
  * @suppress {checkTypes,constantProperty,extraRequire,missingOverride,missingReturn,unusedPrivateMembers,uselessCode} checked by tsc
  */
 // text,email,tel,textarea,password, 
@@ -2138,16 +1985,9 @@ FileComponent.propDecorators = {
     field: [{ type: Input }],
     form: [{ type: Input }]
 };
-if (false) {
-    /** @type {?} */
-    FileComponent.prototype.field;
-    /** @type {?} */
-    FileComponent.prototype.form;
-}
 
 /**
  * @fileoverview added by tsickle
- * Generated from: lib/dynamic-form-builder/atoms/checkbox.ts
  * @suppress {checkTypes,constantProperty,extraRequire,missingOverride,missingReturn,unusedPrivateMembers,uselessCode} checked by tsc
  */
 class CheckBoxComponent {
@@ -2192,16 +2032,9 @@ CheckBoxComponent.propDecorators = {
     field: [{ type: Input }],
     form: [{ type: Input }]
 };
-if (false) {
-    /** @type {?} */
-    CheckBoxComponent.prototype.field;
-    /** @type {?} */
-    CheckBoxComponent.prototype.form;
-}
 
 /**
  * @fileoverview added by tsickle
- * Generated from: lib/dynamic-form-builder/atoms/radio.ts
  * @suppress {checkTypes,constantProperty,extraRequire,missingOverride,missingReturn,unusedPrivateMembers,uselessCode} checked by tsc
  */
 class RadioComponent {
@@ -2239,16 +2072,9 @@ RadioComponent.propDecorators = {
     field: [{ type: Input }],
     form: [{ type: Input }]
 };
-if (false) {
-    /** @type {?} */
-    RadioComponent.prototype.field;
-    /** @type {?} */
-    RadioComponent.prototype.form;
-}
 
 /**
  * @fileoverview added by tsickle
- * Generated from: lib/dynamic-form-builder/atoms/date.ts
  * @suppress {checkTypes,constantProperty,extraRequire,missingOverride,missingReturn,unusedPrivateMembers,uselessCode} checked by tsc
  */
 // text,email,tel,textarea,password, 
@@ -2295,16 +2121,9 @@ DateComponent.propDecorators = {
     field: [{ type: Input }],
     form: [{ type: Input }]
 };
-if (false) {
-    /** @type {?} */
-    DateComponent.prototype.field;
-    /** @type {?} */
-    DateComponent.prototype.form;
-}
 
 /**
  * @fileoverview added by tsickle
- * Generated from: lib/dynamic-form-builder/atoms/slider.ts
  * @suppress {checkTypes,constantProperty,extraRequire,missingOverride,missingReturn,unusedPrivateMembers,uselessCode} checked by tsc
  */
 // text,email,tel,textarea,password, 
@@ -2358,16 +2177,9 @@ SliderComponent.propDecorators = {
     field: [{ type: Input }],
     form: [{ type: Input }]
 };
-if (false) {
-    /** @type {?} */
-    SliderComponent.prototype.field;
-    /** @type {?} */
-    SliderComponent.prototype.form;
-}
 
 /**
  * @fileoverview added by tsickle
- * Generated from: lib/dynamic-form-builder/atoms/multi-select.ts
  * @suppress {checkTypes,constantProperty,extraRequire,missingOverride,missingReturn,unusedPrivateMembers,uselessCode} checked by tsc
  */
 class MultiSelectComponent {
@@ -2442,12 +2254,6 @@ class MultiSelectComponent {
      */
     parentMapping() {
         console.log(this.condition, "condition", this.currentSelectedQtn, "selectedOption", this.selectedOption);
-        /** @type {?} */
-        let obj = {}
-        // option:this.selectedOption,
-        // question:this.currentSelectedQtn
-        // obj['visibleIf'] = [];
-        ;
         // option:this.selectedOption,
         // question:this.currentSelectedQtn
         // obj['visibleIf'] = [];
@@ -2546,8 +2352,7 @@ class MultiSelectComponent {
                 this.listOfRelation.push(condiObj);
             }
         }
-        if (this.condition) {
-        }
+        if (this.condition) ;
         // 'option':this.selectedOption,
         //       'question':this.currentSelectedQtn
         // this.field.childQnt = this.currentSelectedQtn.field;
@@ -2982,83 +2787,9 @@ MultiSelectComponent.propDecorators = {
     copyOrDeleteEvent: [{ type: Output }],
     onFieldUpdate: [{ type: Output }]
 };
-if (false) {
-    /** @type {?} */
-    MultiSelectComponent.prototype.field;
-    /** @type {?} */
-    MultiSelectComponent.prototype.form;
-    /** @type {?} */
-    MultiSelectComponent.prototype.sendDataToParent;
-    /** @type {?} */
-    MultiSelectComponent.prototype.childrenDropEvent;
-    /** @type {?} */
-    MultiSelectComponent.prototype.copyOrDeleteEvent;
-    /** @type {?} */
-    MultiSelectComponent.prototype.onFieldUpdate;
-    /** @type {?} */
-    MultiSelectComponent.prototype.activeModelData;
-    /** @type {?} */
-    MultiSelectComponent.prototype.validations;
-    /** @type {?} */
-    MultiSelectComponent.prototype.required;
-    /** @type {?} */
-    MultiSelectComponent.prototype.autoCollect;
-    /** @type {?} */
-    MultiSelectComponent.prototype.openEditChild;
-    /** @type {?} */
-    MultiSelectComponent.prototype._id;
-    /** @type {?} */
-    MultiSelectComponent.prototype.description;
-    /** @type {?} */
-    MultiSelectComponent.prototype.minDate;
-    /** @type {?} */
-    MultiSelectComponent.prototype.maxDate;
-    /** @type {?} */
-    MultiSelectComponent.prototype.min;
-    /** @type {?} */
-    MultiSelectComponent.prototype.max;
-    /** @type {?} */
-    MultiSelectComponent.prototype.label;
-    /** @type {?} */
-    MultiSelectComponent.prototype.type;
-    /** @type {?} */
-    MultiSelectComponent.prototype.placeholder;
-    /** @type {?} */
-    MultiSelectComponent.prototype.options;
-    /** @type {?} */
-    MultiSelectComponent.prototype.pageNumber;
-    /** @type {?} */
-    MultiSelectComponent.prototype.allData;
-    /** @type {?} */
-    MultiSelectComponent.prototype.filtereddata;
-    /** @type {?} */
-    MultiSelectComponent.prototype.conditionMatchValue;
-    /** @type {?} */
-    MultiSelectComponent.prototype.selectedOption;
-    /** @type {?} */
-    MultiSelectComponent.prototype.currentSelectedQtn;
-    /** @type {?} */
-    MultiSelectComponent.prototype.listOfRelation;
-    /** @type {?} */
-    MultiSelectComponent.prototype.condition;
-    /** @type {?} */
-    MultiSelectComponent.prototype.getSelectQuestion;
-    /** @type {?} */
-    MultiSelectComponent.prototype.conditionArray;
-    /** @type {?} */
-    MultiSelectComponent.prototype.currentItem;
-    /** @type {?} */
-    MultiSelectComponent.prototype.cdr;
-    /**
-     * @type {?}
-     * @private
-     */
-    MultiSelectComponent.prototype.dynamicServe;
-}
 
 /**
  * @fileoverview added by tsickle
- * Generated from: lib/dynamic-form-builder/dynamic-form-builder.module.ts
  * @suppress {checkTypes,constantProperty,extraRequire,missingOverride,missingReturn,unusedPrivateMembers,uselessCode} checked by tsc
  */
 // import {  } from '@angular/cdk/'
@@ -3101,7 +2832,6 @@ DynamicFormBuilderModule.decorators = [
 
 /**
  * @fileoverview added by tsickle
- * Generated from: lib/dynamic-form-builder.module.ts
  * @suppress {checkTypes,constantProperty,extraRequire,missingOverride,missingReturn,unusedPrivateMembers,uselessCode} checked by tsc
  */
 class DynamicFormBuilderModule1 {
@@ -3141,15 +2871,14 @@ DynamicFormBuilderModule1.decorators = [
 
 /**
  * @fileoverview added by tsickle
- * Generated from: public_api.ts
  * @suppress {checkTypes,constantProperty,extraRequire,missingOverride,missingReturn,unusedPrivateMembers,uselessCode} checked by tsc
  */
 
 /**
  * @fileoverview added by tsickle
- * Generated from: dynamic-form-builder.ts
  * @suppress {checkTypes,constantProperty,extraRequire,missingOverride,missingReturn,unusedPrivateMembers,uselessCode} checked by tsc
  */
 
-export { DynamicFormBuilderModule1, DynamicFormBuilderService, DynamicFormBuilderComponent as ɵa, DynamicFormBuilderModule as ɵb, DynamicFormBuilderComponent$1 as ɵc, FieldBuilderComponent as ɵd, TextBoxComponent as ɵe, DropDownComponent as ɵf, CheckBoxComponent as ɵg, FileComponent as ɵh, RadioComponent as ɵi, DateComponent as ɵj, SliderComponent as ɵk, MultiSelectComponent as ɵl };
+export { DynamicFormBuilderService, DynamicFormBuilderModule1, DynamicFormBuilderComponent as ɵa, CheckBoxComponent as ɵg, DateComponent as ɵj, DropDownComponent as ɵf, FileComponent as ɵh, MultiSelectComponent as ɵl, RadioComponent as ɵi, SliderComponent as ɵk, TextBoxComponent as ɵe, DynamicFormBuilderComponent$1 as ɵc, DynamicFormBuilderModule as ɵb, FieldBuilderComponent as ɵd };
+
 //# sourceMappingURL=dynamic-form-builder.js.map
