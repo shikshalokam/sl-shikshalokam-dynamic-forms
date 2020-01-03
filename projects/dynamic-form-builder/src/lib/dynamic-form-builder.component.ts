@@ -491,13 +491,16 @@ export class DynamicFormBuilderComponent implements OnInit {
     }
 
 
+  
+
+
     let elem = this.fields;
     let trnasformData = {
       action: 'add',
       data: obj
     }
     console.log("transf", trnasformData);
-    this.questionTrigger.emit(trnasformData);
+   
 
     this.formData.push(obj);
     let fieldsCtrls = {};
@@ -542,9 +545,11 @@ export class DynamicFormBuilderComponent implements OnInit {
     console.log("completeData", completeData);
     this.sendToService(completeData);
 
-    this.questionTrigger.emit(trnasformData);
+    // this.questionTrigger.emit(trnasformData);
 
-    console.log("fields controls", this.form);
+    // this.questionTrigger.emit(trnasformData);
+
+    // console.log("fields controls", this.form);
 
   }
 

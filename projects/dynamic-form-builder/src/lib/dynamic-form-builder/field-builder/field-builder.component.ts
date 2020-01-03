@@ -10,6 +10,7 @@ import { MatTabChangeEvent, MatPaginator, MatTableDataSource, MatSort, MatSnackB
 
 
 
+
 @Component({
   selector: 'field-builder',
   template: `
@@ -115,6 +116,17 @@ span.cursor-pntr {
         </mat-select>
       </mat-form-field>
     </div>
+    <div class="col-sm-6">
+    <label id="example-radio-group-label">is Reqired ?</label>
+    <mat-radio-group aria-labelledby="radio-group-label" class="radio-group" [(ngModel)]="required">
+      <mat-radio-button class="example-radio-button" [value]=true>
+        Yes
+      </mat-radio-button>
+      <mat-radio-button class="example-radio-button" [value]=false>
+        No
+      </mat-radio-button>
+    </mat-radio-group>
+  </div>
   
   
   
@@ -145,10 +157,10 @@ span.cursor-pntr {
   
   
     </div>
-    <div class="col-sm-12" *ngIf="type=='radio' || type=='checkbox' || type=='dropdown'">
+    <div class="" *ngIf="type=='radio' || type=='checkbox' || type=='dropdown'">
       <label for="label" class="col-sm-12">Options</label>
   
-      <ul class="col" *ngFor="let opt of options;let i = index">
+      <ul class="col-sm-12 option-ul" *ngFor="let opt of options;let i = index">
         <li class="">
           <span>{{opt.label}} </span><span style="
       margin-left: 30px;cursor: pointer" title = "delete" (click)="deleteOption(opt,i)">
@@ -156,10 +168,10 @@ span.cursor-pntr {
         </li>
       </ul>
   
-      <div class="col-sm-6">
-        <div class="input-group">
+      <div class="col-sm-12">
+        <div class="input-group pull-left col-sm-6">
           <mat-form-field>
-            <input type="text" placeholder="Label" matInput style="margin-bottom: 10px;" [(ngModel)]="newOptionLabel"
+            <input type="text" placeholder="Label" matInput style="" [(ngModel)]="newOptionLabel"
               name="newOption">
           </mat-form-field>
         </div>
@@ -221,17 +233,7 @@ span.cursor-pntr {
     </ul>
   
   
-    <div class="col-sm-12">
-      <label id="example-radio-group-label">is Reqired ?</label>
-      <mat-radio-group aria-labelledby="example-radio-group-label" class="example-radio-group" [(ngModel)]="required">
-        <mat-radio-button class="example-radio-button" [value]=true>
-          Yes
-        </mat-radio-button>
-        <mat-radio-button class="example-radio-button" [value]=false>
-          No
-        </mat-radio-button>
-      </mat-radio-group>
-    </div>
+   
   
     <div class="col-sm-12" *ngIf="type=='date'">  
     <label id="example-radio-group-label">is autoCollect</label>
@@ -287,7 +289,17 @@ span.cursor-pntr {
     width: 40px;
     padding: 5px 0px 0px 5px;
     color: #ccc;
-  } `
+  }
+  .radio-group {
+    display: inline-block;
+    margin: 15px 0; 
+  }
+   .option-ul {
+    padding-left: 44px;
+    padding-top: 5px;
+   }
+  
+  `
   ]
 })
 
@@ -663,6 +675,7 @@ export class FieldBuilderComponent implements OnInit {
       this.field.description = this.description;
       this.field.pageNumber = this.pageNumber;
       this.field.draftCriteriaId = this.draftCriteriaId;
+      // this.field.field = this.field.field;
 
       if (this.type == 'date') {
         this.field.validations.minDate = this.minDate;
@@ -696,6 +709,8 @@ export class FieldBuilderComponent implements OnInit {
         action: "save",
         data: obj
       }
+
+      this.dynamicServe.updateQuestion(this.field);
 
       this.sendDataToParent.emit(op);
       // this.sendDataToParent.emit(JSON.stringify(obj));

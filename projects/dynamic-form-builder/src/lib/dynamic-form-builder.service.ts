@@ -59,8 +59,14 @@ export class DynamicFormBuilderService {
       criteriaList: this.criteriaList,
       questionList: this.list
     }
+
+    console.log("executing in service",this.all);
     // return this.communicateSubject.asObservable();
     return this.all;
+  }
+
+  getQuestions(){
+    return this.list;
   }
   setCriteria(list) {
 
@@ -68,5 +74,16 @@ export class DynamicFormBuilderService {
 
   }
 
+  updateQuestion(questionEle){
+
+    console.log("update question",questionEle);
+    this.list = this.list['questionList'].filter(item=>{
+      if(item.field==questionEle.field){
+        return questionEle;
+      }else {
+        return item;
+      }
+    })
+  }
 
 }
