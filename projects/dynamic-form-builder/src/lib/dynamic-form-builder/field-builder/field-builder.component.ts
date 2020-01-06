@@ -80,7 +80,7 @@ span.cursor-pntr {
 }
 
   </style>
-  <div class="row" *ngIf="openEdit" style="padding: 15px;
+  <div class="row" *ngIf="openEdit && currentposition == field.field" style="padding: 15px;
   border: 1px solid #ccc;margin-top:10px;width:85%;margin-top:40px;margin: auto;
   box-shadow: 1px 1px 1px 1px rgba(0,0,0,0.19);margin-top:20px;">
     <div class="col-sm-6">
@@ -343,7 +343,9 @@ export class FieldBuilderComponent implements OnInit {
   options: any;
   newOptionKey: any;
   newOptionLabel: any;
-
+  dataPass: any;
+  currentposition: any;
+  fromService: any;
   pages = [{
     label: 'page 1',
     value: 'page 1'
@@ -575,16 +577,28 @@ export class FieldBuilderComponent implements OnInit {
     this.field.validations = {
       'relation': []
     };
-    this.dynamicServe.setPageNumber(this.pages);
-  }
-  loadFormElement(item) {
 
+    this.dynamicServe.setPageNumber(this.pages);
+    this.fromService = this.dynamicServe.getlastActivePopUp();
+    console.log('ngOnInit=============',this.dynamicServe.getALl());
+    console.log('fromService', this.fromService);
+    const openpopup =  this.dynamicServe.getALl();
+    this.dataPass = openpopup['questionList']['questionList'][openpopup['questionList']['questionList'].length -1];
+    console.log('===', this.dataPass);
+    this.currentposition = this.fromService ;
+
+    // if(this.fromService === this.currentposition){
+    //   this.openEdit = this.openEdit ? false : true;
+    // }
+    this.loadFormElement(this.dataPass);
+   
+  }
+
+  loadFormElement(item) {
     console.log('loadFormElement', item);
     this.allData = this.dynamicServe.getALl();
 
     console.log(this.allData, " all questions ", this.allData['questionList']);
-
-
 
     this.filtereddata = this.allData['questionList']['questionList'].filter(t => t.field !== item.field);
 
@@ -592,11 +606,8 @@ export class FieldBuilderComponent implements OnInit {
 
     this.criteriaList = this.allData['criteriaList'];
     console.log('const filtereddata', this.filtereddata);
-    // console.log('length', this.filtereddata['questionList'].length);
 
     // this.dynamicServe.getALl()
-
-    // console.log("item ---", );
 
     this.activeModelData = "";
     this.label = item.label;
@@ -628,7 +639,6 @@ export class FieldBuilderComponent implements OnInit {
 
     this.required = this.field.validations.required;
     console.log(item.validations.required, "item.validations.required", this.required, "label", this.label);
-    // console.log("label",this.label);
 
     this.openEdit = this.openEdit ? false : true;
     // document.getElementById("openModalButton").click();
@@ -679,13 +689,7 @@ export class FieldBuilderComponent implements OnInit {
         obj['max'] = this.max;
       }
 
-      // console.log("obj",obj);
-
-
-
-
       // this.field.label = this.label;
-
 
       this.field.label = this.label;
       this.field.type = this.type;
@@ -718,7 +722,6 @@ export class FieldBuilderComponent implements OnInit {
 
       // this.field.validations
 
-      // console.log(" this.field.validations.required", this.field.validations.required, "sdds", this.required);
       this.field.validations.required = this.required;
       this.field.validations.autoCollect = this.autoCollect;
 
@@ -734,7 +737,6 @@ export class FieldBuilderComponent implements OnInit {
       this.sendDataToParent.emit(op);
       // this.sendDataToParent.emit(JSON.stringify(obj));
 
-      // console.log(" this.field", this.field);
       this.openEdit = false;
 
       // this.sendDataToParent.emit(this.activeModelData);
@@ -753,7 +755,6 @@ export class FieldBuilderComponent implements OnInit {
 
 
 
-    // console.log(" this.activeModelData", selectedData);
     // this.modalReference = this.modalService.open(content);
     // this.modalReference.result.then((result) => {
     //   this.closeResult = `Closed with`;
@@ -774,8 +775,6 @@ export class FieldBuilderComponent implements OnInit {
 
   deleteOption(opt, index) {
     // this.deleteDraftCriteria();
-    console.log("delete", this.options);
-
     // let newArr = [];
     // let optionsArr = this.options.filter(item => {
     // if(item.lable==opt.label && item.key==opt.key){
@@ -795,15 +794,12 @@ export class FieldBuilderComponent implements OnInit {
     this.options.splice(index, 1);
 
     // this.options = optionsArr;
-    console.log("delete new ", this.options);
   }
   AddNewOptions() {
 
     if (this.newOptionLabel != "") {
 
       this.newOptionKey = 'R' + this.options.length;
-      console.log("this.newOption", this.newOptionLabel);
-
       if (Array.isArray(this.options)) {
 
       } else {
@@ -814,8 +810,6 @@ export class FieldBuilderComponent implements OnInit {
         key: this.newOptionKey,
         label: this.newOptionLabel
       });
-
-      console.log("this.options.push", this.options);
     }
     this.newOptionKey = "";
     this.newOptionLabel = "";
@@ -832,8 +826,6 @@ export class FieldBuilderComponent implements OnInit {
     item.action = 'delete';
     this.field.isDelete = true;
     this.copyOrDeleteEvent.emit(item);
-    console.log("field delete", this.field);
-
   }
   childrenDropEvent($event) {
     console.log("childrenDropEvent", this.field);
@@ -843,7 +835,6 @@ export class FieldBuilderComponent implements OnInit {
       data: $event
     }
     this.copyOrDeleteEvent.emit(newObj);
-    console.log("field delete", this.field);
   }
 
   deleteCondition(data, value) {
@@ -852,13 +843,10 @@ export class FieldBuilderComponent implements OnInit {
     this.listOfRelation.splice(value, 1);
     this.getSelectQuestion[0].parentChildren.splice(value, 1);
     // }
-
-    console.log('after delete data', this.listOfRelation);
   }
 
 
   add(data) {
-    console.log(' add data', data);
     let page = {
       label: 'page' + ' ' + (data.length + 1),
       value: 'page' + ' ' + (data.length + 1),
@@ -869,7 +857,7 @@ export class FieldBuilderComponent implements OnInit {
 
   eventFromChild($event) {
     if ($event.action == 'copy') {
-      // $event.action = 'copy';
+    
     } else {
       $event.action = 'childDelete';
     }

@@ -22,9 +22,11 @@ import { FormGroup } from '@angular/forms';
     .form-control {
       display: none;
     }
-    .labeloverflow {
-      padding-top: 5px;
-    }
+    @media only screen and (max-width: 600px) {
+      .labeloverflow {
+       float: left;
+      }   
+
     .checkflow {
       width: 100%
     }

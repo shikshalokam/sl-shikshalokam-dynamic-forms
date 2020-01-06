@@ -157,11 +157,11 @@ import { CdkDragDrop, moveItemInArray } from '@angular/cdk/drag-drop';
         <div class="col-sm-12">
           <label id="example-radio-group-label">is Reqired ?</label>
           <mat-radio-group aria-labelledby="example-radio-group-label" class="example-radio-group"
-            [ngModelOptions]="{standalone: true}" [(ngModel)]="required">
-            <mat-radio-button class="example-radio-button" [value]=true>
+            [ngModelOptions]="{standalone: true}" style = "padding: 5px" [(ngModel)]="required">
+            <mat-radio-button style = "padding: 2px" class="example-radio-button" [value]=true>
               Yes
             </mat-radio-button>
-            <mat-radio-button class="example-radio-button" [value]=false>
+            <mat-radio-button style = "padding: 2px" class="example-radio-button" [value]=false>
               No
             </mat-radio-button>
           </mat-radio-group>
@@ -608,7 +608,8 @@ export class MultiSelectComponent {
     let newobj: any = {
     action: "copy",
     description: item.description,
-    field: item.field + '' +lengthOfChild ,
+    field: item.field,
+    // field: item.field + '' +lengthOfChild,
     label: item.label,
     placeholder: item.placeholder,
     position: item.pointer,
@@ -617,7 +618,7 @@ export class MultiSelectComponent {
    
     console.log("after copy field ----------", newobj, 'index', index);
     this.field.child.push(newobj);
-    // this.copyOrDeleteEvent.emit(item);
+    this.copyOrDeleteEvent.emit(item);
     // this.sendDataToParent.emit(newobj);
   }
 

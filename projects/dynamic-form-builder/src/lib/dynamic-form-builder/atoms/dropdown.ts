@@ -17,10 +17,10 @@ import { FormGroup } from '@angular/forms';
     .form-control {
       display: none;
     }
-    .labeloverflow {
-      float: left;
-      padding-top: 5px;
-    }
+      @media only screen and(max-width: 600px){
+        float: left;
+       padding-top: 5px;
+      }
     `]
 })
 export class DropDownComponent {

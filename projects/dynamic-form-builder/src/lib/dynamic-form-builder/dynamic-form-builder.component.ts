@@ -97,11 +97,11 @@ export class DynamicFormBuilderComponent implements OnInit {
       "icon": "date_range"
     }, {
       "responseType": "slider",
-      "icon": "date_range"
+      "icon": "arrow_forward"
     },
     {
       "responseType": "matrix",
-      "icon": "date_range"
+      "icon": "kitchen"
     }
   ]
 

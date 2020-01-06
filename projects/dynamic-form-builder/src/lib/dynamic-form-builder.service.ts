@@ -17,6 +17,7 @@ export class DynamicFormBuilderService {
   pagelist: any = [];
 
   all: any = [];
+  activePopUp:any;
   criteriaList: any = [];
 
   constructor() { }
@@ -79,16 +80,27 @@ export class DynamicFormBuilderService {
 
   }
 
+  
+  lastActivePopUp(id){
+    this.activePopUp = id;
+    console.log('fffffffffffffffff', this.activePopUp);
+  }
+
+  getlastActivePopUp(){
+    console.log('ssssssssssssssssss', this.activePopUp);
+    return this.activePopUp;
+  }
+
   updateQuestion(questionEle){
 
     console.log("update question",questionEle);
-    this.list = this.list['questionList'].filter(item=>{
-      if(item.field==questionEle.field){
-        return questionEle;
-      }else {
-        return item;
-      }
-    })
+    // this.list = this.list['questionList'].filter(item=>{
+    //   if(item.field==questionEle.field){
+    //     return questionEle;
+    //   }else {
+    //     return item;
+    //   }
+    // })
   }
 
 }

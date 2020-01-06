@@ -27,8 +27,9 @@ import { FormGroup } from '@angular/forms';
     .form-control {
       display: none;
     }
-    .labeloverflow {
+    @media only screen and(max-width: 600px){
       float: left;
+     padding-top: 5px;
     }
     `]
 })

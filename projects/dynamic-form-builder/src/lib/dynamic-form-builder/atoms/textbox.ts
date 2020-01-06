@@ -20,6 +20,10 @@ import { FormGroup } from '@angular/forms';
     .form-control {
       display: none;
     }
+    @media only screen and (max-width: 600px) {
+      .labeloverflow {
+       float: left;
+      }
     `]
 })
 export class TextBoxComponent {

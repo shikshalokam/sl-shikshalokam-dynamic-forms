@@ -23,10 +23,10 @@ import { FormGroup } from '@angular/forms';
     .space {
       padding-left: 5px
     }
-    .labeloverflow {
-      float: left;
-      padding-top: 5px;
-    }
+    @media only screen and (max-width: 600px) {
+      .labeloverflow {
+       float: left;
+      }
      .rnxtline {
        width: 100%
      }

@@ -19,10 +19,12 @@ import { FormGroup } from '@angular/forms';
     styles:[`
     .form-control {
       display: none;
-    } .labeloverflow {
-      float: left;
-      padding-top: 5px;
-    }
+    } 
+    @media only screen and (max-width: 600px) {
+      .labeloverflow {
+       float: left;
+       padding-top: 5px;
+      }     
     `]
 })
 export class DateComponent {

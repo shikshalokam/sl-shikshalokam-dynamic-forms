@@ -52,7 +52,8 @@ p {
   width: 100%;
   text-align: left;
   display: block;
-
+  text-transform: capitalize;
+  cursor:pointer;
   font-size: 16px;
 }
 .margin-5 {
@@ -152,8 +153,8 @@ p {
           <div  class="col-md-12">
             <!-- <dynamic-form-builder [fields]="getFields()"></dynamic-form-builder> -->
       
-            <span  class ="qtype" *ngFor="let item of jsonData" >
-              <span [dndDraggable]="item" (click)="onDrop(item.responseType)"  class="toolbar"  >
+            <span  class ="qtype" *ngFor="let item of jsonData">
+              <span [dndDraggable]="item" (click)="onDrop(item.responseType)"  class="toolbar">
             {{ item.responseType }}   <i class="material-icons">{{ item.icon }}</i>
              </span>
               </span>
@@ -273,11 +274,11 @@ export class DynamicFormBuilderComponent implements OnInit {
         "icon": "date_range"
       }, {
         "responseType": "slider",
-        "icon": "date_range"
+        "icon": "arrow_forward"
       },
       {
         "responseType": "matrix",
-        "icon": "date_range"
+        "icon": "kitchen"
       }
     ]
   }
@@ -309,7 +310,7 @@ export class DynamicFormBuilderComponent implements OnInit {
         "field": len + "question",
         "type": "text",
         "label": "Question",
-        "placeholder": "Please enter your question here",
+        "placeholder": "",
         "description": "",
         "validations": {
           "required": true,
@@ -323,7 +324,7 @@ export class DynamicFormBuilderComponent implements OnInit {
         "type": "number",
         "position": len,
         "label": "Question",
-        "placeholder": "Please enter your question here",
+        "placeholder": "",
         "description": "",
         "validations": {
           "required": true,
@@ -389,8 +390,7 @@ export class DynamicFormBuilderComponent implements OnInit {
           { key: 'option1', label: 'Option 2' }
         ]
       }
-    }
-    else if (ele == "date") {
+    } else if (ele == "date") {
       obj = {
         field: len + "question",
         type: 'date',
@@ -419,7 +419,7 @@ export class DynamicFormBuilderComponent implements OnInit {
           "position": len,
           "label": "Question",
           "child": [],
-          "placeholder": "Please add Child's here",
+          "placeholder": " ",
           "description": "",
           "validations": {
             "required": false,
@@ -439,7 +439,7 @@ export class DynamicFormBuilderComponent implements OnInit {
         "label":  "Question",
         "position": len,
         "child": [],
-        "placeholder": "Please add Child's here",
+        "placeholder": " ",
         "description": "",
         "validations": {
           "required": false,
@@ -453,7 +453,7 @@ export class DynamicFormBuilderComponent implements OnInit {
         type: 'slider',
         "position": len,
         name: len + ". question",
-        label: ". question",
+        label: "Question",
         description: "",
         required: true,
         "validations": {
@@ -470,11 +470,13 @@ export class DynamicFormBuilderComponent implements OnInit {
       }
     }
 
+    console.log("----------",obj);
+    this.dynamicServe.lastActivePopUp(obj['field']);
     return obj;
   }
 
   onDrop(ele, action = "") {
-
+   
     this.showQuestionBlock = false;
     console.log("drop ele", ele);
     if (ele.data) {
@@ -486,7 +488,6 @@ export class DynamicFormBuilderComponent implements OnInit {
     console.log(action,"calling from child copy",ele);
     debugger;
     if (action == "copy") {
-
 
       let copyObj = {
         "position": len,
@@ -500,7 +501,7 @@ export class DynamicFormBuilderComponent implements OnInit {
         "copied": true 
       }
       obj = copyObj;
-
+      this.dynamicServe.lastActivePopUp(copyObj.field);
     } else {
 
 
@@ -649,8 +650,12 @@ export class DynamicFormBuilderComponent implements OnInit {
   ngOnDestroy() {
     this.eventsSubscription.unsubscribe()
   }
+
+  lastDropEle = "";
   onFieldUpdate($event) {
     console.log("eventData sssssss------", $event);
+
+     this.dynamicServe.lastActivePopUp($event.field);
 
     let eventObj = $event
     let trnasformData = {};
