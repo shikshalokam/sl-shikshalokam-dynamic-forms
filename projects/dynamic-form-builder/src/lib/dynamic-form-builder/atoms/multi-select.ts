@@ -355,6 +355,7 @@ export class MultiSelectComponent {
     } else {
       console.log("not allowed");
     }
+    this.loadFormChildElement(field.child[field.child.length-1], field.child.length-1);
   }
 
 
