@@ -1,15 +1,9 @@
 import { Component, Input, OnInit, ViewChild, ElementRef, EventEmitter, Output } from '@angular/core';
-// import { NgbModal, ModalDismissReasons } from '@ng-bootstrap/ng-bootstrap';
 import { THIS_EXPR } from '@angular/compiler/src/output/output_ast';
 import { DynamicFormBuilderService } from '../../dynamic-form-builder.service';
 import { Subscription } from 'rxjs';
 import { isNgTemplate } from '@angular/compiler';
-// import { ConfirmationComponent, ConfirmDialogModel } from '../../common/confirmation/confirmation.component';
 import { MatTabChangeEvent, MatPaginator, MatTableDataSource, MatSort, MatSnackBar, MatDialog } from '@angular/material';
-
-
-
-
 
 @Component({
   selector: 'field-builder',
@@ -58,7 +52,9 @@ span.cursor-pntr {
 
 }
 .addicon {
-  margin-left: 90%
+  margin-top: 17px;
+  text-align: right;
+  font-size: 17px;
 }
 .spacearoundbtn{
   margin-top: 10px;
@@ -70,6 +66,29 @@ span.cursor-pntr {
 .labeloverflow {
   float: left;
 }
+
+.questionEditBlock {
+  padding: 15px;
+  border: 1px solid #ccc;margin-top:10px;width:85%;margin-top:40px;margin: auto;
+  box-shadow: 1px 1px 1px 1px rgba(0,0,0,0.19);margin-top:20px;
+}
+.question-list {
+  padding:0px;margin:0px;margin-top:10px;box-shadow: 1px 1px 2px 1px rgba(0,0,0,0.19);padding-bottom:10px;
+  
+}
+.active-questn {
+  border: 2px solid #a63936;
+  border-left: none;
+  border-top: none;
+  border-right: none;
+}
+.parent-child-block {
+  margin-top: 10px;
+  margin-bottom: 15px;
+  padding: 15px;
+  border: 0.02px solid #ccc;
+}
+
 @media only screen and (max-width: 600px) {
   .col-sm-12 {
     padding: 0px
@@ -78,11 +97,8 @@ span.cursor-pntr {
     padding: 0px
   }
 }
-
   </style>
-  <div class="row" *ngIf="openEdit && currentposition == field.field" style="padding: 15px;
-  border: 1px solid #ccc;margin-top:10px;width:85%;margin-top:40px;margin: auto;
-  box-shadow: 1px 1px 1px 1px rgba(0,0,0,0.19);margin-top:20px;">
+  <div class="row questionEditBlock"  *ngIf="field.isOpen == true" style="">
     <div class="col-sm-6">
       <mat-form-field>
         <input matInput placeholder="Label" [(ngModel)]="label" name="label">
@@ -122,8 +138,8 @@ span.cursor-pntr {
         </mat-select>
       </mat-form-field>
     </div>
-    <div class="col-sm-1">
-      <span class="cursor-pntr addicon"><i title="Add Page" class="fa fa-plus"
+    <div class="col-sm-1 addicon">
+      <span class="cursor-pntr"><i title="Add Page" class="fa fa-plus"
           (click)="add(pages)"></i></span>
     </div>
   
@@ -136,7 +152,7 @@ span.cursor-pntr {
       </mat-form-field>
     </div>
     <div class="col-sm-6">
-    <label id="example-radio-group-label">is Reqired ?</label>
+    <label id="example-radio-group-label">is Required ?</label>
     <mat-radio-group aria-labelledby="radio-group-label" class="radio-group" [(ngModel)]="required">
       <mat-radio-button class="example-radio-button" [value]=true>
         Yes
@@ -200,7 +216,8 @@ span.cursor-pntr {
       </div>
     </div>
   
-    <div *ngIf="filtereddata && filtereddata.length > 0">
+    <div class="col-sm-12 ">
+    <div *ngIf="filtereddata && filtereddata.length > 0" class="parent-child-block col-sm-12">
       <div class="col-sm-12">
         <label id="example-radio-group-label">Do you want to related the question based on below options ?</label>
         <mat-radio-group aria-labelledby="example-radio-group-label" class="example-radio-group"
@@ -241,6 +258,7 @@ span.cursor-pntr {
           Add
         </button>
       </div>
+      
     </div>
   
     <ul class="col-sm-12" *ngFor="let relate of listOfRelation;let i = index">
@@ -250,10 +268,9 @@ span.cursor-pntr {
           <i class="fa fa-trash"></i></span>
       </li>
     </ul>
-  
-  
-   
-  
+
+    </div>
+
     <div class="col-sm-12" *ngIf="type=='date'">  
     <label id="example-radio-group-label">is autoCollect</label>
       <mat-radio-group aria-labelledby="example-radio-group-label" class="example-radio-group" [(ngModel)]="autoCollect">
@@ -274,10 +291,8 @@ span.cursor-pntr {
       </button>
   
     </div>
-  
   </div>
-  <div class="form-group row" [formGroup]="form"
-    style="padding:0px;margin:0px;margin-top:10px;box-shadow: 1px 1px 2px 1px rgba(0,0,0,0.19);padding-bottom:10px;">
+  <div class="form-group row question-list" [ngClass]="{'active-questn': field.isOpen == true}" [formGroup]="form" >
     <span class="qtn_position"><span class="">#{{ field.position }}</span></span>
   
     <div class="action-component">
@@ -344,8 +359,9 @@ export class FieldBuilderComponent implements OnInit {
   newOptionKey: any;
   newOptionLabel: any;
   dataPass: any;
-  currentposition: any;
-  fromService: any;
+
+
+  openEditPopUp:boolean;
   pages = [{
     label: 'page 1',
     value: 'page 1'
@@ -374,12 +390,10 @@ export class FieldBuilderComponent implements OnInit {
   allData: any;
   currentSelectedQtn: any;
   selectedOption: any;
-
   listOfRelation: any = [];
   condition: any;
-
   conditionMatchValue: any;
-
+  currentField:any;
   conditionArray: any = [
     {
       label: "equals",
@@ -410,10 +424,8 @@ export class FieldBuilderComponent implements OnInit {
 
   // private modalRef: NgbModalRef;
   @ViewChild('content', { static: false }) myModal: ElementRef;
-
   get isValid() { return this.form.controls[this.field.name].valid; }
   get isDirty() { return this.form.controls[this.field.name].dirty; }
-
   constructor(
     // private modalService: NgbModal
     private dynamicServe: DynamicFormBuilderService,
@@ -438,8 +450,6 @@ export class FieldBuilderComponent implements OnInit {
     // option:this.selectedOption,
     // question:this.currentSelectedQtn
     // obj['visibleIf'] = [];
-
-
     let condiObj = {
       operator: this.condition,
       value: this.conditionMatchValue,
@@ -447,7 +457,6 @@ export class FieldBuilderComponent implements OnInit {
       label: this.field.label
       // parent:this.selectedOption.field
     }
-
     // if (this.currentSelectedQtn.parentChildren) {
     //   this.currentSelectedQtn.parentChildren.push(condiObj);
     // } else {
@@ -455,16 +464,13 @@ export class FieldBuilderComponent implements OnInit {
     //   this.currentSelectedQtn.parentChildren.push(condiObj);
     // }
     console.log('this.currentSelectedQtn', this.currentSelectedQtn);
-
     console.log("condiObj", condiObj);
     this.getSelectQuestion = this.allData['questionList']['questionList'].filter(ele => {
       if (ele.field == this.field.field) {
         return ele;
       }
     });
-
     console.log("getSelectQuestion", this.getSelectQuestion);
-
     let isAvailable = false;
     if (this.getSelectQuestion['visibleIf'] && this.getSelectQuestion['visibleIf'].length > 0) {
       isAvailable = this.getSelectQuestion['visibleIf'].filter(item => {
@@ -473,43 +479,25 @@ export class FieldBuilderComponent implements OnInit {
         }
       })
     }
-
-
-
-
-
     console.log("after getSelectQuestion", this.getSelectQuestion);
-
     let allData = [];
-
-
-
     let addObj = false;
     for (let i = 0; i < this.getSelectQuestion.length; i++) {
       debugger
       if (this.getSelectQuestion[i].parentChildren) {
         if (this.getSelectQuestion[i].parentChildren.indexOf(this.currentSelectedQtn.field) !== -1) {
-          alert("Value exists!")
-
           addObj = false;
-
         } else {
-
           addObj = true;
           this.getSelectQuestion[i].parentChildren.push(this.currentSelectedQtn.field);
         }
-
       } else {
         addObj = true;
         this.getSelectQuestion[i].parentChildren = [];
         this.getSelectQuestion[i].parentChildren.push(this.currentSelectedQtn.field);
       }
     }
-
-
     if (addObj) {
-
-
       allData = this.allData['questionList']['questionList'].filter(ele => {
         if (ele.field == this.currentSelectedQtn.field) {
           if (ele.visibleIf && ele.visibleIf.length > 0 && isAvailable == false) {
@@ -523,47 +511,21 @@ export class FieldBuilderComponent implements OnInit {
           return ele
         }
       });
-
-
-
       console.log("all data in question", allData);
 
       // this.sendDataToParent()
-
-
-
-
-
-
       if (!this.listOfRelation.includes(condiObj)) {
-
         this.listOfRelation.push(condiObj);
-
-
       }
-
-
     }
-
-
-
-    if (this.condition) {
-
-
-
-
-    }
-
-
-
+    // if (this.condition) {
+    // }
     // 'option':this.selectedOption,
     //       'question':this.currentSelectedQtn
 
     // this.field.childQnt = this.currentSelectedQtn.field;
 
     console.log("this.field.validations.relation", this.listOfRelation);
-
-
   }
 
   ngOnInit() {
@@ -573,58 +535,92 @@ export class FieldBuilderComponent implements OnInit {
     this.validations = {
       'relation': []
     }
-
     this.field.validations = {
       'relation': []
     };
-
     this.dynamicServe.setPageNumber(this.pages);
-    this.fromService = this.dynamicServe.getlastActivePopUp();
-    console.log('ngOnInit=============',this.dynamicServe.getALl());
-    console.log('fromService', this.fromService);
+ 
     const openpopup =  this.dynamicServe.getALl();
-    this.dataPass = openpopup['questionList']['questionList'][openpopup['questionList']['questionList'].length -1];
+    this.dataPass = openpopup['questionList']['questionList'][openpopup['questionList']
+    ['questionList'].length -1];
     console.log('===', this.dataPass);
-    this.currentposition = this.fromService ;
-
     // if(this.fromService === this.currentposition){
     //   this.openEdit = this.openEdit ? false : true;
     // }
-    this.loadFormElement(this.dataPass);
-   
+
+
+    this.loadFormElement(this.dataPass,'onload');
   }
 
-  loadFormElement(item) {
-    console.log('loadFormElement', item);
+  loadFormElement(item,arg='') {
+
+    /**
+     * updateOpenPopup() is used to update the isOpen status to false
+     */
+    this.dynamicServe.updateOpenPopup(item);
+
+    // console.log("");
+
+    console.log(this.openEditPopUp, "item.validations.required", this.field.isOpen);
+
+   
+
+    if(this.openEditPopUp==false && this.field.isOpen){
+      this.openEditPopUp =true;
+    }else if(this.openEditPopUp==false && this.field.isOpen==false){
+      this.field.isOpen=true;
+      this.openEditPopUp= true;
+    }else if(this.field.isOpen){
+      if(arg && arg=='onload'){
+        this.openEditPopUp= true;
+        this.field.isOpen = true;
+      }else{
+        this.openEditPopUp= false;
+      this.field.isOpen = false;
+      }
+      
+    }else if(this.field.isOpen==false){
+      this.field.isOpen=true;
+      this.openEditPopUp= true;
+    }
+   
+
+    /**
+     * to set the popup open by default it false
+     */
+
+     
+     
+
+
+    /**
+     * sendDataToParent() is a parent function, it helps to send an event
+     * from child, based Object paramets it performs
+     */
+    let actionObject = {
+      action: "reload",
+    }
+    this.sendDataToParent.emit(actionObject);
+
     this.allData = this.dynamicServe.getALl();
-
-    console.log(this.allData, " all questions ", this.allData['questionList']);
-
     this.filtereddata = this.allData['questionList']['questionList'].filter(t => t.field !== item.field);
-
     this.allData['questionList']['questionList'];
-
     this.criteriaList = this.allData['criteriaList'];
-    console.log('const filtereddata', this.filtereddata);
-
-    // this.dynamicServe.getALl()
-
+    
     this.activeModelData = "";
     this.label = item.label;
     this.type = item.type;
     this.placeholder = item.placeholder;
     this.options = item.options;
     this.draftCriteriaId = item.draftCriteriaId;
-    // this.pages = this.pages
     this.required = item.validations.required;
-
+    this.currentField= item.field;
     this.description = item.description;
     this.pageNumber = item.pageNumber;
-
+    
     if (item.validations.relation) {
       this.listOfRelation = item.validations.relation;
     }
-
     if (item.type == "date") {
       this.minDate = item.validations.minDate;
       this.maxDate = item.validations.maxDate
@@ -634,13 +630,11 @@ export class FieldBuilderComponent implements OnInit {
       this.min = item.validations.min;
       this.max = item.validations.max;
     }
-
-
-
     this.required = this.field.validations.required;
-    console.log(item.validations.required, "item.validations.required", this.required, "label", this.label);
-
-    this.openEdit = this.openEdit ? false : true;
+    console.log(this.openEditPopUp, "item.validations.required", this.field.isOpen);
+    
+    // if(this.field.isOpen)
+    // this.openEdit = this.openEdit = true;
     // document.getElementById("openModalButton").click();
     // this.open(this.myModal);
     // this.myModal.show();
@@ -652,16 +646,11 @@ export class FieldBuilderComponent implements OnInit {
   }
   closeModel(action) {
 
+    this.field.isOpen = false;
     if (action == "save") {
-
-
-
       console.log(this.validations, "this.field", this.required);
       // this.modalReference.close();
-
-
       // this.activeModelData.field = this.field.field;
-
       // this.activeModelData.label = this.label;
       // this.activeModelData.type = this.type;
       // this.activeModelData.placeholder = this.placeholder;
@@ -678,9 +667,7 @@ export class FieldBuilderComponent implements OnInit {
         description: this.description,
         pageNumber: this.pageNumber,
         draftCriteriaId: this.draftCriteriaId,
-
       }
-
       if (this.type == 'date') {
         obj['minDate'] = this.minDate;
         obj['maxDate'] = this.maxDate
@@ -688,7 +675,6 @@ export class FieldBuilderComponent implements OnInit {
         obj['min'] = this.min;
         obj['max'] = this.max;
       }
-
       // this.field.label = this.label;
 
       this.field.label = this.label;
@@ -699,7 +685,6 @@ export class FieldBuilderComponent implements OnInit {
       this.field.pageNumber = this.pageNumber;
       this.field.draftCriteriaId = this.draftCriteriaId;
       // this.field.field = this.field.field;
-
       if (this.type == 'date') {
         this.field.validations.minDate = this.minDate;
         this.field.validations.maxDate = this.maxDate;
@@ -708,47 +693,26 @@ export class FieldBuilderComponent implements OnInit {
         this.field.validations.min = this.min;
         this.field.validations.max = this.max;
       }
-
       // if(this.field.validations.relation){
-
       if (this.listOfRelation) {
         obj.validations.relation = this.listOfRelation;
         this.field.validations.relation = this.listOfRelation;
       }
-
       // }
-
-
-
       // this.field.validations
-
       this.field.validations.required = this.required;
       this.field.validations.autoCollect = this.autoCollect;
-
-
       console.log(obj, "this.field.validations", this.field.validations);
-      let op = {
+      let actionObject = {
         action: "save",
         data: obj
       }
-
       this.dynamicServe.updateQuestion(this.field);
-
-      this.sendDataToParent.emit(op);
-      // this.sendDataToParent.emit(JSON.stringify(obj));
-
+      this.sendDataToParent.emit(actionObject);
       this.openEdit = false;
-
-      // this.sendDataToParent.emit(this.activeModelData);
-
     } else {
-
       this.openEdit = false;
-      // this.modalReference.close();
     }
-
-    // this.modalService.close();
-    //  this.myModal.nativeElement.className = 'modal hide';
   }
 
   open(content) {

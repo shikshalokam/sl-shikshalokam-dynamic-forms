@@ -127,78 +127,48 @@ export class DynamicFormBuilderComponent implements OnInit {
       data = JSON.parse(data);
 
     }
-
     // let childdata = data;
     // let finaldata = JSON.parse(childdata);
-
     // console.log(JSON.parse(data),"parse copyEvent occured");
     // let obj = data;
-    console.log(data, "copyEvent occured");
-
     // data.field =(this.fields.length+1)+"question";
     // data.label = (this.fields.length+1)+" question";
 
     if (data.action == "addnew") {
-
-
       let transferData = {
         action: "addnew",
         data: data
       }
-
       this.onFieldUpdate.emit(transferData);
 
     } else if (data.action == "copy") {
-
       console.log(data, "this.form before");
-
       let transferData = {
         action: "copy",
         data: data
       }
-
       this.onFieldUpdate.emit(transferData);
-
       //  data.field = (this.fields.length+1)+"question";
-
       //  console.log("data",data)
       // this.formBuild(obj);
-
     } else if (data.action == "delete") {
-
       // var index = this.fields.indexOf(data);
-
       // console.log("ind", index);
-
       this.onFieldUpdate.emit(data);
-
       // this.fields.splice(index, 1);
-
-
-
       // this.fields = this.fields.filter(function(value, index, arr){
       //   return value!=data;
       // });
-
-
-
-      // console.log("evens",evens);
-      // this.fields= evens;
-      // console.log("this.form",this.form);
-      // this.fields.
-      // console.log(this.fields.length,"copyEvent occured",evens);
     } else if(data.action == "childDelete"){
-
       // console.log('childDelete', this.fields);
-
-      
       // var index = this.fields[0].child.indexOf(data);
-
       // console.log("ind", index);
-
       this.onFieldUpdate.emit(data);
     }
      else if (data.action == "childDroped") {
+      this.onFieldUpdate.emit(data);
+    }else{
+      console.log("data reciving in reload block");
       this.onFieldUpdate.emit(data);
     }
 

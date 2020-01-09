@@ -24,13 +24,8 @@ import { CdkDragDrop, moveItemInArray } from '@angular/cdk/drag-drop';
   <div *ngIf="field.child.length > 0" cdkDropList (cdkDropListDropped)="drop($event)">
 
     <div *ngFor="let obj of field.child; let i =index; let data" cdkDrag>
-      <div class="col-sm-2 edit-icon actions">
-        <i class="fa fa-trash" title = "delete" (click)="deleteElement(obj, i)"></i>
-        <i class="fa fa-copy" title = "copy" (click)="copyElement(obj, i)"></i>
-        <i class="fa fa-edit" title = "edit" (click)="loadFormChildElement(obj, i)"></i>
-      </div>
-      <div class="row editmatrix" *ngIf="obj.expand">
-
+      
+      <div class="row editmatrix" *ngIf="obj.isOpen">
         <div class="col-sm-6">
           <mat-form-field>
             <input matInput placeholder="Label" [(ngModel)]="obj.label" [ngModelOptions]="{standalone: true}">
@@ -92,7 +87,7 @@ import { CdkDragDrop, moveItemInArray } from '@angular/cdk/drag-drop';
 
 
         </div>
-        <div class="col-sm-12 form-group " *ngIf="type=='radio' || type=='checkbox' || type=='dropdown'">
+        <div class="col-sm-12 form-group " *ngIf="type=='radio' || type=='checkbox' || type=='dropdown'" >
           <label for="label" class="col-sm-12">Options</label>
 
           <div class="col-sm-7 form-group" *ngIf="type=='slider'">
@@ -103,7 +98,7 @@ import { CdkDragDrop, moveItemInArray } from '@angular/cdk/drag-drop';
 
         </div>
 
-        <div *ngIf="field.child && field.child.length > 0">
+        <div *ngIf="field.child && field.child.length > 0" class="parent-child-block col-sm-12">
           <div class="col-sm-12">
             <label id="example-radio-group-label">Do you want to related the question based on below options ?</label>
             <mat-radio-group aria-labelledby="example-radio-group-label" class="example-radio-group"
@@ -114,7 +109,6 @@ import { CdkDragDrop, moveItemInArray } from '@angular/cdk/drag-drop';
               </mat-radio-button>
             </mat-radio-group>
           </div>
-
 
           <div class="col-sm-6">
             <mat-form-field>
@@ -155,7 +149,7 @@ import { CdkDragDrop, moveItemInArray } from '@angular/cdk/drag-drop';
 
 
         <div class="col-sm-12">
-          <label id="example-radio-group-label">is Reqired ?</label>
+          <label id="example-radio-group-label">is Required ?</label>
           <mat-radio-group aria-labelledby="example-radio-group-label" class="example-radio-group"
             [ngModelOptions]="{standalone: true}" style = "padding: 5px" [(ngModel)]="required">
             <mat-radio-button style = "padding: 2px" class="example-radio-button" [value]=true>
@@ -189,7 +183,12 @@ import { CdkDragDrop, moveItemInArray } from '@angular/cdk/drag-drop';
         </div>
       </div>
 
-      <div class="col-md-0 matrixmain" [ngSwitch]="obj.type">
+      <div class="col-sm-2 edit-icon actions">
+        <i class="fa fa-trash" title = "delete" (click)="deleteElement(obj, i)"></i>
+        <i class="fa fa-copy" title = "copy" (click)="copyElement(obj, i)"></i>
+        <i class="fa fa-edit" title = "edit" (click)="loadFormChildElement(obj, i)"></i>
+      </div>
+      <div class="col-md-0 matrixmain" [ngClass]="{'active-questn': obj.isOpen == true}" [ngSwitch]="obj.type">
 
         <textbox class = "mchild" *ngSwitchCase="'number'" [field]="obj" [form]="form"></textbox>
 
@@ -216,6 +215,20 @@ import { CdkDragDrop, moveItemInArray } from '@angular/cdk/drag-drop';
 </div>
 `,
   styles: [`
+
+  .parent-child-block {
+    margin-top: 10px;
+    margin-bottom: 15px;
+    padding: 15px;
+    border: 0.02px solid #ccc;
+  }
+
+  .active-questn {
+    border: 2px solid #a63936;
+    border-left: none;
+    border-top: none;
+    border-right: none;
+  }
     .form-control {
       display: none;
     }
@@ -339,14 +352,11 @@ export class MultiSelectComponent {
       label: "Less Than Or Equal",
       condition: "<="
     }
-  ]
+  ];
+  currentItem: any;
 
   constructor(public cdr: ChangeDetectorRef,
     private dynamicServe: DynamicFormBuilderService) {
-
-    // this.form.controls = this.field.name;
-    // console.log("form",this.form);
-
   }
   onDropNew($event, field) {
     if ($event.data.responseType && $event.data.responseType != 'matrix') {
@@ -357,7 +367,6 @@ export class MultiSelectComponent {
     }
     this.loadFormChildElement(field.child[field.child.length-1], field.child.length-1);
   }
-
 
   parentMapping() {
     let obj = {}
@@ -378,16 +387,11 @@ export class MultiSelectComponent {
     //   this.currentSelectedQtn.parentChildren = [];
     //   this.currentSelectedQtn.parentChildren.push(condiObj);
     // }
-    console.log('this.currentSelectedQtn', this.currentSelectedQtn);
-
-    console.log("condiObj", condiObj);
     this.getSelectQuestion = this.allData['questionList']['questionList'].filter(ele => {
       if (ele.field == this.field.field) {
         return ele;
       }
     });
-
-    console.log("getSelectQuestion", this.getSelectQuestion);
 
     let isAvailable = false;
     if (this.getSelectQuestion['visibleIf'] && this.getSelectQuestion['visibleIf'].length > 0) {
@@ -397,23 +401,17 @@ export class MultiSelectComponent {
         }
       })
     }
-    console.log("after getSelectQuestion", this.getSelectQuestion);
     let allData = [];
     let addObj = false;
     for (let i = 0; i < this.getSelectQuestion.length; i++) {
       debugger
       if (this.getSelectQuestion[i].parentChildren) {
         if (this.getSelectQuestion[i].parentChildren.indexOf(this.currentSelectedQtn.field) !== -1) {
-          alert("Value exists!")
-
           addObj = false;
-
-        } else {
-
-          addObj = true;
+      } else {
+        addObj = true;
           this.getSelectQuestion[i].parentChildren.push(this.currentSelectedQtn.field);
         }
-
       } else {
         addObj = true;
         this.getSelectQuestion[i].parentChildren = [];
@@ -434,7 +432,6 @@ export class MultiSelectComponent {
           return ele
         }
       });
-      console.log("all data in question", allData);
       // this.sendDataToParent()
       if (!this.listOfRelation.includes(condiObj)) {
         this.listOfRelation.push(condiObj);
@@ -442,25 +439,11 @@ export class MultiSelectComponent {
     }
     if (this.condition) {
     }
-    // 'option':this.selectedOption,
-    //       'question':this.currentSelectedQtn
-    // this.field.childQnt = this.currentSelectedQtn.field;
-    console.log("this.field.validations.relation", this.listOfRelation);
   }
 
   closeModelChild(action, data) {
+
     if (action == "save") {
-      console.log("closeModel", this.field);
-      console.log('!!!!!!!!!!!', data);
-      // this.modalReference.close();
-      // this.activeModelData.field = this.field.field;
-      // this.activeModelData.label = this.label;
-      // this.activeModelData.type = this.type;
-      // this.activeModelData.placeholder = this.placeholder;
-      // this.activeModelData.options = this.options;
-
-    
-
       let obj = {
         label: '',
         type: '',
@@ -469,9 +452,9 @@ export class MultiSelectComponent {
         validations: '',
         field: '',
         _id: this._id,
-        description: ''
+        description: '',
+        isOpen:false,
       }
-
       obj.label = data.label;
       obj.field = data.field;
       obj.type = data.type;
@@ -486,26 +469,10 @@ export class MultiSelectComponent {
         obj['min'] = data.min;
         obj['max'] = data.max;
       }
-
-      // console.log("obj",obj);
-
-      debugger;
-
       var index = this.field.child.findIndex(el => el.field === this.currentItem.field);
+
+      console.log(this.currentItem.field,"file",obj)
       this.field.child.splice(index, 1, obj)
-
-      // let newObj =  this.field.child.filter(item => {
-      //   if (item.field == this.currentItem.field) {
-      //     // this.field.child[this.currentItem.position] = obj;
-      //     return obj;
-      //   } else {
-      //     return item;
-      //   }
-      // });
-
-      console.log('aaaaaaaaaaa', this.field);
-
-
 
       // this.sendDataToParent.emit(JSON.stringify(obj));
 
@@ -533,32 +500,54 @@ export class MultiSelectComponent {
       // console.log(" this.field.validations.required", this.field.validations.required, "sdds", this.required);
       // this.field.validations.required = this.required;
       // this.field.validations.autoCollect = this.autoCollect;
+      
+      this.dynamicServe.updateQuestion(this.field);
+
 
 
       // console.log(" this.field", this.field);
       this.openEditChild = false;
-
       // this.sendDataToParent.emit(this.activeModelData);
-
     } else {
-
       this.openEditChild = false;
       // this.modalReference.close();
     }
-
     // this.modalService.close();
     //  this.myModal.nativeElement.className = 'modal hide';
   }
 
-  currentItem: any;
-
   loadFormChildElement(loadEle, id) {
     console.log("item ---", loadEle, "id", id);
     loadEle.expand = !loadEle.expand;
+    this.field.child = this.field.child.filter(loopEle=>{
+      if(loopEle){
+        if(loopEle.isOpen){
+          if(loadEle.field==loopEle.field){
+            loopEle.isOpen=false;
+            return loopEle;
+          }else{
+            loopEle.isOpen=false;
+            return loopEle;
+          }
+        }else{
+          if(loadEle.field==loopEle.field){
+            loopEle.isOpen=true;
+            return loopEle;
+          }else{
+            loopEle.isOpen=false;
+            return loopEle;
+          }
+        }
+      } 
+    })
+
+
     this.activeModelData = "";
     this.label = loadEle.label;
     this.currentItem = loadEle;
     this.allData = this.dynamicServe.getALl();
+
+
     console.log('this.field', this.field);
     // for(let i = 0; i < this.allData['questionList']['questionList'][0].child.length; i++) {
     this.filtereddata = this.field.child.filter(t => t.field !== loadEle.field);
@@ -602,6 +591,8 @@ export class MultiSelectComponent {
 
   // To copy the element in the matrix
   copyElement(item, index) {
+
+    debugger;
     // this.field.push(item);
     console.log("before copy field ----------", this.field.child.length);
 
@@ -609,8 +600,7 @@ export class MultiSelectComponent {
     let newobj: any = {
     action: "copy",
     description: item.description,
-    field: item.field,
-    // field: item.field + '' +lengthOfChild,
+    field: item.field + '' +lengthOfChild,
     label: item.label,
     placeholder: item.placeholder,
     position: item.pointer,
@@ -619,7 +609,8 @@ export class MultiSelectComponent {
    
     console.log("after copy field ----------", newobj, 'index', index);
     this.field.child.push(newobj);
-    this.copyOrDeleteEvent.emit(item);
+    this.dynamicServe.updateQuestion(this.field);
+    // this.copyOrDeleteEvent.emit(newobj);
     // this.sendDataToParent.emit(newobj);
   }
 

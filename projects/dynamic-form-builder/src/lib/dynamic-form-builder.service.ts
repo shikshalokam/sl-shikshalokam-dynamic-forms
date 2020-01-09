@@ -80,27 +80,37 @@ export class DynamicFormBuilderService {
 
   }
 
-  
-  lastActivePopUp(id){
-    this.activePopUp = id;
-    console.log('fffffffffffffffff', this.activePopUp);
-  }
-
-  getlastActivePopUp(){
-    console.log('ssssssssssssssssss', this.activePopUp);
-    return this.activePopUp;
-  }
-
   updateQuestion(questionEle){
 
     console.log("update question",questionEle);
-    // this.list = this.list['questionList'].filter(item=>{
-    //   if(item.field==questionEle.field){
-    //     return questionEle;
-    //   }else {
-    //     return item;
-    //   }
-    // })
+    this.list['questionList'] = this.list['questionList'].filter(item=>{
+      if(item.field==questionEle.field){
+        return questionEle;
+      }else {
+        return item;
+      }
+    })
+  }
+  updateOpenPopup(ele){
+
+     this.list['questionList'] = this.list['questionList'].filter(item=>{
+      if(item.isOpen){
+         item.isOpen = false;
+        //  return item;
+        if(item.field==ele.field){
+          return item.isOpen =true;
+         }else{
+          return item;
+         }
+      }else {
+        if(item.field==ele.field){
+          return item.isOpen =true;
+         }else{
+          return item;
+         }
+      }
+    })
+  
   }
 
 }
