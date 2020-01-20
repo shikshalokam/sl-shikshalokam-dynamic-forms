@@ -112,5 +112,20 @@ export class DynamicFormBuilderService {
     })
   
   }
+  validateFiled(ele,type){
+    console.log("ele valdation =======",ele)
+    
+  if(ele.formValidation && ele.formValidation.validate){
+    if(type=='label'){
+      if(ele.label=='' || ele.label.length == 0){
+          return true;
+      }else{
+        return false;
+      }
+    }
+  }else{
+    return false;
+  }
+  }
 
 }

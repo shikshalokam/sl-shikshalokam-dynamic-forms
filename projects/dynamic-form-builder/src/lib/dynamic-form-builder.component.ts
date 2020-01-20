@@ -219,25 +219,28 @@ export class DynamicFormBuilderComponent implements OnInit {
   ngOnInit() {
     this.criteriaList = [];
     this.getCriteria();
-     this.eventsSubscription = this.events.subscribe(data => {
+    this.eventsSubscription = this.events.subscribe(data => {
       console.log("calling from parent with data", data);
       if (data) {
-        // let dt = data;
-        // this.formBuild(dt);
-        this.criteriaList = data.criteriaList;
-        let dt = data['questionArray'];
-
-        console.log("")
-        this.formBuild(dt);
-
-        let completeData = {
-          questionList: data['questionArray'],
-          criteriaList: data.criteriaList
+        if (data == 'validate') {
+          // to get all data 
+          const pages = this.dynamicServe.getPageNumbers();
+          let obj = {
+            action: "all",
+            data: this.fields,
+            pages: pages
+          }
+          this.questionTrigger.emit(obj);
+        } else {
+          this.criteriaList = data.criteriaList;
+          let dt = data['questionArray'];
+          this.formBuild(dt);
+          let completeData = {
+            questionList: data['questionArray'],
+            criteriaList: data.criteriaList
+          }
+          this.sendToService(completeData);
         }
-
-        console.log(" eventsSubscription completeData", completeData);
-        this.sendToService(completeData);
-
       } else {
         const pages = this.dynamicServe.getPageNumbers();
         let obj = {
@@ -245,8 +248,6 @@ export class DynamicFormBuilderComponent implements OnInit {
           data: this.fields,
           pages: pages
         }
-        console.log("to get all", this.fields);
-       
         this.questionTrigger.emit(obj);
       }
     })
@@ -433,7 +434,7 @@ export class DynamicFormBuilderComponent implements OnInit {
       obj = {
         "field": len + "question",
         "type": "matrix",
-        "label":  "Question",
+        "label": "Question",
         "position": len,
         "child": [],
         "placeholder": " ",
@@ -459,21 +460,19 @@ export class DynamicFormBuilderComponent implements OnInit {
           "max": "",
           "maxDate": "",
           "minDate": "",
-
         },
         options: [
-
         ]
       }
     }
-    debugger;
-    this.fields = this.fields.filter(ele=>{
-         if(ele.isOpen){
-          ele.isOpen =false;
-          return ele;
-        }else{
-          return ele;
-        }
+
+    this.fields = this.fields.filter(ele => {
+      if (ele.isOpen) {
+        ele.isOpen = false;
+        return ele;
+      } else {
+        return ele;
+      }
     });
     obj['isOpen'] = true;
     return obj;
@@ -486,21 +485,18 @@ export class DynamicFormBuilderComponent implements OnInit {
     }
     let len = this.fields.length + 1;
     var obj = {};
-    debugger;
-    
     if (action == "copy") {
-
-    
       let copyObj = {
         "position": len,
-        "field": ele.field ? ele.field: len + "question",
+        "field": ele.field ? ele.field : len + "question",
         "type": ele.type,
         "label": ele.label,
         "placeholder": ele.placeholder,
         "validations": ele.validations,
+        "formValidation": ele.formValidation ? ele.formValidation : {},
         "options": ele.options,
         "description": ele.description,
-        "copied": true 
+        "copied": true
       }
       obj = copyObj;
     } else {
@@ -532,7 +528,6 @@ export class DynamicFormBuilderComponent implements OnInit {
       criteriaList: this.criteriaList
     }
     this.sendToService(completeData);
-    // this.questionTrigger.emit(trnasformData);
     this.questionTrigger.emit(trnasformData);
   }
 
@@ -546,7 +541,6 @@ export class DynamicFormBuilderComponent implements OnInit {
     this.form = new FormGroup(fieldsCtrls);
     for (let f of formData) {
       if (f['type'] != 'checkbox') {
-        console.log("f.type", f['field']);
         fieldsCtrls[f['field']] = new FormControl(f['value'] || '')
       } else {
         let opts = {};
@@ -557,101 +551,53 @@ export class DynamicFormBuilderComponent implements OnInit {
       }
     }
     this.form = new FormGroup(fieldsCtrls);
-
     this.fields = formData;
     let obj = {
       action: "all",
       data: formData
     }
-
-    console.log("this.fields-------", this.fields);
     this.questionTrigger.emit(obj);
-
-
-    // this.fields = data;
-
-    // let fieldsCtrls = {};
-
-    // console.log(" this.fields", data);
-    // for (let f of data) {
-
-
-    //   if (f.type != 'checkbox') {
-
-    //     fieldsCtrls[f.name] = new FormControl(f.value || '')
-    //   } else {
-    //     let opts = {};
-    //     for (let opt of f.options) {
-
-    //       opts[opt.key] = new FormControl(opt.value);
-    //     }
-    //     fieldsCtrls[f.name] = new FormGroup(opts)
-    //   }
-    // }
-    // this.form = new FormGroup(fieldsCtrls);
   }
 
   onSubmit(value) {
-    console.log("value", this.fields);
-
-    // this.questionList.emit(this.fields);
-
     let obj = {
       action: "all",
       data: this.fields
     }
     this.questionTrigger.emit(obj);
   }
-
-
-  // (event) {
-  //   console.log('Element was dragged', event);
-  // }
-
   ngOnDestroy() {
     this.eventsSubscription.unsubscribe()
   }
 
   lastDropEle = "";
   onFieldUpdate($event) {
-    console.log("eventData sssssss------", $event);
     let eventObj = $event
     let trnasformData = {};
     if ($event.action == "reload") {
-
       let dataFromServ = this.dynamicServe.getALl();
       this.fields = dataFromServ['questionList']['questionList'];
-
-    }else if ($event.action == "addnew") {
+    } else if ($event.action == "addnew") {
       this.onDrop($event.data.element);
-    }else if ($event.action == "copy") {
+    } else if ($event.action == "copy") {
       this.onDrop($event.data, "copy");
     } else if ($event.action == "delete") {
-      // this.fields = this.fields.filter( each => {
-      //   return each.field != $event.data.field
-      // })
-      // console.log("$event",$event.data.field); 
       trnasformData = {
         action: 'delete',
         data: $event
       }
     }
-     else if ($event.action == 'childDelete') {
+    else if ($event.action == 'childDelete') {
       trnasformData = {
         action: 'childDelete',
         data: $event
       }
-    } 
+    }
     else if ($event.action == "childDroped") {
-      console.log('this.fields', this.fields);
       var final = this.fields.filter(
         item => {
           if (item.field === eventObj.data.mutiSelect.field) {
-            console.log(eventObj.data.mutiSelect.field, '====== this.fields  =====', item);
-            // if(item.child){
             let obj = this.getToolObj($event.data.responseType, item.child.length + 1);
-            // }
-
             obj['isOpen'] = false;
             item.child.push(obj);
             trnasformData = {
@@ -663,10 +609,6 @@ export class DynamicFormBuilderComponent implements OnInit {
             return item;
           }
         });
-      // final.push(obj);
-      // this.fields
-      console.log('final result', final);
-      // console.log("main obj", obj);
     } else {
       trnasformData = {
         action: 'update',

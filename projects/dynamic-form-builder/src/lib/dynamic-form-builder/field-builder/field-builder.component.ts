@@ -1,8 +1,9 @@
-import { Component, Input, OnInit, ViewChild, ElementRef, EventEmitter, Output } from '@angular/core';
+import { Component, Input, OnInit, ViewChild, ElementRef, EventEmitter, Output, AfterViewChecked, ChangeDetectorRef } from '@angular/core';
 import { THIS_EXPR } from '@angular/compiler/src/output/output_ast';
 import { DynamicFormBuilderService } from '../../dynamic-form-builder.service';
 import { Subscription } from 'rxjs';
 import { isNgTemplate } from '@angular/compiler';
+import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { MatTabChangeEvent, MatPaginator, MatTableDataSource, MatSort, MatSnackBar, MatDialog } from '@angular/material';
 
 @Component({
@@ -88,6 +89,9 @@ span.cursor-pntr {
   padding: 15px;
   border: 0.02px solid #ccc;
 }
+.custom-error {
+   margin-top : -20px;
+}
 
 @media only screen and (max-width: 600px) {
   .col-sm-12 {
@@ -98,29 +102,38 @@ span.cursor-pntr {
   }
 }
   </style>
-  <div class="row questionEditBlock"  *ngIf="field.isOpen == true" style="">
-    <div class="col-sm-6">
+  <div class="row questionEditBlock" *ngIf="field.isOpen == true"  [formGroup]="editForm">
+    <div class="col-sm-6" >
       <mat-form-field>
-        <input matInput placeholder="Label" [(ngModel)]="label" name="label">
-      </mat-form-field>
+        <input matInput placeholder="Label" name="label" formControlName="label">
+     </mat-form-field>
+      <span class="mat-error custom-error" *ngIf="formValidate('label')">
+        Invalid Label
+      </span>
     </div>
   
     <div class="col-sm-6">
       <mat-form-field>
-        <input matInput placeholder="Input Place Holder" [(ngModel)]="placeholder" name="placeholder">
+        <input matInput placeholder="Input Place Holder" formControlName="placeholder" name="placeholder">
       </mat-form-field>
+      <span class="mat-error custom-error" *ngIf="formValidate('placeholder')">
+        Invalid placeholder
+      </span>
     </div>
   
     <div class="col-sm-6">
       <mat-form-field>
-        <input matInput placeholder="Hint/Description" [(ngModel)]="description" name="Description">
+        <input matInput placeholder="Hint/Description" formControlName="description" name="Description">
       </mat-form-field>
+      <span class="mat-error custom-error" *ngIf="formValidate('description')">
+        Invalid placeholder
+      </span>
     </div>
   
     <div class="col-sm-6 " style="display:none">
       <mat-form-field>
         <mat-label>Input Type</mat-label>
-        <mat-select [(ngModel)]="type">
+        <mat-select >
           <mat-option value="text">text</mat-option>
           <mat-option value="number">number</mat-option>
           <mat-option value="radio">radio</mat-option>
@@ -133,10 +146,14 @@ span.cursor-pntr {
       <mat-form-field>
         <mat-label>Pages</mat-label>
   
-        <mat-select [(ngModel)]="pageNumber">
+        <mat-select formControlName="pageNumber" >
           <mat-option *ngFor="let page of pages; let i = index" value="{{page.value}}">{{page.label}}</mat-option>
         </mat-select>
+
       </mat-form-field>
+      <span class="mat-error custom-error" *ngIf="formValidate('pageNumber')">
+      Please select Page Number
+    </span>
     </div>
     <div class="col-sm-1 addicon">
       <span class="cursor-pntr"><i title="Add Page" class="fa fa-plus"
@@ -146,14 +163,17 @@ span.cursor-pntr {
     <div class="col-sm-6">
       <mat-form-field>
         <mat-label>Criteria</mat-label>
-        <mat-select [(ngModel)]="draftCriteriaId">
+        <mat-select formControlName="draftCriteriaId" >
           <mat-option *ngFor="let item of criteriaList" [value]="item._id">{{ item.name}}</mat-option>
         </mat-select>
       </mat-form-field>
+      <span class="mat-error custom-error" *ngIf="formValidate('draftCriteriaId')">
+      Please select criteria
+    </span>
     </div>
     <div class="col-sm-6">
     <label id="example-radio-group-label">is Required ?</label>
-    <mat-radio-group aria-labelledby="radio-group-label" class="radio-group" [(ngModel)]="required">
+    <mat-radio-group aria-labelledby="radio-group-label" class="radio-group"  formControlName="required">
       <mat-radio-button class="example-radio-button" [value]=true>
         Yes
       </mat-radio-button>
@@ -161,40 +181,55 @@ span.cursor-pntr {
         No
       </mat-radio-button>
     </mat-radio-group>
+    <span class="mat-error custom-error" *ngIf="formValidate('required')">
+      Invalid
+    </span>
   </div>
-  
-  
-  
     <div class="col-sm-6" *ngIf="type=='slider'">
       <mat-form-field>
-        <input type="text" placeholder="Min" matInput [(ngModel)]="min" name="min value">
+        <input type="text" placeholder="Min" matInput formControlName="min" name="min value">
       </mat-form-field>
+      <span class="mat-error custom-error" *ngIf="formValidate('min')">
+      Min value required
+    </span>
     </div>
   
     <div class="col-sm-6" *ngIf="type=='slider'">
       <mat-form-field>
-        <input type="text" placeholder="Max" matInput [(ngModel)]="max" name="min value">
+        <input type="text" placeholder="Max" matInput formControlName="max" name="min value">
       </mat-form-field>
+      <span class="mat-error custom-error" *ngIf="formValidate('max')">
+      max value required
+    </span>
     </div>
+
+     
+      
   
     <div class="col-sm-6" *ngIf="type=='date'">
       <mat-form-field>
-        <input matInput [matDatepicker]="picker" [(ngModel)]="minDate" placeholder="Choose a min date">
+        <input matInput [matDatepicker]="picker" formControlName="minDate" placeholder="Choose a min date">
         <mat-datepicker-toggle matSuffix [for]="picker"></mat-datepicker-toggle>
         <mat-datepicker #picker></mat-datepicker>
       </mat-form-field>
+      <span class="mat-error custom-error" *ngIf="formValidate('minDate')">
+      Min Date is required
+    </span>
   
       <mat-form-field>
-        <input matInput [matDatepicker]="pickerMaxDate" [(ngModel)]="maxDate" placeholder="Choose a max date">
+        <input matInput [matDatepicker]="pickerMaxDate" formControlName="maxDate" placeholder="Choose a max date">
         <mat-datepicker-toggle matSuffix [for]="pickerMaxDate"></mat-datepicker-toggle>
         <mat-datepicker #pickerMaxDate></mat-datepicker>
       </mat-form-field>
+      <span class="mat-error custom-error" *ngIf="formValidate('maxDate')">
+      max Date is required
+    </span>
   
   
     </div>
-    <div class="" *ngIf="type=='radio' || type=='checkbox' || type=='dropdown'">
+    <div class="" *ngIf="type=='radio' || type=='checkbox' || type=='dropdown'" >
       <label for="label" class="col-sm-12">Options</label>
-  
+
       <ul class="col-sm-12 option-ul" *ngFor="let opt of options;let i = index">
         <li class="">
           <span>{{opt.label}} </span><span style="
@@ -206,9 +241,14 @@ span.cursor-pntr {
       <div class="col-sm-12">
         <div class="input-group pull-left col-sm-6">
           <mat-form-field>
-            <input type="text" placeholder="Label" matInput style="" [(ngModel)]="newOptionLabel"
+            <input type="text" placeholder="Label" matInput style="" formControlName="newOptionLabel"
               name="newOption">
           </mat-form-field>
+
+          <span class="mat-error custom-error" *ngIf="formValidate('newOptionLabel')">
+        Invalid Label
+      </span>
+
         </div>
         <button mat-flat-button color="primary" class = "spacearoundbtn" (click)="AddNewOptions()">
           Add
@@ -221,7 +261,7 @@ span.cursor-pntr {
       <div class="col-sm-12">
         <label id="example-radio-group-label">Do you want to related the question based on below options ?</label>
         <mat-radio-group aria-labelledby="example-radio-group-label" class="example-radio-group"
-          [(ngModel)]="selectedOption">
+        formControlName="selectedOption" >
           <mat-radio-button class="example-radio-button" *ngFor="let ele of options" [value]="ele">
             {{ ele.label }}
           </mat-radio-button>
@@ -232,24 +272,25 @@ span.cursor-pntr {
       <div class="col-sm-6">
         <mat-form-field>
           <mat-label>Select Question to add </mat-label>
-          <select matNativeControl [(ngModel)]="currentSelectedQtn">
+          <select matNativeControl   formControlName="currentSelectedQtn"  (change)="parentMapQuestionChange()">
             <option *ngFor="let values of filtereddata" [ngValue]="values"> {{ values.label }} </option>
           </select>
         </mat-form-field>
       </div>
   
-      <div class="col-sm-6" *ngIf="type=='text' || type=='date' || type=='number'">
+      <div class="col-sm-6" >
         <mat-form-field>
           <mat-label>Select Condition </mat-label>
-          <select matNativeControl [(ngModel)]="condition">
+          <select matNativeControl formControlName="condition" >
             <option *ngFor="let values of conditionArray" [ngValue]="values.condition"> {{ values.label }} </option>
           </select>
         </mat-form-field>
       </div>
   
-      <div class="col-sm-6" *ngIf="type=='text' || type=='date' || type=='number'">
+      
+      <div class="col-sm-6" >
         <mat-form-field>
-          <input type="text" matInput name="conditionMatchValue" placeholder="Value" [(ngModel)]="conditionMatchValue">
+          <input type="text" matInput name="conditionMatchValue" placeholder="Value" formControlName="conditionMatchValue">
         </mat-form-field>
       </div>
   
@@ -273,7 +314,7 @@ span.cursor-pntr {
 
     <div class="col-sm-12" *ngIf="type=='date'">  
     <label id="example-radio-group-label">is autoCollect</label>
-      <mat-radio-group aria-labelledby="example-radio-group-label" class="example-radio-group" [(ngModel)]="autoCollect">
+      <mat-radio-group aria-labelledby="example-radio-group-label" class="example-radio-group" formControlName="autoCollect">
         <mat-radio-button class="example-radio-button" [value]=true>
           True
         </mat-radio-button>
@@ -299,7 +340,7 @@ span.cursor-pntr {
   
       <span class="cursor-pntr" title = "delete" (click)="deleteElement(field)"><i class="fa fa-trash"></i> </span>
       <span class="cursor-pntr" title = "copy" (click)="copyElement(field)"><i class="fa fa-copy"></i></span>
-      <span class="cursor-pntr" title = "edit"><i class="fa fa-edit" (click)="loadFormElement(field)"></i></span>
+      <span class="cursor-pntr" title = "edit"><i class="fa fa-edit" (click)="loadFormElement(field)"></i ></span>
   
     </div>
     <div class="col-md-12" [ngSwitch]="field.type">
@@ -339,7 +380,7 @@ span.cursor-pntr {
 
 // <div class="alert alert-danger my-1 p-2 fadeInDown animated" *ngIf="!isValid && isDirty">{{field.label}} is required</div>
 
-export class FieldBuilderComponent implements OnInit {
+export class FieldBuilderComponent implements OnInit, AfterViewChecked {
   @Input() field: any;
 
   @Input() criteriaList: any;
@@ -361,7 +402,7 @@ export class FieldBuilderComponent implements OnInit {
   dataPass: any;
 
 
-  openEditPopUp:boolean;
+  openEditPopUp: boolean;
   pages = [{
     label: 'page 1',
     value: 'page 1'
@@ -393,7 +434,7 @@ export class FieldBuilderComponent implements OnInit {
   listOfRelation: any = [];
   condition: any;
   conditionMatchValue: any;
-  currentField:any;
+  currentField: any;
   conditionArray: any = [
     {
       label: "equals",
@@ -426,14 +467,29 @@ export class FieldBuilderComponent implements OnInit {
   @ViewChild('content', { static: false }) myModal: ElementRef;
   get isValid() { return this.form.controls[this.field.name].valid; }
   get isDirty() { return this.form.controls[this.field.name].dirty; }
+
+  public editForm: any;
+  formErrors: any;
+
+
+
   constructor(
     // private modalService: NgbModal
     private dynamicServe: DynamicFormBuilderService,
     private _snackBar: MatSnackBar,
-    private dialog: MatDialog
+    private dialog: MatDialog,
+    private builder: FormBuilder,
+    private cdRef: ChangeDetectorRef,
+
   ) {
 
+
+
+
   }
+
+
+  // }
 
   // getAll(){
   //   this.subscription = this.dynamicServe.getALl().subscribe(message => { 
@@ -443,8 +499,16 @@ export class FieldBuilderComponent implements OnInit {
 
   // }   
 
+  ngAfterViewChecked() {
+    this.cdRef.detectChanges();
+  }
+  validate(element, type) {
+    this.dynamicServe.validateFiled(element, type);
+  }
 
   parentMapping() {
+
+    this.currentSelectedQtn = this.editForm.controls['currentSelectedQtn'].value;
     console.log(this.condition, "condition", this.currentSelectedQtn, "selectedOption", this.selectedOption);
     let obj = {}
     // option:this.selectedOption,
@@ -529,6 +593,11 @@ export class FieldBuilderComponent implements OnInit {
   }
 
   ngOnInit() {
+
+
+
+    this.formBuilder();
+
     // this.currentSelectedQtn = { };
     // this.dynamicServe.getALl();
     this.options = [];
@@ -539,58 +608,50 @@ export class FieldBuilderComponent implements OnInit {
       'relation': []
     };
     this.dynamicServe.setPageNumber(this.pages);
- 
-    const openpopup =  this.dynamicServe.getALl();
+
+    const openpopup = this.dynamicServe.getALl();
     this.dataPass = openpopup['questionList']['questionList'][openpopup['questionList']
-    ['questionList'].length -1];
+    ['questionList'].length - 1];
     console.log('===', this.dataPass);
     // if(this.fromService === this.currentposition){
     //   this.openEdit = this.openEdit ? false : true;
     // }
 
 
-    this.loadFormElement(this.dataPass,'onload');
+    this.loadFormElement(this.dataPass, 'onload');
   }
 
-  loadFormElement(item,arg='') {
-
+  loadFormElement(item, arg = '') {
     /**
      * updateOpenPopup() is used to update the isOpen status to false
      */
     this.dynamicServe.updateOpenPopup(item);
-
-    // console.log("");
-
     console.log(this.openEditPopUp, "item.validations.required", this.field.isOpen);
-
-   
-
-    if(this.openEditPopUp==false && this.field.isOpen){
-      this.openEditPopUp =true;
-    }else if(this.openEditPopUp==false && this.field.isOpen==false){
-      this.field.isOpen=true;
-      this.openEditPopUp= true;
-    }else if(this.field.isOpen){
-      if(arg && arg=='onload'){
-        this.openEditPopUp= true;
+    if (this.openEditPopUp == false && this.field.isOpen) {
+      this.openEditPopUp = true;
+    } else if (this.openEditPopUp == false && this.field.isOpen == false) {
+      this.field.isOpen = true;
+      this.openEditPopUp = true;
+    } else if (this.field.isOpen) {
+      if (arg && arg == 'onload') {
+        this.openEditPopUp = true;
         this.field.isOpen = true;
-      }else{
-        this.openEditPopUp= false;
-      this.field.isOpen = false;
+      } else {
+        this.openEditPopUp = false;
+        this.field.isOpen = false;
       }
-      
-    }else if(this.field.isOpen==false){
-      this.field.isOpen=true;
-      this.openEditPopUp= true;
+    } else if (this.field.isOpen == false) {
+      this.field.isOpen = true;
+      this.openEditPopUp = true;
     }
-   
+
 
     /**
      * to set the popup open by default it false
      */
 
-     
-     
+
+
 
 
     /**
@@ -606,7 +667,7 @@ export class FieldBuilderComponent implements OnInit {
     this.filtereddata = this.allData['questionList']['questionList'].filter(t => t.field !== item.field);
     this.allData['questionList']['questionList'];
     this.criteriaList = this.allData['criteriaList'];
-    
+
     this.activeModelData = "";
     this.label = item.label;
     this.type = item.type;
@@ -614,10 +675,34 @@ export class FieldBuilderComponent implements OnInit {
     this.options = item.options;
     this.draftCriteriaId = item.draftCriteriaId;
     this.required = item.validations.required;
-    this.currentField= item.field;
+    this.currentField = item.field;
     this.description = item.description;
     this.pageNumber = item.pageNumber;
-    
+
+
+    console.log("formBuilder", item);
+    let formControl = {
+      label: [item.label, [Validators.required]],
+      placeholder: [item.placeholder, [Validators.required]],
+      description: [item.description, [Validators.required]],
+      pageNumber: [item.pageNumber, [Validators.required]],
+      required: [item.validations.required, [Validators.required]],
+      draftCriteriaId: [item.draftCriteriaId, [Validators.required]],
+      newOptionLabel: [null],
+      maxDate: [null],
+      minDate: [null],
+      max: [null],
+      min: [null],
+      autoCollect: [null],
+      conditionMatchValue: [null],
+      condition: [null],
+      currentSelectedQtn: [null],
+      selectedOption: [null]
+
+    }
+
+    // this.editForm = this.builder.group();
+
     if (item.validations.relation) {
       this.listOfRelation = item.validations.relation;
     }
@@ -625,14 +710,24 @@ export class FieldBuilderComponent implements OnInit {
       this.minDate = item.validations.minDate;
       this.maxDate = item.validations.maxDate
       this.autoCollect = item.validations.autoCollect;
+
+      formControl.minDate = [item.validations.minDate, [Validators.required]];
+      formControl.maxDate = [item.validations.maxDate, [Validators.required]];
+      formControl.autoCollect = [item.validations.autoCollect];
     }
     else if (item.type == "slider") {
       this.min = item.validations.min;
       this.max = item.validations.max;
+      formControl.min = [item.validations.min, [Validators.required]];
+      formControl.max = [item.validations.max, [Validators.required]];
+
     }
     this.required = this.field.validations.required;
     console.log(this.openEditPopUp, "item.validations.required", this.field.isOpen);
-    
+
+    // this.editForm.formBuilder()
+    this.editForm = this.builder.group(formControl);
+
     // if(this.field.isOpen)
     // this.openEdit = this.openEdit = true;
     // document.getElementById("openModalButton").click();
@@ -646,18 +741,27 @@ export class FieldBuilderComponent implements OnInit {
   }
   closeModel(action) {
 
-    this.field.isOpen = false;
     if (action == "save") {
-      console.log(this.validations, "this.field", this.required);
-      // this.modalReference.close();
-      // this.activeModelData.field = this.field.field;
-      // this.activeModelData.label = this.label;
-      // this.activeModelData.type = this.type;
-      // this.activeModelData.placeholder = this.placeholder;
-      // this.activeModelData.options = this.options;
-
+      let saveData = false;
+      if(this.editForm.valid){
+          if(this.field.formValidation.validate){
+            saveData = true;
+          }else{
+            saveData = true;
+          }
+      }else{
+        if( this.field.formValidation && this.field.formValidation.validate){
+          saveData = false;
+        }else{
+          saveData = true;
+        }
+      }
+      if (saveData) {
+        this.openEdit = false;
+        this.field.isOpen = false;
+      this.label = this.editForm.get('label').value;
       let obj = {
-        label: this.label,
+        label: this.editForm.get('label').value,
         type: this.type,
         placeholder: this.placeholder,
         options: this.options,
@@ -702,40 +806,28 @@ export class FieldBuilderComponent implements OnInit {
       // this.field.validations
       this.field.validations.required = this.required;
       this.field.validations.autoCollect = this.autoCollect;
-      console.log(obj, "this.field.validations", this.field.validations);
-      let actionObject = {
-        action: "save",
-        data: obj
+
+     
+        let actionObject = {
+          action: "save",
+          data: obj
+        }
+        this.dynamicServe.updateQuestion(this.field);
+        this.sendDataToParent.emit(actionObject);
+        this.openEdit = false;
+
+      }else{
+        console.log("invalid --");
+        this.openEdit = true;
       }
-      this.dynamicServe.updateQuestion(this.field);
-      this.sendDataToParent.emit(actionObject);
-      this.openEdit = false;
+     
     } else {
       this.openEdit = false;
     }
   }
 
   open(content) {
-
-
-
-    // this.modalReference = this.modalService.open(content);
-    // this.modalReference.result.then((result) => {
-    //   this.closeResult = `Closed with`;
-    // }, (reason) => {
-    //   this.closeResult = `Dismissed`;
-    // });
   }
-
-  // private getDismissReason(reason: any): string {
-  //   // if (reason === ModalDismissReasons.ESC) {
-  //   //   return 'by pressing ESC';
-  //   // } else if (reason === ModalDismissReasons.BACKDROP_CLICK) {
-  //   //   return 'by clicking on a backdrop';
-  //   // } else {
-  //   //   return `with: ${reason}`;
-  //   // }
-  // }
 
   deleteOption(opt, index) {
     // this.deleteDraftCriteria();
@@ -765,11 +857,9 @@ export class FieldBuilderComponent implements OnInit {
 
       this.newOptionKey = 'R' + this.options.length;
       if (Array.isArray(this.options)) {
-
       } else {
         this.options = [];
       }
-
       this.options.push({
         key: this.newOptionKey,
         label: this.newOptionLabel
@@ -821,7 +911,7 @@ export class FieldBuilderComponent implements OnInit {
 
   eventFromChild($event) {
     if ($event.action == 'copy') {
-    
+
     } else {
       $event.action = 'childDelete';
     }
@@ -843,4 +933,52 @@ export class FieldBuilderComponent implements OnInit {
   //   });
   // }
 
+  // validate(field,currentField){
+  //   field.
+  // }
+
+  formBuilder() {
+    this.editForm = this.builder.group({
+      label: [null],
+      placeholder: [null],
+      description: [null],
+      pageNumber: [null],
+      required: [null],
+      draftCriteriaId: [null],
+      newOptionLabel: [null],
+      maxDate: [null],
+      minDate: [null],
+      max: [null],
+      min: [null],
+      autoCollect: [null],
+      conditionMatchValue: [null],
+      condition: [null],
+      currentSelectedQtn: [null],
+      selectedOption: [null]
+    });
+  }
+
+  formValidate(el) {
+    if (el) {
+      if (this.field.formValidation && this.field.formValidation.fields && this.field.formValidation.validate) {
+        let currentItem = this.field.formValidation.fields.filter(eachElement => {
+          if (eachElement == el) {
+            return true;
+          } else {
+            return false;
+          }
+        })
+        if (currentItem.length > 0) {
+          return this.editForm.get(el).hasError('required')
+        } else {
+          return false;
+        }
+      } else {
+        return false;
+      }
+    }
+  }
+  parentMapQuestionChange(){
+    console.log("value",this.editForm.formControl['currentSelectedQtn'].value);
+  }
 }
