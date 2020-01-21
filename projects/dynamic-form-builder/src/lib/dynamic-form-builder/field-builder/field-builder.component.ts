@@ -174,10 +174,10 @@ span.cursor-pntr {
     <div class="col-sm-6">
     <label id="example-radio-group-label">is Required ?</label>
     <mat-radio-group aria-labelledby="radio-group-label" class="radio-group"  formControlName="required">
-      <mat-radio-button class="example-radio-button" [value]=true>
+      <mat-radio-button class="example-radio-button"  [checked]="true" [value]=true>
         Yes
       </mat-radio-button>
-      <mat-radio-button class="example-radio-button" [value]=false>
+      <mat-radio-button class="example-radio-button" [value]=false >
         No
       </mat-radio-button>
     </mat-radio-group>
@@ -261,7 +261,7 @@ span.cursor-pntr {
       <div class="col-sm-12">
         <label id="example-radio-group-label">Do you want to related the question based on below options ?</label>
         <mat-radio-group aria-labelledby="example-radio-group-label" class="example-radio-group"
-        formControlName="selectedOption" >
+        formControlName="selectedOption"  style="display:none" >
           <mat-radio-button class="example-radio-button" *ngFor="let ele of options" [value]="ele">
             {{ ele.label }}
           </mat-radio-button>
@@ -277,8 +277,13 @@ span.cursor-pntr {
           </select>
         </mat-form-field>
       </div>
+
+      
+      
+     
+     
   
-      <div class="col-sm-6" >
+      <div class="col-sm-6" *ngIf="optionQntList.length <= 0">
         <mat-form-field>
           <mat-label>Select Condition </mat-label>
           <select matNativeControl formControlName="condition" >
@@ -288,7 +293,16 @@ span.cursor-pntr {
       </div>
   
       
-      <div class="col-sm-6" >
+      <div class="col-sm-6" *ngIf="optionQntList && optionQntList.length > 0" >
+      <mat-form-field>
+        <mat-label>Select Options </mat-label>
+        <select matNativeControl formControlName="conditionMatchValue" >
+          <option *ngFor="let values of optionQntList" [ngValue]="values.key"> {{ values.label }} </option>
+        </select>
+      </mat-form-field>
+    </div>
+
+      <div class="col-sm-6" *ngIf="optionQntList.length <= 0" >
         <mat-form-field>
           <input type="text" matInput name="conditionMatchValue" placeholder="Value" formControlName="conditionMatchValue">
         </mat-form-field>
@@ -318,7 +332,7 @@ span.cursor-pntr {
         <mat-radio-button class="example-radio-button" [value]=true>
           True
         </mat-radio-button>
-        <mat-radio-button class="example-radio-button" [value]=false>
+        <mat-radio-button class="example-radio-button" [checked]="false" [value]=false>
           False
         </mat-radio-button>
       </mat-radio-group>
@@ -470,6 +484,7 @@ export class FieldBuilderComponent implements OnInit, AfterViewChecked {
 
   public editForm: any;
   formErrors: any;
+  optionQntList:any;
 
 
 
@@ -508,29 +523,34 @@ export class FieldBuilderComponent implements OnInit, AfterViewChecked {
 
   parentMapping() {
 
-    this.currentSelectedQtn = this.editForm.controls['currentSelectedQtn'].value;
-    console.log(this.condition, "condition", this.currentSelectedQtn, "selectedOption", this.selectedOption);
+    this.currentSelectedQtn = this.editForm.get('currentSelectedQtn').value;
+    
+    console.log(this.editForm.get('condition').value, "--condition", this.currentSelectedQtn, "selectedOption", this.selectedOption);
     let obj = {}
     // option:this.selectedOption,
     // question:this.currentSelectedQtn
     // obj['visibleIf'] = [];
+
+    let operator = "===";
+  
+    if(this.editForm.get('condition').value){
+        operator = this.editForm.get('condition').value;
+    } 
     let condiObj = {
-      operator: this.condition,
-      value: this.conditionMatchValue,
-      field: this.field.field,
-      label: this.field.label
+      operator:operator,
+      value: this.editForm.get('conditionMatchValue').value,
+      field: this.currentSelectedQtn.field,
+      label: this.editForm.get('label').value
       // parent:this.selectedOption.field
     }
-    // if (this.currentSelectedQtn.parentChildren) {
-    //   this.currentSelectedQtn.parentChildren.push(condiObj);
-    // } else {
-    //   this.currentSelectedQtn.parentChildren = [];
-    //   this.currentSelectedQtn.parentChildren.push(condiObj);
-    // }
-    console.log('this.currentSelectedQtn', this.currentSelectedQtn);
-    console.log("condiObj", condiObj);
+
+    console.log("====condiObj",condiObj);
+  
+    // console.log('this.currentSelectedQtn', this.currentSelectedQtn);
+    // console.log("condiObj", condiObj);
     this.getSelectQuestion = this.allData['questionList']['questionList'].filter(ele => {
-      if (ele.field == this.field.field) {
+      // if (ele.field == this.field.field) {
+        if(ele.field == this.currentSelectedQtn.field){
         return ele;
       }
     });
@@ -538,7 +558,7 @@ export class FieldBuilderComponent implements OnInit, AfterViewChecked {
     let isAvailable = false;
     if (this.getSelectQuestion['visibleIf'] && this.getSelectQuestion['visibleIf'].length > 0) {
       isAvailable = this.getSelectQuestion['visibleIf'].filter(item => {
-        if (item.visibleIf.field == this.field.field) {
+        if (item.visibleIf.field ==this.field.field) {
           return true
         }
       })
@@ -549,24 +569,41 @@ export class FieldBuilderComponent implements OnInit, AfterViewChecked {
     for (let i = 0; i < this.getSelectQuestion.length; i++) {
       debugger
       if (this.getSelectQuestion[i].parentChildren) {
-        if (this.getSelectQuestion[i].parentChildren.indexOf(this.currentSelectedQtn.field) !== -1) {
+        if (this.getSelectQuestion[i].parentChildren.indexOf(this.field.field) !== -1) {
           addObj = false;
         } else {
           addObj = true;
-          this.getSelectQuestion[i].parentChildren.push(this.currentSelectedQtn.field);
+          this.getSelectQuestion[i].parentChildren.push(this.field.field);
         }
       } else {
         addObj = true;
         this.getSelectQuestion[i].parentChildren = [];
-        this.getSelectQuestion[i].parentChildren.push(this.currentSelectedQtn.field);
+        this.getSelectQuestion[i].parentChildren.push(this.field.field);
       }
     }
-    if (addObj) {
+    // if (addObj) {
       allData = this.allData['questionList']['questionList'].filter(ele => {
-        if (ele.field == this.currentSelectedQtn.field) {
+        
+        if (ele.field == this.field.field) {
+        // if (ele.field == this.currentSelectedQtn.field) { //old code 
           if (ele.visibleIf && ele.visibleIf.length > 0 && isAvailable == false) {
             ele.visibleIf.push(condiObj);
-          } else {
+          }
+          else if(isAvailable && ele.visibleIf && ele.visibleIf.length > 0){
+
+            console.log("updating");
+            ele.visibleIf = ele.visibleIf.filter(loopElement =>{
+              if(loopElement.field == this.currentSelectedQtn.field){
+                return condiObj;
+              }else{
+                loopElement;
+              }
+            });
+            console.log("updated",ele.visibleIf);
+
+            
+          }
+          else{
             ele.visibleIf = [];
             ele.visibleIf.push(condiObj);
           }
@@ -581,7 +618,7 @@ export class FieldBuilderComponent implements OnInit, AfterViewChecked {
       if (!this.listOfRelation.includes(condiObj)) {
         this.listOfRelation.push(condiObj);
       }
-    }
+    // }
     // if (this.condition) {
     // }
     // 'option':this.selectedOption,
@@ -593,11 +630,8 @@ export class FieldBuilderComponent implements OnInit, AfterViewChecked {
   }
 
   ngOnInit() {
-
-
-
+    this.optionQntList = []; 
     this.formBuilder();
-
     // this.currentSelectedQtn = { };
     // this.dynamicServe.getALl();
     this.options = [];
@@ -697,7 +731,8 @@ export class FieldBuilderComponent implements OnInit, AfterViewChecked {
       conditionMatchValue: [null],
       condition: [null],
       currentSelectedQtn: [null],
-      selectedOption: [null]
+      selectedOption: [null],
+     
 
     }
 
@@ -781,21 +816,27 @@ export class FieldBuilderComponent implements OnInit, AfterViewChecked {
       }
       // this.field.label = this.label;
 
-      this.field.label = this.label;
+      this.field.label = this.editForm.get('label').value;
       this.field.type = this.type;
-      this.field.placeholder = this.placeholder;
-      this.field.options = this.options;
-      this.field.description = this.description;
-      this.field.pageNumber = this.pageNumber;
-      this.field.draftCriteriaId = this.draftCriteriaId;
+
+    
+      // currentSelectedQtn: [null],
+      // selectedOption: [null]
+
+
+      this.field.placeholder = this.editForm.get('placeholder').value;
+      this.field.options = this.editForm.get('options').value;
+      this.field.description = this.editForm.get('description').value;
+      this.field.pageNumber = this.editForm.get('pageNumber').value;
+      this.field.draftCriteriaId = this.editForm.get('draftCriteriaId').value;
       // this.field.field = this.field.field;
       if (this.type == 'date') {
-        this.field.validations.minDate = this.minDate;
-        this.field.validations.maxDate = this.maxDate;
-        this.field.validations.autoCollect = this.autoCollect;
+        this.field.validations.minDate = this.editForm.get('minDate').value;
+        this.field.validations.maxDate = this.editForm.get('maxDate').value;
+        this.field.validations.autoCollect = this.editForm.get('autoCollect').value;
       } else if (this.type == 'slider') {
-        this.field.validations.min = this.min;
-        this.field.validations.max = this.max;
+        this.field.validations.min = this.editForm.get('max').value;
+        this.field.validations.max = this.editForm.get('min').value;
       }
       // if(this.field.validations.relation){
       if (this.listOfRelation) {
@@ -804,8 +845,8 @@ export class FieldBuilderComponent implements OnInit, AfterViewChecked {
       }
       // }
       // this.field.validations
-      this.field.validations.required = this.required;
-      this.field.validations.autoCollect = this.autoCollect;
+      this.field.validations.required = this.editForm.get('required').value;
+      this.field.validations.autoCollect = this.editForm.get('autoCollect').value;
 
      
         let actionObject = {
@@ -979,6 +1020,17 @@ export class FieldBuilderComponent implements OnInit, AfterViewChecked {
     }
   }
   parentMapQuestionChange(){
-    console.log("value",this.editForm.formControl['currentSelectedQtn'].value);
+    console.log("value changes",this.editForm.get('currentSelectedQtn').value);
+
+
+    this.optionQntList = [];
+    let currentQnt = this.editForm.get('currentSelectedQtn').value;
+    if(currentQnt.type=='radio' || currentQnt.type=='checkbox' ){
+      console.log("type",currentQnt.type);
+      this.optionQntList = currentQnt.options;
+    } 
+
+   
+   
   }
 }
