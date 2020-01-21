@@ -348,8 +348,8 @@ export class DynamicFormBuilderComponent implements OnInit {
           "maxLength": ""
         },
         options: [
-          { key: 'R1', label: 'Label 1' },
-          { key: 'R2', label: 'Label 2' }
+          { key: 'R1', label: 'Label 1', hint: 'hint 1' },
+          { key: 'R2', label: 'Label 2' , hint: 'hint 2'}
         ]
       }
     } else if (ele == "checkbox") {

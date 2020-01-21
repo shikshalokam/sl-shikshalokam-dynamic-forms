@@ -21,7 +21,12 @@ import { CdkDragDrop, moveItemInArray } from '@angular/cdk/drag-drop';
   </textarea>
 
 
-  <div *ngIf="field.child.length > 0" cdkDropList (cdkDropListDropped)="drop($event)">
+  <div style="background-color: #f9f9f9;
+  margin-left: 13%;
+  padding: 25px;" *ngIf="field.child.length > 0" cdkDropList (cdkDropListDropped)="drop($event)">
+
+  <div *ngIf ="field.sectionHeader" style ="text-align:center;font-size: 20px;">
+  {{field.sectionHeader}}</div>
 
     <div *ngFor="let obj of field.child; let i =index; let data" cdkDrag>
       
@@ -97,7 +102,14 @@ import { CdkDragDrop, moveItemInArray } from '@angular/cdk/drag-drop';
           </div>
 
         </div>
-
+        <div class="col-sm-6">
+        <mat-form-field>
+          <mat-label>Criteria</mat-label>
+          <mat-select>
+            <mat-option *ngFor="let item of criteriaList" [value]="item._id">{{ item.name}}</mat-option>
+          </mat-select>
+        </mat-form-field>
+      </div>
         <div *ngIf="field.child && field.child.length > 0" class="parent-child-block col-sm-12">
           <div class="col-sm-12">
             <label id="example-radio-group-label">Do you want to related the question based on below options ?</label>
@@ -146,20 +158,31 @@ import { CdkDragDrop, moveItemInArray } from '@angular/cdk/drag-drop';
               <i class="fa fa-trash"></i></span>
           </li>
         </ul>
-
-
-        <div class="col-sm-12">
+        <div class="col-sm-6">
           <label id="example-radio-group-label">is Required ?</label>
           <mat-radio-group aria-labelledby="example-radio-group-label" class="example-radio-group"
             [ngModelOptions]="{standalone: true}" style = "padding: 5px" [(ngModel)]="required">
-            <mat-radio-button style = "padding: 2px" class="example-radio-button" [value]=true>
+            <mat-radio-button  class="example-radio-button gap" [value]=true>
               Yes
             </mat-radio-button>
-            <mat-radio-button style = "padding: 2px" class="example-radio-button" [value]=false>
+            <mat-radio-button  class="example-radio-button gap" [value]=false>
               No
             </mat-radio-button>
           </mat-radio-group>
         </div>
+
+        <div class="col-sm-6">
+        <label id="example-radio-group-label">Applicable ?</label>
+        <mat-radio-group [ngModelOptions]="{standalone: true}" style = "padding: 5px" aria-labelledby="radio-group-label" 
+        class="radio-group" [(ngModel)]="applicable">
+          <mat-radio-button class="example-radio-button gap" [value]=true>
+            Yes
+          </mat-radio-button>
+          <mat-radio-button class="example-radio-button gap" [value]=false>
+            No
+          </mat-radio-button>
+        </mat-radio-group>
+      </div>
 
         <div class="col-sm-7" *ngIf="type=='date'">
           <label id="example-radio-group-label">is autoCollect</label>
@@ -183,6 +206,7 @@ import { CdkDragDrop, moveItemInArray } from '@angular/cdk/drag-drop';
         </div>
       </div>
 
+      
       <div class="col-sm-2 edit-icon actions">
         <i class="fa fa-trash" title = "delete" (click)="deleteElement(obj, i)"></i>
         <i class="fa fa-copy" title = "copy" (click)="copyElement(obj, i)"></i>
@@ -248,8 +272,8 @@ import { CdkDragDrop, moveItemInArray } from '@angular/cdk/drag-drop';
       padding: 10px
     }
     .matrixmain {
-      width: 80%;
-      margin-left: 20%;
+      width: 98%;
+      margin-left: 2%;
       padding-left: 10px;
       margin-top: 10px;
       box-shadow: 1px 1px 2px 1px rgba(0,0,0,0.19);
@@ -270,6 +294,9 @@ import { CdkDragDrop, moveItemInArray } from '@angular/cdk/drag-drop';
     }
     .mchild {
       padding-left:30px;
+    }
+    .gap {
+      padding: 2px;
     }
     .labeloverflow {
       float: none !important;
@@ -292,6 +319,7 @@ import { CdkDragDrop, moveItemInArray } from '@angular/cdk/drag-drop';
 export class MultiSelectComponent {
 
   @Input() field: any = {};
+  @Input() criteriaList: any;
   @Input() form: any;
   get isValid() { return this.form.controls[this.field.name].valid; }
   get isDirty() { return this.form.controls[this.field.name].dirty; }
@@ -327,6 +355,8 @@ export class MultiSelectComponent {
   listOfRelation: any = [];
   condition: any;
   getSelectQuestion: any;
+  childtitle: any;
+  applicable: any;
   conditionArray: any = [
     {
       label: "equals",
@@ -546,7 +576,7 @@ export class MultiSelectComponent {
     this.label = loadEle.label;
     this.currentItem = loadEle;
     this.allData = this.dynamicServe.getALl();
-
+    this.criteriaList = this.allData['criteriaList'];
 
     console.log('this.field', this.field);
     // for(let i = 0; i < this.allData['questionList']['questionList'][0].child.length; i++) {
