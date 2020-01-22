@@ -170,6 +170,26 @@ span.cursor-pntr {
       Please select criteria
     </span>
     </div>
+
+    <div class="col-sm-6">
+    <mat-form-field>
+      <input matInput placeholder="prefix" formControlName="prefix" name="prefix">
+    </mat-form-field>
+    <span class="mat-error custom-error" *ngIf="formValidate('prefix')">
+    prefix required
+    </span>
+  </div>
+
+
+    <div class="col-sm-6" *ngIf="type=='number'">
+    <mat-form-field>
+      <input matInput placeholder="Weightage" formControlName="weightage" name="weightage">
+    </mat-form-field>
+    <span class="mat-error custom-error" *ngIf="formValidate('weightage')">
+    weightage required
+    </span>
+  </div>
+
     <div class="col-sm-6">
     <label id="example-radio-group-label">is Required ?</label>
     <mat-radio-group aria-labelledby="radio-group-label" class="radio-group"  formControlName="required">
@@ -199,7 +219,7 @@ span.cursor-pntr {
     </span>
     </div>
 
-    <div class="col-sm-6">
+ <div class="col-sm-6">
   <label id="example-radio-group-label">Applicable ?</label>
   <mat-radio-group aria-labelledby="radio-group-label" formControlName="applicable" class="radio-group">
     <mat-radio-button class="example-radio-button" [value]=true>
@@ -209,7 +229,56 @@ span.cursor-pntr {
       No
     </mat-radio-button>
   </mat-radio-group>
+ </div>
+
+ <div class="col-sm-6">
+ <label id="example-radio-group-label">Allow Audio Recording?</label>
+ <mat-radio-group aria-labelledby="radio-group-label" formControlName="audiorecording" class="radio-group">
+   <mat-radio-button class="example-radio-button" [value]=true>
+     Yes
+   </mat-radio-button>
+   <mat-radio-button class="example-radio-button" [value]=false>
+     No
+   </mat-radio-button>
+ </mat-radio-group>
 </div>
+
+<div class="col-sm-6">
+<label id="example-radio-group-label">show Remarks ?</label>
+<mat-radio-group aria-labelledby="radio-group-label" class="radio-group"  formControlName="remarks">
+  <mat-radio-button class="example-radio-button" [value]=true>
+    Yes
+  </mat-radio-button>
+  <mat-radio-button class="example-radio-button" [value]=false>
+    No
+  </mat-radio-button>
+</mat-radio-group>
+</div>
+
+<div class="col-sm-6">
+<label id="example-radio-group-label">File Required ?</label>
+<mat-radio-group aria-labelledby="radio-group-label" class="radio-group" formControlName="filerequired">
+  <mat-radio-button class="example-radio-button" value="true">
+    Yes
+  </mat-radio-button>
+  <mat-radio-button class="example-radio-button" checked value="false">
+    No
+  </mat-radio-button>
+</mat-radio-group>
+</div>
+
+<div class="col-sm-6" *ngIf="type=='date'">
+<label id="example-radio-group-label">is autoCollect ?</label>
+<mat-radio-group aria-labelledby="radio-group-label" class="radio-group"  formControlName="autoCollect">
+  <mat-radio-button class="example-radio-button" [value]=true>
+    Yes
+  </mat-radio-button>
+  <mat-radio-button class="example-radio-button" [value]=false>
+    No
+  </mat-radio-button>
+</mat-radio-group>
+</div>
+
 
 <div class="col-sm-6" *ngIf="type=='matrix'">
 <label id="example-radio-group-label">Instance Identifier</label>
@@ -235,40 +304,53 @@ span.cursor-pntr {
      
       
   
-    <div class="col-sm-6" *ngIf="type=='date'">
+    <div *ngIf="type=='date'">
+      <div class="col-sm-6">
+        <mat-form-field>
+          <input matInput [matDatepicker]="picker" formControlName="minDate" placeholder="Choose a min date">
+          <mat-datepicker-toggle matSuffix [for]="picker"></mat-datepicker-toggle>
+          <mat-datepicker #picker></mat-datepicker>
+        </mat-form-field>
+        <span class="mat-error custom-error" *ngIf="formValidate('minDate')">
+        Min Date is required
+      </span>
+      </div>
+    <div class="col-sm-6">
+        <mat-form-field>
+          <input matInput [matDatepicker]="pickerMaxDate" formControlName="maxDate" placeholder="Choose a max date">
+          <mat-datepicker-toggle matSuffix [for]="pickerMaxDate"></mat-datepicker-toggle>
+          <mat-datepicker #pickerMaxDate></mat-datepicker>
+        </mat-form-field>
+        <span class="mat-error custom-error" *ngIf="formValidate('maxDate')">
+        max Date is required
+      </span>
+    </div>
+
+    <div class="col-sm-6">
       <mat-form-field>
-        <input matInput [matDatepicker]="picker" formControlName="minDate" placeholder="Choose a min date">
-        <mat-datepicker-toggle matSuffix [for]="picker"></mat-datepicker-toggle>
-        <mat-datepicker #picker></mat-datepicker>
+        <mat-label>Date format</mat-label>
+        <mat-select formControlName="dateformat" >
+          <mat-option *ngFor="let item of dateFormates" [value]="item.value">{{ item.value}}</mat-option>
+        </mat-select>
       </mat-form-field>
-      <span class="mat-error custom-error" *ngIf="formValidate('minDate')">
-      Min Date is required
+      <span class="mat-error custom-error" *ngIf="formValidate('dateformat')">
+      Please select Date Format
     </span>
-  
-      <mat-form-field>
-        <input matInput [matDatepicker]="pickerMaxDate" formControlName="maxDate" placeholder="Choose a max date">
-        <mat-datepicker-toggle matSuffix [for]="pickerMaxDate"></mat-datepicker-toggle>
-        <mat-datepicker #pickerMaxDate></mat-datepicker>
-      </mat-form-field>
-      <span class="mat-error custom-error" *ngIf="formValidate('maxDate')">
-      max Date is required
-    </span>
-  
-  
+    </div>
     </div>
     <div class="" *ngIf="type=='radio' || type=='checkbox' || type=='dropdown'" >
       <label for="label" class="col-sm-12">Options</label>
 
       <ul class="col-sm-12 option-ul" *ngFor="let opt of options;let i = index">
         <li class="">
-          <span>{{opt.label}} </span>
-          <span class="col-sm-6">
+          <span class = "col-md-3 hint">{{opt.label}} </span>
+          <span class="col-sm-4 ">
           <mat-form-field>
-          <input type="text" [(ngModel)] = "labelHint"  [ngModelOptions]="{standalone: true}" placeholder="Hint" matInput name="hint">
+          <input type="text" formControlName = "labelHint" placeholder="Hint" matInput name="hint">
         </mat-form-field>
           </span>
           <span style="margin-left: 30px;cursor: pointer" title = "delete" (click)="deleteOption(opt,i)">
-            <i class="fa fa-trash"></i></span>
+            <i class="fa fa-trash hint"></i></span>
         </li>
       </ul>
   
@@ -313,10 +395,6 @@ span.cursor-pntr {
       </div>
 
       
-      
-     
-     
-  
       <div class="col-sm-6" *ngIf="optionQntList.length <= 0">
         <mat-form-field>
           <mat-label>Select Condition </mat-label>
@@ -348,24 +426,19 @@ span.cursor-pntr {
         </button>
       </div>
       
-    </div>
-  
-    <ul class="col-sm-12" *ngFor="let relate of listOfRelation;let i = index">
+      <ul class="col-sm-12" *ngFor="let relate of listOfRelation;let i = index">
       <li class="col-sm-12">
-        <span>{{relate.label}} </span><span style="
-  margin-left: 30px;" (click)="deleteCondition(relate,i)">
+        <span>Current Question will display only when {{relate.label}} {{relate.operator}} {{relate.value}}</span><span style="
+        margin-left: 30px;" (click)="deleteCondition(relate,i)">
           <i class="fa fa-trash"></i></span>
       </li>
     </ul>
 
     </div>
-  
+    </div>
 
-    <div class="col-sm-12 ">
+    <div class="col-sm-12" *ngIf="editForm.value.filerequired == 'true'">
     <div class="parent-child-block col-sm-12">
-    
-  
-  
       <div class="col-sm-6">
         <mat-form-field>
           <mat-label>No of Files</mat-label>
@@ -397,36 +470,9 @@ span.cursor-pntr {
       </mat-radio-group>
     </div>
 
-    
-  
-    <div class="col-sm-6">
-      <label id="example-radio-group-label">Show Remarks ?</label>
-      <mat-radio-group aria-labelledby="radio-group-label" class="radio-group"  formControlName="remarks">
-        <mat-radio-button class="example-radio-button" [value]=true>
-          Yes
-        </mat-radio-button>
-        <mat-radio-button class="example-radio-button" [value]=false>
-          No
-        </mat-radio-button>
-      </mat-radio-group>
-    </div>
-  
     </div>
   </div>
 
-
-    <div class="col-sm-12" *ngIf="type=='date'">  
-    <label id="example-radio-group-label">is autoCollect</label>
-      <mat-radio-group aria-labelledby="example-radio-group-label" class="example-radio-group" formControlName="autoCollect">
-        <mat-radio-button class="example-radio-button" [value]=true>
-          True
-        </mat-radio-button>
-        <mat-radio-button class="example-radio-button" [checked]="false" [value]=false>
-          False
-        </mat-radio-button>
-      </mat-radio-group>
-    </div>
-  
   
     <div class="col-sm-12">
   
@@ -476,6 +522,13 @@ span.cursor-pntr {
     padding-left: 44px;
     padding-top: 5px;
    }
+
+   .hint {
+    padding-top:2%
+   }
+   .radio-group {
+    margin: 10px 0;
+  }
   
   `
   ]
@@ -502,33 +555,38 @@ export class FieldBuilderComponent implements OnInit, AfterViewChecked {
   options: any;
   newOptionKey: any;
   newOptionLabel: any;
+  labelHint: any;
   dataPass: any;
   childtitle: any;
 
   openEditPopUp: boolean;
   pages = [{
     label: 'page 1',
-    value: 'page 1'
+    value: 'P1'
   }, {
     label: 'page 2',
-    value: 'page 2'
+    value: 'P2'
   }, {
     label: 'page 3',
-    value: 'page 3'
+    value: 'P3'
   }]
 
   activeModelData: any;
   validations: any;
   required: any;
   applicable: any;
+  audiorecording: any;
   Instance: any;
   autoCollect: any;
   openEdit: boolean = false;
   _id: any;
   description: any;
+  weightage: any;
+  prefix: any;
   pageNumber: any;
   minDate: any;
   maxDate: any;
+  dateformat: any;
   min: any;
   max: any;
   draftCriteriaId: any;
@@ -543,8 +601,8 @@ export class FieldBuilderComponent implements OnInit, AfterViewChecked {
   fileType: any;
   caption: any;
   remarks: any;
+  filerequired: any;
   currentField: any;
-  labelHint: any;
 
   fileTypes: any = [{
     filetype: 'image/jpeg'
@@ -607,6 +665,27 @@ export class FieldBuilderComponent implements OnInit, AfterViewChecked {
     }
   ]
 
+  dateFormates: any = [
+    {
+      value: 'M/d/yy'
+    },
+    {
+      value: 'YYYY-MM-DD'
+    },
+    {
+      value: 'MM-dd-yyyy'
+    },
+    {
+      value: 'dd-M-yyyy hh:mm:ss'
+    },
+    {
+      value: 'dd MMMM yyyy zzzz'
+    },
+    {
+      value: 'E, dd MMM yyyy HH:mm:ss z'
+    },
+  ]
+
 
   // private modalRef: NgbModalRef;
   @ViewChild('content', { static: false }) myModal: ElementRef;
@@ -615,7 +694,7 @@ export class FieldBuilderComponent implements OnInit, AfterViewChecked {
 
   public editForm: any;
   formErrors: any;
-  optionQntList:any;
+  optionQntList: any;
 
 
 
@@ -655,7 +734,7 @@ export class FieldBuilderComponent implements OnInit, AfterViewChecked {
   parentMapping() {
 
     this.currentSelectedQtn = this.editForm.get('currentSelectedQtn').value;
-    
+
     console.log(this.editForm.get('condition').value, "--condition", this.currentSelectedQtn, "selectedOption", this.selectedOption);
     let obj = {}
     // option:this.selectedOption,
@@ -663,25 +742,25 @@ export class FieldBuilderComponent implements OnInit, AfterViewChecked {
     // obj['visibleIf'] = [];
 
     let operator = "===";
-  
-    if(this.editForm.get('condition').value){
-        operator = this.editForm.get('condition').value;
-    } 
+
+    if (this.editForm.get('condition').value) {
+      operator = this.editForm.get('condition').value;
+    }
     let condiObj = {
-      operator:operator,
+      operator: operator,
       value: this.editForm.get('conditionMatchValue').value,
       field: this.currentSelectedQtn.field,
       label: this.editForm.get('label').value
       // parent:this.selectedOption.field
     }
 
-    console.log("====condiObj",condiObj);
-  
+    console.log("====condiObj", condiObj);
+
     // console.log('this.currentSelectedQtn', this.currentSelectedQtn);
     // console.log("condiObj", condiObj);
     this.getSelectQuestion = this.allData['questionList']['questionList'].filter(ele => {
       // if (ele.field == this.field.field) {
-        if(ele.field == this.currentSelectedQtn.field){
+      if (ele.field == this.currentSelectedQtn.field) {
         return ele;
       }
     });
@@ -689,7 +768,7 @@ export class FieldBuilderComponent implements OnInit, AfterViewChecked {
     let isAvailable = false;
     if (this.getSelectQuestion['visibleIf'] && this.getSelectQuestion['visibleIf'].length > 0) {
       isAvailable = this.getSelectQuestion['visibleIf'].filter(item => {
-        if (item.visibleIf.field ==this.field.field) {
+        if (item.visibleIf.field == this.field.field) {
           return true
         }
       })
@@ -713,42 +792,48 @@ export class FieldBuilderComponent implements OnInit, AfterViewChecked {
       }
     }
     // if (addObj) {
-      allData = this.allData['questionList']['questionList'].filter(ele => {
-        
-        if (ele.field == this.field.field) {
+    allData = this.allData['questionList']['questionList'].filter(ele => {
+
+      if (ele.field == this.field.field) {
         // if (ele.field == this.currentSelectedQtn.field) { //old code 
-          if (ele.visibleIf && ele.visibleIf.length > 0 && isAvailable == false) {
-            ele.visibleIf.push(condiObj);
-          }
-          else if(isAvailable && ele.visibleIf && ele.visibleIf.length > 0){
-
-            console.log("updating");
-            ele.visibleIf = ele.visibleIf.filter(loopElement =>{
-              if(loopElement.field == this.currentSelectedQtn.field){
-                return condiObj;
-              }else{
-                loopElement;
-              }
-            });
-            console.log("updated",ele.visibleIf);
-
-            
-          }
-          else{
-            ele.visibleIf = [];
-            ele.visibleIf.push(condiObj);
-          }
-          return ele;
-        } else {
-          return ele
+        if (ele.visibleIf && ele.visibleIf.length > 0 && isAvailable == false) {
+          ele.visibleIf.push(condiObj);
         }
-      });
-      console.log("all data in question", allData);
+        else if (isAvailable && ele.visibleIf && ele.visibleIf.length > 0) {
 
-      // this.sendDataToParent()
-      if (!this.listOfRelation.includes(condiObj)) {
-        this.listOfRelation.push(condiObj);
+          console.log("updating");
+          ele.visibleIf = ele.visibleIf.filter(loopElement => {
+            if (loopElement.field == this.currentSelectedQtn.field) {
+              return condiObj;
+            } else {
+              loopElement;
+            }
+          });
+          console.log("updated", ele.visibleIf);
+
+
+        }
+        else {
+          ele.visibleIf = [];
+          ele.visibleIf.push(condiObj);
+        }
+        return ele;
+      } else {
+        return ele
       }
+    });
+    console.log("all data in question", allData);
+
+    // this.sendDataToParent()
+    // if (!this.listOfRelation.includes(condiObj)) {
+    //   this.listOfRelation.push(condiObj);
+    // }
+
+    this.listOfRelation = this.addcondition(this.listOfRelation, condiObj);
+
+    
+
+
     // }
     // if (this.condition) {
     // }
@@ -760,8 +845,20 @@ export class FieldBuilderComponent implements OnInit, AfterViewChecked {
     console.log("this.field.validations.relation", this.listOfRelation);
   }
 
+  // To check the whole object
+   addcondition(arr, obj) {
+    debugger
+    const found = arr.some(el => el.operator === obj.operator && el.value === obj.value && el.field ===obj.field);
+    if (!found) {
+    arr.push(obj);
+    } else {
+      alert('already exists')
+    }
+    return arr;
+  }
+
   ngOnInit() {
-    this.optionQntList = []; 
+    this.optionQntList = [];
     this.formBuilder();
     // this.currentSelectedQtn = { };
     // this.dynamicServe.getALl();
@@ -841,9 +938,12 @@ export class FieldBuilderComponent implements OnInit, AfterViewChecked {
     this.draftCriteriaId = item.draftCriteriaId;
     this.required = item.validations.required;
     this.applicable = item.validations.required;
+    this.audiorecording = item.validations.required;
     this.Instance = item.validations.required;
     this.currentField = item.field;
     this.description = item.description;
+    this.weightage = item.weightage;
+    this.prefix = item.prefix;
     this.pageNumber = item.pageNumber;
     this.filecount = item.filecount;
     this.fileType = item.fileType;
@@ -857,15 +957,21 @@ export class FieldBuilderComponent implements OnInit, AfterViewChecked {
       description: [item.description, [Validators.required]],
       pageNumber: [item.pageNumber, [Validators.required]],
       required: [false, [Validators.required]],
+      weightage: [item.weightage,[Validators.required]],
+      prefix: [item.prefix, [Validators.required]],
       applicable: [false],
+      sectionHeader: [item.sectionHeader],
+      audiorecording: [false],
       Instance: [false],
       draftCriteriaId: [item.draftCriteriaId, [Validators.required]],
       newOptionLabel: [null],
+      labelHint: [null],
       maxDate: [null],
       minDate: [null],
+      dateformat:[null],
       max: [null],
       min: [null],
-      autoCollect: [null],
+      autoCollect: [false],
       conditionMatchValue: [null],
       filecount: [item.filecount],
       fileType: [item.fileType],
@@ -874,7 +980,8 @@ export class FieldBuilderComponent implements OnInit, AfterViewChecked {
       condition: [null],
       currentSelectedQtn: [null],
       selectedOption: [null],
-      sectionHeader:[null]
+      filerequired:[],
+      
     }
 
     // this.editForm = this.builder.group();
@@ -890,10 +997,12 @@ export class FieldBuilderComponent implements OnInit, AfterViewChecked {
       this.minDate = item.validations.minDate;
       this.maxDate = item.validations.maxDate
       this.autoCollect = item.validations.autoCollect;
+      this.dateformat = item.validations.dateformat;
 
       formControl.minDate = [item.validations.minDate, [Validators.required]];
       formControl.maxDate = [item.validations.maxDate, [Validators.required]];
       formControl.autoCollect = [item.validations.autoCollect];
+      formControl.dateformat = [item.validations.dateformat];
     }
     else if (item.type == "slider") {
       this.min = item.validations.min;
@@ -904,6 +1013,7 @@ export class FieldBuilderComponent implements OnInit, AfterViewChecked {
     }
     this.required = this.field.validations.required;
     this.applicable = this.field.validations.applicable;
+    this.audiorecording = this.field.validations.audiorecording;
     this.Instance = this.field.validations.Instance;
     console.log(this.openEditPopUp, "item.validations.required", this.field.isOpen);
 
@@ -965,24 +1075,20 @@ export class FieldBuilderComponent implements OnInit, AfterViewChecked {
       // }
       // this.field.label = this.label;
 
-      this.field.label = this.editForm.get('label').value;
-      this.field.type = this.type;
+        this.field.label = this.editForm.get('label').value;
+        this.field.type = this.type;
 
-    
-      // currentSelectedQtn: [null],
-      // selectedOption: [null]
 
+        // currentSelectedQtn: [null],
+        // selectedOption: [null]
 
       this.field.placeholder = this.editForm.get('placeholder').value;
-      
       this.field.description = this.editForm.get('description').value;
       this.field.pageNumber = this.editForm.get('pageNumber').value;
       this.field.draftCriteriaId = this.editForm.get('draftCriteriaId').value;
-      
+      this.field.filerequired = this.editForm.get('filerequired').value;
       this.field.filecount = this.editForm.get("filecount").value;
       this.field.fileType = this.editForm.get('fileType').value;
-
-
       this.field.fileType = this.editForm.get('fileType').value;
       this.field.caption = this.editForm.get('caption').value;
       this.field.remarks = this.editForm.get('remarks').value;
@@ -993,34 +1099,30 @@ export class FieldBuilderComponent implements OnInit, AfterViewChecked {
         this.field.sectionHeader = this.editForm.get('sectionHeader').value;
       }else if (this.type == 'date') {
         this.field.validations.minDate = this.editForm.get('minDate').value;
-        this.field.validations.maxDate = this.editForm.get('maxDate').value;
-        this.field.validations.autoCollect = this.editForm.get('autoCollect').value;
+          this.field.validations.maxDate = this.editForm.get('maxDate').value;
+          this.field.validations.autoCollect = this.editForm.get('autoCollect').value;
+          this.field.validations.dateformat = this.editForm.get('dateformat').value;
       } else if (this.type == 'slider') {
         this.field.validations.min = this.editForm.get('max').value;
         this.field.validations.max = this.editForm.get('min').value;
+      }else if(this.type == 'number'){
+        this.field.weightage = this.editForm.get('weightage').value;
+        this.field.validations.weightage = this.editForm.get('weightage').value;
       }
-
-
       if(this.type=="radio" || this.type=="checkbox" || this.type=="dropdown"){
         this.field.options = this.editForm.get('options').value;
       }
-      // if(this.field.validations.relation){
       if (this.listOfRelation) {
-        // obj.validations.relation = this.listOfRelation;
         this.field.validations.relation = this.listOfRelation;
       }
-      // }
-      // this.field.validations
       this.field.validations.required = this.editForm.get('required').value;
-      // this.field.validations.autoCollect = this.editForm.get('autoCollect').value;
-
-
+        
         let actionObject = {
           action: "save",
           data: this.field
         }
         this.dynamicServe.updateQuestion(this.field);
-        this.sendDataToParent.emit(actionObject);
+        this.sendDataToParent.emit(this.field);
         this.openEdit = false;
 
       } else {
@@ -1059,9 +1161,7 @@ export class FieldBuilderComponent implements OnInit, AfterViewChecked {
     // this.options = optionsArr;
   }
   AddNewOptions() {
-
-    if (this.newOptionLabel != "") {
-
+    if (this.editForm.get('newOptionLabel').value != "") {
       this.newOptionKey = 'R' + this.options.length;
       if (Array.isArray(this.options)) {
       } else {
@@ -1069,8 +1169,8 @@ export class FieldBuilderComponent implements OnInit, AfterViewChecked {
       }
       this.options.push({
         key: this.newOptionKey,
-        label: this.newOptionLabel,
-        hint: this.labelHint,
+        label: this.editForm.get('newOptionLabel').value,
+        hint: this.editForm.get('labelHint').value,
       });
     }
     this.newOptionKey = "";
@@ -1114,7 +1214,7 @@ export class FieldBuilderComponent implements OnInit, AfterViewChecked {
   add(data) {
     let page = {
       label: 'page' + ' ' + (data.length + 1),
-      value: 'page' + ' ' + (data.length + 1),
+      value: 'P' + ' ' + (data.length + 1),
     }
     this.pages.push(page);
     this.dynamicServe.setPageNumber(this.pages);
@@ -1154,13 +1254,17 @@ export class FieldBuilderComponent implements OnInit, AfterViewChecked {
       placeholder: [null],
       description: [null],
       pageNumber: [null],
+      weightage: [null],
+      prefix: [null],
       required: [null],
       applicable: [null],
+      audiorecording: [null],
       Instance: [null],
       draftCriteriaId: [null],
       newOptionLabel: [null],
       maxDate: [null],
       minDate: [null],
+      dateformat: [null],
       max: [null],
       min: [null],
       autoCollect: [null],
@@ -1169,6 +1273,7 @@ export class FieldBuilderComponent implements OnInit, AfterViewChecked {
       fileType: [null],
       caption: [null],
       remarks: [null],
+      filerequired: [null],
       condition: [null],
       currentSelectedQtn: [null],
       selectedOption: [null],
@@ -1196,18 +1301,18 @@ export class FieldBuilderComponent implements OnInit, AfterViewChecked {
       }
     }
   }
-  parentMapQuestionChange(){
-    console.log("value changes",this.editForm.get('currentSelectedQtn').value);
+  parentMapQuestionChange() {
+    console.log("value changes", this.editForm.get('currentSelectedQtn').value);
 
 
     this.optionQntList = [];
     let currentQnt = this.editForm.get('currentSelectedQtn').value;
-    if(currentQnt.type=='radio' || currentQnt.type=='checkbox' ){
-      console.log("type",currentQnt.type);
+    if (currentQnt.type == 'radio' || currentQnt.type == 'checkbox') {
+      console.log("type", currentQnt.type);
       this.optionQntList = currentQnt.options;
-    } 
+    }
 
-   
-   
+
+
   }
 }
