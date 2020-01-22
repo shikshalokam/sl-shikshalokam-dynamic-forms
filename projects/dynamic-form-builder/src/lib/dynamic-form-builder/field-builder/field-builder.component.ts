@@ -343,14 +343,14 @@ span.cursor-pntr {
 
       <ul class="col-sm-12 option-ul" *ngFor="let opt of options;let i = index">
         <li class="">
-          <span>{{opt.label}} </span>
-          <span class="col-sm-6">
+          <span class = "col-md-3">{{opt.label}} </span>
+          <span class="col-sm-4 hint">
           <mat-form-field>
           <input type="text" formControlName = "labelHint" placeholder="Hint" matInput name="hint">
         </mat-form-field>
           </span>
           <span style="margin-left: 30px;cursor: pointer" title = "delete" (click)="deleteOption(opt,i)">
-            <i class="fa fa-trash"></i></span>
+            <i class="fa fa-trash hint"></i></span>
         </li>
       </ul>
   
@@ -426,18 +426,16 @@ span.cursor-pntr {
         </button>
       </div>
       
-    </div>
-  
-    <ul class="col-sm-12" *ngFor="let relate of listOfRelation;let i = index">
+      <ul class="col-sm-12" *ngFor="let relate of listOfRelation;let i = index">
       <li class="col-sm-12">
-        <span>{{relate.label}} </span><span style="
-  margin-left: 30px;" (click)="deleteCondition(relate,i)">
+        <span>Current Question will display only when {{relate.label}} {{relate.operator}} {{relate.value}}</span><span style="
+        margin-left: 30px;" (click)="deleteCondition(relate,i)">
           <i class="fa fa-trash"></i></span>
       </li>
     </ul>
 
     </div>
-  
+    </div>
 
     <div class="col-sm-12" *ngIf="editForm.value.filerequired == 'true'">
     <div class="parent-child-block col-sm-12">
@@ -524,6 +522,13 @@ span.cursor-pntr {
     padding-left: 44px;
     padding-top: 5px;
    }
+
+   .hint {
+    padding-top:2%
+   }
+   .radio-group {
+    margin: 10px 0;
+  }
   
   `
   ]
@@ -820,9 +825,15 @@ export class FieldBuilderComponent implements OnInit, AfterViewChecked {
     console.log("all data in question", allData);
 
     // this.sendDataToParent()
-    if (!this.listOfRelation.includes(condiObj)) {
-      this.listOfRelation.push(condiObj);
-    }
+    // if (!this.listOfRelation.includes(condiObj)) {
+    //   this.listOfRelation.push(condiObj);
+    // }
+
+    this.listOfRelation = this.addcondition(this.listOfRelation, condiObj);
+
+    
+
+
     // }
     // if (this.condition) {
     // }
@@ -832,6 +843,18 @@ export class FieldBuilderComponent implements OnInit, AfterViewChecked {
     // this.field.childQnt = this.currentSelectedQtn.field;
 
     console.log("this.field.validations.relation", this.listOfRelation);
+  }
+
+  // To check the whole object
+   addcondition(arr, obj) {
+    debugger
+    const found = arr.some(el => el.operator === obj.operator && el.value === obj.value && el.field ===obj.field);
+    if (!found) {
+    arr.push(obj);
+    } else {
+      alert('already exists')
+    }
+    return arr;
   }
 
   ngOnInit() {

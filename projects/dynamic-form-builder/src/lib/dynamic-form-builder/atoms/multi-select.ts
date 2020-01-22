@@ -92,7 +92,7 @@ import { CdkDragDrop, moveItemInArray } from '@angular/cdk/drag-drop';
 
 
         </div>
-        <div class="col-sm-12 form-group " *ngIf="type=='radio' || type=='checkbox' || type=='dropdown'" >
+        <div class="col-sm-12 form-group" *ngIf="type=='radio' || type=='checkbox' || type=='dropdown'" >
           <label for="label" class="col-sm-12">Options</label>
 
           <div class="col-sm-7 form-group" *ngIf="type=='slider'">
@@ -105,7 +105,7 @@ import { CdkDragDrop, moveItemInArray } from '@angular/cdk/drag-drop';
         <div class="col-sm-6">
         <mat-form-field>
           <mat-label>Criteria</mat-label>
-          <mat-select>
+          <mat-select [(ngModel)]="obj.draftCriteriaId" [ngModelOptions]="{standalone: true}">
             <mat-option *ngFor="let item of criteriaList" [value]="item._id">{{ item.name}}</mat-option>
           </mat-select>
         </mat-form-field>
@@ -113,17 +113,17 @@ import { CdkDragDrop, moveItemInArray } from '@angular/cdk/drag-drop';
 
       <div class="col-sm-6">
         <mat-form-field>
-          <input matInput placeholder="prefix" [(ngModel)]="prefix" name="prefix">
+          <input matInput placeholder="prefix" [(ngModel)]="prefix" [ngModelOptions]="{standalone: true}" name="prefix">
         </mat-form-field>
       </div>
 
     <div class="col-sm-6" *ngIf="type=='number'">
     <mat-form-field>
-    <input matInput placeholder="weightage" [(ngModel)]="Weightage" name="weightage">
+    <input matInput placeholder="weightage" [(ngModel)]="obj.Weightage"  [ngModelOptions]="{standalone: true}" name="weightage">
     </mat-form-field>
       </div>
 
-        <div *ngIf="field.child && field.child.length > 0" class="parent-child-block col-sm-12">
+        <div *ngIf="field.child && field.child.length > 1" class="parent-child-block col-sm-12">
           <div class="col-sm-12">
             <label id="example-radio-group-label">Do you want to related the question based on below options ?</label>
             <mat-radio-group aria-labelledby="example-radio-group-label" class="example-radio-group"
@@ -152,7 +152,7 @@ import { CdkDragDrop, moveItemInArray } from '@angular/cdk/drag-drop';
 
           <div class="col-sm-6" *ngIf="type=='text' || type=='date' || type=='number'">
             <mat-form-field>
-              <input type="tex" matInput name="conditionMatchValue" placeholder="value" [(ngModel)]="conditionMatchValue">
+              <input type="tex" matInput name="conditionMatchValue" [ngModelOptions]="{standalone: true}" placeholder="value" [(ngModel)]="conditionMatchValue">
             </mat-form-field>
           </div>
 
@@ -161,17 +161,20 @@ import { CdkDragDrop, moveItemInArray } from '@angular/cdk/drag-drop';
               Add
             </button>
           </div>
-        </div>
 
-        <ul class="col-sm-12" *ngFor="let relate of listOfRelation;let i = index">
+          <ul class="col-sm-12" *ngFor="let relate of listOfRelation;let i = index">
           <li class="col-sm-12">
-            <span>{{relate.label}} </span><span style="
-      margin-left: 30px;" (click)="deleteCondition(relate,i)">
-              <i class="fa fa-trash"></i></span>
+           
+              <span>Current Question will display only when {{relate.label}} {{relate.operator}} {{relate.value}}</span><span style="
+              margin-left: 30px;" (click)="deleteCondition(relate,i)">
+                <i class="fa fa-trash"></i></span>
           </li>
         </ul>
+        </div>
 
-        <div class="col-sm-12 ">
+       
+
+        <div class="col-sm-12" *ngIf="filerequired == 'true'">
         <div class="parent-child-block col-sm-12">
           <div class="col-sm-6">
             <mat-form-field>
@@ -193,7 +196,7 @@ import { CdkDragDrop, moveItemInArray } from '@angular/cdk/drag-drop';
           <div class="col-sm-6">
           <label id="example-radio-group-label">Caption ?</label>
           <mat-radio-group aria-labelledby="radio-group-label" style = "padding: 5px" class="radio-group"
-            [(ngModel)] ="obj.caption">
+            [(ngModel)] ="obj.caption" [ngModelOptions]="{standalone: true}">
             <mat-radio-button class="example-radio-button gap" [value]=true>
               Yes
             </mat-radio-button>
@@ -234,7 +237,8 @@ import { CdkDragDrop, moveItemInArray } from '@angular/cdk/drag-drop';
 
       <div class="col-sm-6">
       <label id="example-radio-group-label">Allow Audio Recording?</label>
-      <mat-radio-group aria-labelledby="radio-group-label" style = "padding: 5px" [(ngModel)]="audiorecording" class="radio-group">
+      <mat-radio-group aria-labelledby="radio-group-label" style = "padding: 5px" [(ngModel)]="audiorecording"
+       class="radio-group">
         <mat-radio-button class="example-radio-button gap" [value]=true>
           Yes
         </mat-radio-button>
@@ -242,6 +246,19 @@ import { CdkDragDrop, moveItemInArray } from '@angular/cdk/drag-drop';
           No
         </mat-radio-button>
       </mat-radio-group>
+     </div>
+
+      <div class="col-sm-6">
+        <label id="example-radio-group-label">File Required ?</label>
+        <mat-radio-group aria-labelledby="radio-group-label" style = "padding: 5px"
+         class="radio-group" [(ngModel)]="filerequired">
+          <mat-radio-button class="example-radio-button gap" value="true">
+            Yes
+          </mat-radio-button>
+          <mat-radio-button class="example-radio-button gap" checked value="false">
+            No
+          </mat-radio-button>
+        </mat-radio-group>
      </div>
      
         <div class="col-sm-7" *ngIf="type=='date'">
@@ -354,6 +371,9 @@ import { CdkDragDrop, moveItemInArray } from '@angular/cdk/drag-drop';
     .mchild {
       padding-left:30px;
     }
+    .radio-group {
+      margin: 10px 0;
+    }
     .gap {
       padding: 2px;
     }
@@ -401,6 +421,7 @@ export class MultiSelectComponent {
   maxDate: any;
   Weightage: any;
   prefix: any;
+  draftCriteriaId: any;
   min: any;
   max: any;
   label: any;
@@ -419,6 +440,7 @@ export class MultiSelectComponent {
   childtitle: any;
   applicable: any;
   audiorecording: any;
+  filerequired: any;
   caption: any;
   filecount: any;
   fileType: any;
@@ -502,7 +524,7 @@ export class MultiSelectComponent {
 
   }
   parentMapping() {
-    let obj = {}
+    // let obj = {}
     // option:this.selectedOption,
     // question:this.currentSelectedQtn
     // obj['visibleIf'] = [];
@@ -566,15 +588,32 @@ export class MultiSelectComponent {
         }
       });
       // this.sendDataToParent()
-      if (!this.listOfRelation.includes(condiObj)) {
-        this.listOfRelation.push(condiObj);
-      }
+      // if (!this.listOfRelation.includes(condiObj)) {
+      //   this.listOfRelation.push(condiObj);
+      // }
+
+      this.listOfRelation = this.addcondition(this.listOfRelation, condiObj);
+
+      
     }
     if (this.condition) {
     }
   }
 
+  // To check the whole object
+  addcondition(arr, obj) {
+    const found = arr.some(el => el.operator === obj.operator && el.value === obj.value && el.field ===obj.field);
+    if (!found) {
+    arr.push(obj);
+    } else {
+      alert('already exists')
+    }
+    return arr;
+  }
+
   closeModelChild(action, data) {
+
+    console.log('==============', data);
 
     if (action == "save") {
       let obj = {
@@ -590,11 +629,16 @@ export class MultiSelectComponent {
         required: '',
         applicable: '',
         audiorecording: '',
+        filerequired: '',
         caption: '',
         filecount: '',
         fileType: '',
         Weightage: '',
-        prefix: ''
+        prefix: '',
+        draftCriteriaId: '',
+        currentSelectedQtn: '',
+        condition: '',
+        conditionMatchValue: ''
       }
       obj.label = data.label;
       obj.field = data.field;
@@ -604,11 +648,17 @@ export class MultiSelectComponent {
       obj.description = data.description;
       obj.required = data.required;
       obj.applicable = data.applicable;
+      obj.draftCriteriaId = data.draftCriteriaId
       obj.audiorecording = data.audiorecording;
+      obj.filerequired = data.filerequired;
       obj.caption = data.caption;
       obj.filecount = data.filecount;
       obj.fileType = data.fileType;
       obj.prefix = data.prefix;
+      obj.currentSelectedQtn = data.currentSelectedQtn;
+      obj.condition = data.condition;
+      obj.conditionMatchValue = data.conditionMatchValue;
+      
      
 
       if (data.type == 'date') {
@@ -658,7 +708,7 @@ export class MultiSelectComponent {
 
       // console.log(" this.field", this.field);
       this.openEditChild = false;
-      // this.sendDataToParent.emit(this.activeModelData);
+      this.sendDataToParent.emit(this.field);
     } else {
       this.openEditChild = false;
       // this.modalReference.close();
@@ -717,10 +767,15 @@ export class MultiSelectComponent {
     this.required = loadEle.required;
     this.applicable = loadEle.applicable;
     this.audiorecording = loadEle.audiorecording;
+    this.filerequired = loadEle.filerequired;
     this.caption = loadEle.caption;
     this.filecount = loadEle.filecount;
     this.fileType = loadEle.fileType;
     this.prefix = loadEle.prefix;
+    this.draftCriteriaId = loadEle.draftCriteriaId;
+    this.currentSelectedQtn = loadEle.currentSelectedQtn;
+    this.conditionMatchValue = loadEle.conditionMatchValue;
+    this.condition = loadEle.condition;
     if (loadEle.type == "date") {
       this.minDate = loadEle.validations.minDate;
       this.maxDate = loadEle.validations.maxDate
@@ -768,11 +823,16 @@ export class MultiSelectComponent {
       required: item.required,
       applicable: item.applicable,
       audiorecording: item.audiorecording,
+      filerequired: item.filerequired,
       caption: item.caption,
       filecount: item.filecount,
       fileType: item.fileType,
       Weightage: item.Weightage,
-      prefix: item.prefix
+      prefix: item.prefix,
+      draftCriteriaId: item.draftCriteriaId,
+      currentSelectedQtn: item.currentSelectedQtn,
+      conditionMatchValue: item.conditionMatchValue,
+      condition: item.condition
     }
 
     console.log("after copy field ----------", newobj, 'index', index);
