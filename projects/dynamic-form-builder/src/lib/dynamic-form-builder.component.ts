@@ -231,10 +231,24 @@ export class DynamicFormBuilderComponent implements OnInit {
             pages: pages
           }
           this.questionTrigger.emit(obj);
-        } else {
+        } else if(data=='all'){
+
+          const pages = this.dynamicServe.getPageNumbers();
+          let obj = {
+            action: "all",
+            data: this.fields,
+            pages: pages
+          }
+          this.questionTrigger.emit(obj);
+
+        }else{
           this.criteriaList = data.criteriaList;
           let dt = data['questionArray'];
-          this.formBuild(dt);
+           this.formBuild(dt);
+
+           this.showQuestionBlock = true;
+
+         
           let completeData = {
             questionList: data['questionArray'],
             criteriaList: data.criteriaList
@@ -532,6 +546,9 @@ export class DynamicFormBuilderComponent implements OnInit {
   }
 
   formBuild(data) {
+
+    // debugger;
+    console.log("form data",data);
     let formData = [];
     this.fields = [];
 
@@ -556,6 +573,8 @@ export class DynamicFormBuilderComponent implements OnInit {
       action: "all",
       data: formData
     }
+
+    console.log("this.fields-----",this.fields);
     this.questionTrigger.emit(obj);
   }
 

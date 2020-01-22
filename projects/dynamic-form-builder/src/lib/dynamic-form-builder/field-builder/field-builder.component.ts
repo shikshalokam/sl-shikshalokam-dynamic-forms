@@ -187,7 +187,7 @@ span.cursor-pntr {
 
   <div class="col-sm-6" *ngIf="type=='matrix'">
         <mat-form-field>
-          <input type="text" placeholder="child section Header" matInput formControlName="sectionHeader" [ngModelOptions]="{standalone: true}">
+          <input type="text" placeholder="Section Header" matInput formControlName="sectionHeader" >
         </mat-form-field>
       </div>
     <div class="col-sm-6" *ngIf="type=='slider'">
@@ -400,7 +400,7 @@ span.cursor-pntr {
     
   
     <div class="col-sm-6">
-      <label id="example-radio-group-label">show Remarks ?</label>
+      <label id="example-radio-group-label">Show Remarks ?</label>
       <mat-radio-group aria-labelledby="radio-group-label" class="radio-group"  formControlName="remarks">
         <mat-radio-button class="example-radio-button" [value]=true>
           Yes
@@ -845,7 +845,10 @@ export class FieldBuilderComponent implements OnInit, AfterViewChecked {
     this.currentField = item.field;
     this.description = item.description;
     this.pageNumber = item.pageNumber;
-
+    this.filecount = item.filecount;
+    this.fileType = item.fileType;
+    this.caption = item.caption;
+    this.remarks = item.remarks;
 
     console.log("formBuilder", item);
     let formControl = {
@@ -864,21 +867,24 @@ export class FieldBuilderComponent implements OnInit, AfterViewChecked {
       min: [null],
       autoCollect: [null],
       conditionMatchValue: [null],
-      filecount: [null],
-      fileType: [null],
-      caption: [false],
-      remarks: [false],
+      filecount: [item.filecount],
+      fileType: [item.fileType],
+      caption: [item.caption],
+      remarks: [item.remarks],
       condition: [null],
       currentSelectedQtn: [null],
       selectedOption: [null],
-     
-
+      sectionHeader:[null]
     }
 
     // this.editForm = this.builder.group();
 
     if (item.validations.relation) {
       this.listOfRelation = item.validations.relation;
+    }
+
+    if(item.type=="matrix"){
+      formControl.sectionHeader = [item.sectionHeader];
     }
     if (item.type == "date") {
       this.minDate = item.validations.minDate;
@@ -938,26 +944,25 @@ export class FieldBuilderComponent implements OnInit, AfterViewChecked {
         this.openEdit = false;
         this.field.isOpen = false;
       this.label = this.editForm.get('label').value;
-      let obj = {
-        label: this.editForm.get('label').value,
-        type: this.type,
-        placeholder: this.placeholder,
-        options: this.options,
-        validations: this.validations,
-        sectionHeader: this.editForm.get('sectionHeader').value,
-        field: this.field,
-        _id: this._id,
-        description: this.description,
-        pageNumber: this.pageNumber,
-        draftCriteriaId: this.draftCriteriaId,
-      }
-      if (this.type == 'date') {
-        obj['minDate'] = this.minDate;
-        obj['maxDate'] = this.maxDate
-      } else if (this.type == 'slider') {
-        obj['min'] = this.min;
-        obj['max'] = this.max;
-      }
+      // let obj = {
+      //   label: this.editForm.get('label').value,
+      //   type: this.type,
+      //   placeholder: this.placeholder,
+      //   options: this.options,
+      //   validations: this.validations,
+      //   field: this.field,
+      //   _id: this._id,
+      //   description: this.description,
+      //   pageNumber: this.pageNumber,
+      //   draftCriteriaId: this.draftCriteriaId,
+      // }
+      // if (this.type == 'date') {
+      //   obj['minDate'] = this.minDate;
+      //   obj['maxDate'] = this.maxDate
+      // } else if (this.type == 'slider') {
+      //   obj['min'] = this.min;
+      //   obj['max'] = this.max;
+      // }
       // this.field.label = this.label;
 
       this.field.label = this.editForm.get('label').value;
@@ -969,11 +974,20 @@ export class FieldBuilderComponent implements OnInit, AfterViewChecked {
 
 
       this.field.placeholder = this.editForm.get('placeholder').value;
-      this.field.options = this.editForm.get('options').value;
+      
       this.field.description = this.editForm.get('description').value;
       this.field.pageNumber = this.editForm.get('pageNumber').value;
       this.field.draftCriteriaId = this.editForm.get('draftCriteriaId').value;
       
+      this.field.filecount = this.editForm.get("filecount").value;
+      this.field.fileType = this.editForm.get('fileType').value;
+
+
+      this.field.fileType = this.editForm.get('fileType').value;
+      this.field.caption = this.editForm.get('caption').value;
+      this.field.remarks = this.editForm.get('remarks').value;
+
+
       // this.field.field = this.field.field;
       if(this.type == 'matrix'){
         this.field.sectionHeader = this.editForm.get('sectionHeader').value;
@@ -985,9 +999,14 @@ export class FieldBuilderComponent implements OnInit, AfterViewChecked {
         this.field.validations.min = this.editForm.get('max').value;
         this.field.validations.max = this.editForm.get('min').value;
       }
+
+
+      if(this.type=="radio" || this.type=="checkbox" || this.type=="dropdown"){
+        this.field.options = this.editForm.get('options').value;
+      }
       // if(this.field.validations.relation){
       if (this.listOfRelation) {
-        obj.validations.relation = this.listOfRelation;
+        // obj.validations.relation = this.listOfRelation;
         this.field.validations.relation = this.listOfRelation;
       }
       // }
@@ -998,7 +1017,7 @@ export class FieldBuilderComponent implements OnInit, AfterViewChecked {
 
         let actionObject = {
           action: "save",
-          data: obj
+          data: this.field
         }
         this.dynamicServe.updateQuestion(this.field);
         this.sendDataToParent.emit(actionObject);
@@ -1068,7 +1087,9 @@ export class FieldBuilderComponent implements OnInit, AfterViewChecked {
   }
   deleteElement(item) {
     item.action = 'delete';
-    this.field.isDelete = true;
+    // this.field.isDeleted = true;
+    // this.field.isDelete = true;cd di
+    this.dynamicServe.updateQuestion(this.field);
     this.copyOrDeleteEvent.emit(item);
   }
   childrenDropEvent($event) {
@@ -1150,7 +1171,8 @@ export class FieldBuilderComponent implements OnInit, AfterViewChecked {
       remarks: [null],
       condition: [null],
       currentSelectedQtn: [null],
-      selectedOption: [null]
+      selectedOption: [null],
+      sectionHeader:[null]
     });
   }
 

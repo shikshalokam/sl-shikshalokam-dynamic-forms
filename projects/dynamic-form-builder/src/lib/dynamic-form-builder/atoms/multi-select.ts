@@ -105,8 +105,8 @@ import { CdkDragDrop, moveItemInArray } from '@angular/cdk/drag-drop';
         <div class="col-sm-6">
         <mat-form-field>
           <mat-label>Criteria</mat-label>
-          <mat-select>
-            <mat-option *ngFor="let item of criteriaList" [value]="item._id">{{ item.name}}</mat-option>
+          <mat-select [(ngModel)]="obj.draftCriteriaId" [ngModelOptions]="{standalone: true}">
+            <mat-option *ngFor="let item of criteriaList"  [value]="item._id">{{ item.name}}</mat-option>
           </mat-select>
         </mat-form-field>
       </div>
@@ -384,6 +384,7 @@ export class MultiSelectComponent {
     }
   ];
   currentItem: any;
+  draftCriteriaId:any;
 
   constructor(public cdr: ChangeDetectorRef,
     private dynamicServe: DynamicFormBuilderService) {
@@ -484,6 +485,7 @@ export class MultiSelectComponent {
         _id: this._id,
         description: '',
         isOpen:false,
+        draftCriteriaId:''
       }
       obj.label = data.label;
       obj.field = data.field;
@@ -491,6 +493,8 @@ export class MultiSelectComponent {
       obj.placeholder = data.placeholder;
       obj.options = data.options;
       obj.description = data.description;
+      obj.draftCriteriaId = data.draftCriteriaId;
+      
 
       if (data.type == 'date') {
         obj['minDate'] = data.minDate;
@@ -537,7 +541,7 @@ export class MultiSelectComponent {
 
       // console.log(" this.field", this.field);
       this.openEditChild = false;
-      // this.sendDataToParent.emit(this.activeModelData);
+     this.sendDataToParent.emit(this.field);
     } else {
       this.openEditChild = false;
       // this.modalReference.close();
@@ -547,7 +551,7 @@ export class MultiSelectComponent {
   }
 
   loadFormChildElement(loadEle, id) {
-    console.log("item ---", loadEle, "id", id);
+    // console.log("item ---", loadEle, "id", id);
     loadEle.expand = !loadEle.expand;
     this.field.child = this.field.child.filter(loopEle=>{
       if(loopEle){
@@ -578,6 +582,7 @@ export class MultiSelectComponent {
     this.allData = this.dynamicServe.getALl();
     this.criteriaList = this.allData['criteriaList'];
 
+
     console.log('this.field', this.field);
     // for(let i = 0; i < this.allData['questionList']['questionList'][0].child.length; i++) {
     this.filtereddata = this.field.child.filter(t => t.field !== loadEle.field);
@@ -593,6 +598,7 @@ export class MultiSelectComponent {
     this._id = loadEle._id;
     // this.required = item.validations.required;
     this.description = loadEle.description;
+    this.draftCriteriaId = loadEle.draftCriteriaId;
     if (loadEle.type == "date") {
       this.minDate = loadEle.validations.minDate;
       this.maxDate = loadEle.validations.maxDate
