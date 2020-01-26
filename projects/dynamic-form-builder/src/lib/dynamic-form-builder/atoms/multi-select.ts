@@ -65,26 +65,26 @@ import { CdkDragDrop, moveItemInArray } from '@angular/cdk/drag-drop';
 
         <div class="col-sm-6" *ngIf="obj.type=='slider'">
           <mat-form-field>
-            <input type="text" placeholder="Min" matInput [(ngModel)]="min" [ngModelOptions]="{standalone: true}">
+            <input type="text" placeholder="Min" matInput [(ngModel)]="obj.min" [ngModelOptions]="{standalone: true}">
           </mat-form-field>
         </div>
 
         <div class="col-sm-6" *ngIf="obj.type=='slider'">
           <mat-form-field>
-            <input type="text" placeholder="Max" matInput [(ngModel)]="max" [ngModelOptions]="{standalone: true}">
+            <input type="text" placeholder="Max" matInput [(ngModel)]="obj.max" [ngModelOptions]="{standalone: true}">
           </mat-form-field>
         </div>
 
         <div class="col-sm-6" *ngIf="obj.type=='date'">
           <mat-form-field>
-            <input matInput [matDatepicker]="picker" [(ngModel)]="minDate" [ngModelOptions]="{standalone: true}"
+            <input matInput [matDatepicker]="picker" [(ngModel)]="obj.minDate" [ngModelOptions]="{standalone: true}"
               placeholder="Choose a min date">
             <mat-datepicker-toggle matSuffix [for]="picker"></mat-datepicker-toggle>
             <mat-datepicker #picker></mat-datepicker>
           </mat-form-field>
 
           <mat-form-field>
-            <input matInput [matDatepicker]="pickerMaxDate" [(ngModel)]="maxDate" [ngModelOptions]="{standalone: true}"
+            <input matInput [matDatepicker]="pickerMaxDate" [(ngModel)]="obj.maxDate" [ngModelOptions]="{standalone: true}"
               placeholder="Choose a max date">
             <mat-datepicker-toggle matSuffix [for]="pickerMaxDate"></mat-datepicker-toggle>
             <mat-datepicker #pickerMaxDate></mat-datepicker>
@@ -92,12 +92,23 @@ import { CdkDragDrop, moveItemInArray } from '@angular/cdk/drag-drop';
 
 
         </div>
+
+        <div class="col-sm-6" *ngIf="obj.type=='date'">
+        <mat-form-field>
+          <mat-label>Date format</mat-label>
+          <mat-select [(ngModel)]="obj.dateFormat" [ngModelOptions]="{standalone: true}" >
+            <mat-option *ngFor="let item of dateformates" [value]="item.value">{{ item.value}}</mat-option>
+          </mat-select>
+        </mat-form-field>
+      </div>
+     
+      
         <div class="col-sm-12 form-group" *ngIf="type=='radio' || type=='checkbox' || type=='dropdown'" >
           <label for="label" class="col-sm-12">Options</label>
 
           <div class="col-sm-7 form-group" *ngIf="type=='slider'">
             <mat-form-field>
-              <input type="text" placeholder="Max" matInput [(ngModel)]="max" [ngModelOptions]="{standalone: true}">
+              <input type="text" placeholder="Max" matInput [(ngModel)]="obj.max" [ngModelOptions]="{standalone: true}">
             </mat-form-field>
           </div>
 
@@ -113,7 +124,7 @@ import { CdkDragDrop, moveItemInArray } from '@angular/cdk/drag-drop';
 
       <div class="col-sm-6">
         <mat-form-field>
-          <input matInput placeholder="prefix" [(ngModel)]="prefix" [ngModelOptions]="{standalone: true}" name="prefix">
+          <input matInput placeholder="prefix" [(ngModel)]="obj.prefix" [ngModelOptions]="{standalone: true}" name="prefix">
         </mat-form-field>
       </div>
 
@@ -172,14 +183,81 @@ import { CdkDragDrop, moveItemInArray } from '@angular/cdk/drag-drop';
         </ul>
         </div>
 
+        <div class="col-sm-6">
+        <label id="labeL_Required">is Required ?</label>
+        <mat-radio-group aria-labelledby="example-radio-group-label" class="radio-group"
+           style = "padding: 5px" [(ngModel)]="obj.required" [ngModelOptions]="{standalone: true}">
+          <mat-radio-button  class="example-radio-button gap" [value]=true>
+            Yes
+          </mat-radio-button>
+          <mat-radio-button  class="example-radio-button gap" [value]=false>
+            No
+          </mat-radio-button>
+        </mat-radio-group>
+      </div>
+
+      <div class="col-sm-6">
+      <label id="labeL_NotApplicable">Not Applicable ?</label>
+      <mat-radio-group [ngModelOptions]="{standalone: true}" style = "padding: 5px" aria-labelledby="radio-group-label" 
+      class="radio-group" [(ngModel)]="obj.applicable">
+        <mat-radio-button class="example-radio-button gap" [value]=true>
+          Yes
+        </mat-radio-button>
+        <mat-radio-button class="example-radio-button gap" [value]=false>
+          No
+        </mat-radio-button>
+      </mat-radio-group>
+    </div>
+
+    <div class="col-sm-6">
+    <label id="label_allow_recording">Allow Audio Recording?</label>
+    <mat-radio-group aria-labelledby="radio-group-label" style = "padding: 5px" [ngModelOptions]="{standalone: true}" [(ngModel)]="audiorecording"
+     class="radio-group">
+      <mat-radio-button class="example-radio-button gap" [value]=true>
+        Yes
+      </mat-radio-button>
+      <mat-radio-button class="example-radio-button gap" [value]=false>
+        No
+      </mat-radio-button>
+    </mat-radio-group>
+   </div>
+
+    <div class="col-sm-6">
+      <label id="label_file_required">File Required ?</label>
+      <mat-radio-group aria-labelledby="radio-group-label" style = "padding: 5px"
+       class="radio-group" [(ngModel)]="obj.filerequired">
+        <mat-radio-button class="example-radio-button gap" [value]=true>
+          Yes
+        </mat-radio-button>
+        <mat-radio-button class="example-radio-button gap" [value]=false>
+          No
+        </mat-radio-button>
+      </mat-radio-group>
+   </div>
+   
+
+      <div class="col-sm-7" *ngIf="type=='date'">
+        <label id="is_autocollect">is autoCollect</label>
+        <mat-radio-group aria-labelledby="example-radio-group-label" class="example-radio-group"
+          [(ngModel)]="obj.autoCollect" [ngModelOptions]="{standalone: true}">
+          <mat-radio-button class="example-radio-button" [value]=true>
+            True
+          </mat-radio-button>
+          <mat-radio-button class="example-radio-button" [value]=false>
+            False
+          </mat-radio-button>
+        </mat-radio-group>
+      </div>
+
+
        
 
-        <div class="col-sm-12" *ngIf="filerequired == 'true'">
+        <div class="col-sm-12" *ngIf="obj.filerequired">
         <div class="parent-child-block col-sm-12">
           <div class="col-sm-6">
             <mat-form-field>
               <mat-label>No of Files</mat-label>
-              <select matNativeControl [(ngModel)]="obj.filecount" (change)="filesChange()">
+              <select matNativeControl [(ngModel)]="obj.filecount" (change)="filesChange()" [ngModelOptions]="{standalone: true}">
                 <option *ngFor="let values of filecounts" [ngValue]="values"> {{ values.value }} </option>
               </select>
             </mat-form-field>
@@ -188,19 +266,19 @@ import { CdkDragDrop, moveItemInArray } from '@angular/cdk/drag-drop';
           <div class="col-sm-6">
             <mat-form-field>
               <mat-label>File Format</mat-label>
-              <select matNativeControl [(ngModel)]="obj.fileType">
+              <select matNativeControl [(ngModel)]="obj.fileType" [ngModelOptions]="{standalone: true}">
                 <option *ngFor="let values of fileTypes" [ngValue]="values"> {{ values.filetype }} </option>
               </select>
             </mat-form-field>
           </div>
           <div class="col-sm-6">
-          <label id="example-radio-group-label">Caption ?</label>
+          <label >Caption ?</label>
           <mat-radio-group aria-labelledby="radio-group-label" style = "padding: 5px" class="radio-group"
             [(ngModel)] ="obj.caption" [ngModelOptions]="{standalone: true}">
             <mat-radio-button class="example-radio-button gap" [value]=true>
               Yes
             </mat-radio-button>
-            <mat-radio-button class="example-radio-button gap" checked [value]=false>
+            <mat-radio-button class="example-radio-button gap" [value]=false>
               No
             </mat-radio-button>
           </mat-radio-group>
@@ -209,71 +287,7 @@ import { CdkDragDrop, moveItemInArray } from '@angular/cdk/drag-drop';
         </div>
       </div>
 
-        <div class="col-sm-6">
-          <label id="example-radio-group-label">is Required ?</label>
-          <mat-radio-group aria-labelledby="example-radio-group-label" class="example-radio-group"
-            [ngModelOptions]="{standalone: true}" style = "padding: 5px" [(ngModel)]="obj.required">
-            <mat-radio-button  class="example-radio-button gap" [value]=true>
-              Yes
-            </mat-radio-button>
-            <mat-radio-button  class="example-radio-button gap" checked [value]=false>
-              No
-            </mat-radio-button>
-          </mat-radio-group>
-        </div>
-
-        <div class="col-sm-6">
-        <label id="example-radio-group-label">Applicable ?</label>
-        <mat-radio-group [ngModelOptions]="{standalone: true}" style = "padding: 5px" aria-labelledby="radio-group-label" 
-        class="radio-group" [(ngModel)]="applicable">
-          <mat-radio-button class="example-radio-button gap" [value]=true>
-            Yes
-          </mat-radio-button>
-          <mat-radio-button class="example-radio-button gap" checked [value]=false>
-            No
-          </mat-radio-button>
-        </mat-radio-group>
-      </div>
-
-      <div class="col-sm-6">
-      <label id="example-radio-group-label">Allow Audio Recording?</label>
-      <mat-radio-group aria-labelledby="radio-group-label" style = "padding: 5px" [(ngModel)]="audiorecording"
-       class="radio-group">
-        <mat-radio-button class="example-radio-button gap" [value]=true>
-          Yes
-        </mat-radio-button>
-        <mat-radio-button class="example-radio-button gap"  checked [value]=false>
-          No
-        </mat-radio-button>
-      </mat-radio-group>
-     </div>
-
-      <div class="col-sm-6">
-        <label id="example-radio-group-label">File Required ?</label>
-        <mat-radio-group aria-labelledby="radio-group-label" style = "padding: 5px"
-         class="radio-group" [(ngModel)]="filerequired">
-          <mat-radio-button class="example-radio-button gap" value="true">
-            Yes
-          </mat-radio-button>
-          <mat-radio-button class="example-radio-button gap" checked value="false">
-            No
-          </mat-radio-button>
-        </mat-radio-group>
-     </div>
-     
-        <div class="col-sm-7" *ngIf="type=='date'">
-          <label id="example-radio-group-label">is autoCollect</label>
-          <mat-radio-group aria-labelledby="example-radio-group-label" class="example-radio-group"
-            [(ngModel)]="autoCollect" [ngModelOptions]="{standalone: true}">
-            <mat-radio-button class="example-radio-button" [value]=true>
-              True
-            </mat-radio-button>
-            <mat-radio-button class="example-radio-button" [value]=false>
-              False
-            </mat-radio-button>
-          </mat-radio-group>
-        </div>
-
+       
 
         <div class="col-sm-12">
           <button mat-flat-button color="primary" style="margin-right:10px;" (click)="closeModelChild('save', obj)">
@@ -444,6 +458,7 @@ export class MultiSelectComponent {
   caption: any;
   filecount: any;
   fileType: any;
+  dateFormat:any;
   filecounts: any = [
     {
       value: 1
@@ -504,8 +519,28 @@ export class MultiSelectComponent {
   }, {
     filetype: 'ppt'
   }]
+  dateformates: any = [
+    {
+      value: 'M/d/yy'
+    },
+    {
+      value: 'YYYY-MM-DD'
+    },
+    {
+      value: 'MM-dd-yyyy'
+    },
+    {
+      value: 'dd-M-yyyy hh:mm:ss'
+    },
+    {
+      value: 'dd MMMM yyyy zzzz'
+    },
+    {
+      value: 'E, dd MMM yyyy HH:mm:ss z'
+    },
+  ]
   currentItem: any;
- 
+
 
   constructor(public cdr: ChangeDetectorRef,
     private dynamicServe: DynamicFormBuilderService) {
@@ -595,7 +630,7 @@ export class MultiSelectComponent {
 
       this.listOfRelation = this.addcondition(this.listOfRelation, condiObj);
 
-      
+
     }
     if (this.condition) {
     }
@@ -603,9 +638,9 @@ export class MultiSelectComponent {
 
   // To check the whole object
   addcondition(arr, obj) {
-    const found = arr.some(el => el.operator === obj.operator && el.value === obj.value && el.field ===obj.field);
+    const found = arr.some(el => el.operator === obj.operator && el.value === obj.value && el.field === obj.field);
     if (!found) {
-    arr.push(obj);
+      arr.push(obj);
     } else {
       alert('already exists')
     }
@@ -614,9 +649,15 @@ export class MultiSelectComponent {
 
   closeModelChild(action, data) {
 
+    debugger;
+
     console.log('==============', data);
 
+    console.log("save", action);
+
     if (action == "save") {
+
+
       let obj = {
         label: '',
         type: '',
@@ -649,7 +690,7 @@ export class MultiSelectComponent {
       obj.description = data.description;
       obj.required = data.required;
       obj.applicable = data.applicable;
-      obj.draftCriteriaId = data.draftCriteriaId
+      obj.draftCriteriaId = data.draftCriteriaId;
       obj.audiorecording = data.audiorecording;
       obj.filerequired = data.filerequired;
       obj.caption = data.caption;
@@ -659,21 +700,22 @@ export class MultiSelectComponent {
       obj.currentSelectedQtn = data.currentSelectedQtn;
       obj.condition = data.condition;
       obj.conditionMatchValue = data.conditionMatchValue;
-      
-     
-
+    
       if (data.type == 'date') {
         obj['minDate'] = data.minDate;
-        obj['maxDate'] = data.maxDate
+        obj['maxDate'] = data.maxDate;
+        obj['autoCollect'] = data.autoCollect
+        obj['dateFormat'] = data.dateFormat;
       } else if (data.type == 'slider') {
         obj['min'] = data.min;
         obj['max'] = data.max;
-      } else if(data.type == 'number') {
+      } else if (data.type == 'number') {
         obj['Weightage'] = data.Weightage;
       }
       var index = this.field.child.findIndex(el => el.field === this.currentItem.field);
 
       console.log(this.currentItem.field, "file", obj)
+      // this.field.child.splice(index, 1, obj)
       this.field.child.splice(index, 1, obj)
 
       // this.sendDataToParent.emit(JSON.stringify(obj));
@@ -687,6 +729,19 @@ export class MultiSelectComponent {
       // this.field.placeholder = this.placeholder;
       // this.field.options = this.options;
       // this.field.description = this.description;
+      // // this.field = data.field;
+
+      // this.field.validations.required = this.required;
+      // this.field.applicable = this.applicable;
+
+
+      // this.field.draftCriteriaId = this.draftCriteriaId
+      // this.field.audiorecording = this.audiorecording;
+      // this.field.filerequired = this.filerequired;
+      // this.field.caption = this.caption;
+      // this.field.filecount = this.filecount;
+      // this.field.fileType = this.fileType;
+      // this.field.prefix = this.prefix;
 
       // if (this.type == 'date') {
       //   this.field.validations.minDate = this.minDate;
@@ -695,9 +750,11 @@ export class MultiSelectComponent {
       // } else if (this.type == 'slider') {
       //   this.field.validations.min = this.min;
       //   this.field.validations.max = this.max;
+      // }else if(this.type == "number"){
+      //   this.field.weightage = this.Weightage;
       // }
 
-      // this.field.validations
+      // // this.field.validations
 
       // console.log(" this.field.validations.required", this.field.validations.required, "sdds", this.required);
       // this.field.validations.required = this.required;
@@ -709,7 +766,7 @@ export class MultiSelectComponent {
 
       // console.log(" this.field", this.field);
       this.openEditChild = false;
-      this.sendDataToParent.emit(this.field);
+      // this.sendDataToParent.emit(this.field);
     } else {
       this.openEditChild = false;
       // this.modalReference.close();
@@ -751,14 +808,10 @@ export class MultiSelectComponent {
     this.criteriaList = this.allData['criteriaList'];
 
 
-    console.log('this.field', this.field);
-    // for(let i = 0; i < this.allData['questionList']['questionList'][0].child.length; i++) {
-    this.filtereddata = this.field.child.filter(t => t.field !== loadEle.field);
-    // }
-    // this.filtereddata = this.field.child;
+    
 
 
-    console.log('multi select', this.allData);
+    console.log('multi select', loadEle);
     console.log('this.filtereddata', this.filtereddata)
     this.type = loadEle.type;
     this.placeholder = loadEle.placeholder;
@@ -774,22 +827,32 @@ export class MultiSelectComponent {
     this.filecount = loadEle.filecount;
     this.fileType = loadEle.fileType;
     this.prefix = loadEle.prefix;
-    this.draftCriteriaId = loadEle.draftCriteriaId;
+    this.draftCriteriaId = loadEle.draftCriteriaId ? loadEle.draftCriteriaId : this.criteriaList[0]._id;
     this.currentSelectedQtn = loadEle.currentSelectedQtn;
     this.conditionMatchValue = loadEle.conditionMatchValue;
     this.condition = loadEle.condition;
+
+
+    console.log("this.draftCriteriaId",this.draftCriteriaId);
+
+
     if (loadEle.type == "date") {
       this.minDate = loadEle.validations.minDate;
       this.maxDate = loadEle.validations.maxDate
       this.autoCollect = loadEle.validations.autoCollect;
+      this.dateFormat = loadEle.dateFormat;
     }
     else if (loadEle.type == "slider") {
       this.min = loadEle.validations.min;
       this.max = loadEle.validations.max;
-    } else if(loadEle.type == 'number'){
+    } else if (loadEle.type == 'number') {
       this.Weightage = loadEle.validations.Weightage;
     }
     this.openEditChild = this.openEditChild ? false : true;
+
+    console.log(this.criteriaList,'this.field', this.field);
+    this.filtereddata = this.field.child.filter(t => t.field !== loadEle.field);
+    
     this.cdr.detectChanges();
   }
 
@@ -801,6 +864,7 @@ export class MultiSelectComponent {
 
   // To Delete the element in the matrix
   deleteElement(item, index) {
+    console.log("deleteElement");
     this.field.deleteindex = index;
     this.field.isDelete = true;
     this.sendDataToParent.emit(this.field);
@@ -834,7 +898,8 @@ export class MultiSelectComponent {
       draftCriteriaId: item.draftCriteriaId,
       currentSelectedQtn: item.currentSelectedQtn,
       conditionMatchValue: item.conditionMatchValue,
-      condition: item.condition
+      condition: item.condition,
+      autoCollect:item.autoCollect
     }
 
     console.log("after copy field ----------", newobj, 'index', index);

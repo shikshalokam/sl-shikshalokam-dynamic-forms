@@ -173,7 +173,7 @@ span.cursor-pntr {
 
     <div class="col-sm-6">
     <mat-form-field>
-      <input matInput placeholder="prefix" formControlName="prefix" name="prefix">
+      <input matInput placeholder="Question Prefix" formControlName="prefix" name="prefix">
     </mat-form-field>
     <span class="mat-error custom-error" *ngIf="formValidate('prefix')">
     prefix required
@@ -220,7 +220,7 @@ span.cursor-pntr {
     </div>
 
  <div class="col-sm-6">
-  <label id="example-radio-group-label">Applicable ?</label>
+  <label id="example-radio-group-label">Not Applicable ?</label>
   <mat-radio-group aria-labelledby="radio-group-label" formControlName="applicable" class="radio-group">
     <mat-radio-button class="example-radio-button" [value]=true>
       Yes
@@ -237,7 +237,7 @@ span.cursor-pntr {
    <mat-radio-button class="example-radio-button" [value]=true>
      Yes
    </mat-radio-button>
-   <mat-radio-button class="example-radio-button" [value]=false>
+   <mat-radio-button class="example-radio-button" [checked]="false" [value]=false>
      No
    </mat-radio-button>
  </mat-radio-group>
@@ -255,17 +255,7 @@ span.cursor-pntr {
 </mat-radio-group>
 </div>
 
-<div class="col-sm-6">
-<label id="example-radio-group-label">File Required ?</label>
-<mat-radio-group aria-labelledby="radio-group-label" class="radio-group" formControlName="filerequired">
-  <mat-radio-button class="example-radio-button" value="true">
-    Yes
-  </mat-radio-button>
-  <mat-radio-button class="example-radio-button" checked value="false">
-    No
-  </mat-radio-button>
-</mat-radio-group>
-</div>
+
 
 <div class="col-sm-6" *ngIf="type=='date'">
 <label id="example-radio-group-label">is autoCollect ?</label>
@@ -273,20 +263,68 @@ span.cursor-pntr {
   <mat-radio-button class="example-radio-button" [value]=true>
     Yes
   </mat-radio-button>
+  <mat-radio-button class="example-radio-button" [checked]="false" [value]=false>
+    No
+  </mat-radio-button>
+</mat-radio-group>
+</div>
+
+<div class="col-sm-6">
+<label id="example-radio-group-label">File Required ?</label>
+<mat-radio-group aria-labelledby="radio-group-label" class="radio-group" formControlName="filerequired">
+  <mat-radio-button class="example-radio-button" [value]=true>
+    Yes
+  </mat-radio-button>
   <mat-radio-button class="example-radio-button" [value]=false>
     No
   </mat-radio-button>
 </mat-radio-group>
 </div>
 
+<div class="col-sm-12" *ngIf="editForm.value.filerequired">
+<div class="parent-child-block col-sm-12">
+  <div class="col-sm-6">
+    <mat-form-field>
+      <mat-label>Number of Files</mat-label>
+      <select matNativeControl formControlName="filecount" (change)="filesChange()">
+        <option *ngFor="let values of filecounts" [ngValue]="values"> {{ values.value }} </option>
+      </select>
+    </mat-form-field>
+  </div>
+
+  <div class="col-sm-6">
+    <mat-form-field>
+      <mat-label>File Format</mat-label>
+      <select matNativeControl formControlName="fileType">
+        <option *ngFor="let values of fileTypes" [ngValue]="values"> {{ values.filetype }} </option>
+      </select>
+    </mat-form-field>
+  </div>
+
+
+  <div class="col-sm-6">
+  <label id="example-radio-group-label">Caption ?</label>
+  <mat-radio-group aria-labelledby="radio-group-label" class="radio-group"  formControlName="caption">
+    <mat-radio-button class="example-radio-button" [value]=true>
+      Yes
+    </mat-radio-button>
+    <mat-radio-button class="example-radio-button" [value]=false>
+      No
+    </mat-radio-button>
+  </mat-radio-group>
+</div>
+
+</div>
+</div>
+
 
 <div class="col-sm-6" *ngIf="type=='matrix'">
 <label id="example-radio-group-label">Instance Identifier</label>
-<mat-radio-group aria-labelledby="radio-group-label"  formControlName="Instance"  class="radio-group">
+<mat-radio-group aria-labelledby="radio-group-label"  formControlName="instanceIdentifier"  class="radio-group">
   <mat-radio-button class="example-radio-button" [value]=true>
     Yes
   </mat-radio-button>
-  <mat-radio-button class="example-radio-button" [value]=false>
+  <mat-radio-button class="example-radio-button" [checked]="false" [value]=false>
     No
   </mat-radio-button>
 </mat-radio-group>
@@ -437,41 +475,7 @@ span.cursor-pntr {
     </div>
     </div>
 
-    <div class="col-sm-12" *ngIf="editForm.value.filerequired == 'true'">
-    <div class="parent-child-block col-sm-12">
-      <div class="col-sm-6">
-        <mat-form-field>
-          <mat-label>No of Files</mat-label>
-          <select matNativeControl formControlName="filecount" (change)="filesChange()">
-            <option *ngFor="let values of filecounts" [ngValue]="values"> {{ values.value }} </option>
-          </select>
-        </mat-form-field>
-      </div>
-  
-      <div class="col-sm-6">
-        <mat-form-field>
-          <mat-label>File Format</mat-label>
-          <select matNativeControl formControlName="fileType">
-            <option *ngFor="let values of fileTypes" [ngValue]="values"> {{ values.filetype }} </option>
-          </select>
-        </mat-form-field>
-      </div>
-  
-  
-      <div class="col-sm-6">
-      <label id="example-radio-group-label">Caption ?</label>
-      <mat-radio-group aria-labelledby="radio-group-label" class="radio-group"  formControlName="caption">
-        <mat-radio-button class="example-radio-button" [value]=true>
-          Yes
-        </mat-radio-button>
-        <mat-radio-button class="example-radio-button" [value]=false>
-          No
-        </mat-radio-button>
-      </mat-radio-group>
-    </div>
-
-    </div>
-  </div>
+   
 
   
     <div class="col-sm-12">
@@ -489,7 +493,7 @@ span.cursor-pntr {
   
       <span class="cursor-pntr" title = "delete" (click)="deleteElement(field)"><i class="fa fa-trash"></i> </span>
       <span class="cursor-pntr" title = "copy" (click)="copyElement(field)"><i class="fa fa-copy"></i></span>
-      <span class="cursor-pntr" title = "edit"><i class="fa fa-edit" (click)="loadFormElement(field)"></i ></span>
+      <span class="cursor-pntr" title = "edit"><i class="fa fa-edit" (click)="loadFormElement(field,field.isOpen?'close':'open')"></i ></span>
   
     </div>
     <div class="col-md-12" [ngSwitch]="field.type">
@@ -576,7 +580,7 @@ export class FieldBuilderComponent implements OnInit, AfterViewChecked {
   required: any;
   applicable: any;
   audiorecording: any;
-  Instance: any;
+  instanceIdentifier: any;
   autoCollect: any;
   openEdit: boolean = false;
   _id: any;
@@ -831,7 +835,7 @@ export class FieldBuilderComponent implements OnInit, AfterViewChecked {
 
     this.listOfRelation = this.addcondition(this.listOfRelation, condiObj);
 
-    
+
 
 
     // }
@@ -846,11 +850,11 @@ export class FieldBuilderComponent implements OnInit, AfterViewChecked {
   }
 
   // To check the whole object
-   addcondition(arr, obj) {
+  addcondition(arr, obj) {
     debugger
-    const found = arr.some(el => el.operator === obj.operator && el.value === obj.value && el.field ===obj.field);
+    const found = arr.some(el => el.operator === obj.operator && el.value === obj.value && el.field === obj.field);
     if (!found) {
-    arr.push(obj);
+      arr.push(obj);
     } else {
       alert('already exists')
     }
@@ -888,7 +892,7 @@ export class FieldBuilderComponent implements OnInit, AfterViewChecked {
      * updateOpenPopup() is used to update the isOpen status to false
      */
     this.dynamicServe.updateOpenPopup(item);
-    console.log(this.openEditPopUp, "item.validations.required", this.field.isOpen);
+    console.log(arg,"arg",this.openEditPopUp, "item.validations.required", this.field.isOpen);
     if (this.openEditPopUp == false && this.field.isOpen) {
       this.openEditPopUp = true;
     } else if (this.openEditPopUp == false && this.field.isOpen == false) {
@@ -898,9 +902,22 @@ export class FieldBuilderComponent implements OnInit, AfterViewChecked {
       if (arg && arg == 'onload') {
         this.openEditPopUp = true;
         this.field.isOpen = true;
-      } else {
+      } else if (arg && arg == 'close') { 
         this.openEditPopUp = false;
         this.field.isOpen = false;
+
+      }else  if (arg && arg == 'open'){
+        this.openEditPopUp = true;
+        this.field.isOpen = true;
+      }else{
+        // if(this.openEditPopUp){
+        //   this.openEditPopUp = true;
+        //   this.field.isOpen = true;
+        // }else{
+          this.openEditPopUp = false;
+         this.field.isOpen = false;
+        // }
+        
       }
     } else if (this.field.isOpen == false) {
       this.field.isOpen = true;
@@ -937,9 +954,9 @@ export class FieldBuilderComponent implements OnInit, AfterViewChecked {
     this.options = item.options;
     this.draftCriteriaId = item.draftCriteriaId;
     this.required = item.validations.required;
-    this.applicable = item.validations.required;
-    this.audiorecording = item.validations.required;
-    this.Instance = item.validations.required;
+    this.applicable = item.applicable;
+    this.audiorecording = item.audiorecording;
+    this.instanceIdentifier = item.required;
     this.currentField = item.field;
     this.description = item.description;
     this.weightage = item.weightage;
@@ -949,6 +966,7 @@ export class FieldBuilderComponent implements OnInit, AfterViewChecked {
     this.fileType = item.fileType;
     this.caption = item.caption;
     this.remarks = item.remarks;
+    this.filerequired = item.filerequired;
 
     console.log("formBuilder", item);
     let formControl = {
@@ -956,19 +974,19 @@ export class FieldBuilderComponent implements OnInit, AfterViewChecked {
       placeholder: [item.placeholder, [Validators.required]],
       description: [item.description, [Validators.required]],
       pageNumber: [item.pageNumber, [Validators.required]],
-      required: [false, [Validators.required]],
-      weightage: [item.weightage,[Validators.required]],
+      required: [item.required, [Validators.required]],
+      weightage: [item.weightage, [Validators.required]],
       prefix: [item.prefix, [Validators.required]],
-      applicable: [false],
+      applicable: [item.applicable],
       sectionHeader: [item.sectionHeader],
-      audiorecording: [false],
-      Instance: [false],
+      audiorecording: [item.audiorecording],
+      instanceIdentifier: [item.instanceIdentifier],
       draftCriteriaId: [item.draftCriteriaId, [Validators.required]],
       newOptionLabel: [null],
       labelHint: [null],
       maxDate: [null],
       minDate: [null],
-      dateformat:[null],
+      dateformat: [null],
       max: [null],
       min: [null],
       autoCollect: [false],
@@ -980,8 +998,8 @@ export class FieldBuilderComponent implements OnInit, AfterViewChecked {
       condition: [null],
       currentSelectedQtn: [null],
       selectedOption: [null],
-      filerequired:[],
-      
+      filerequired: [item.filerequired],
+
     }
 
     // this.editForm = this.builder.group();
@@ -990,7 +1008,7 @@ export class FieldBuilderComponent implements OnInit, AfterViewChecked {
       this.listOfRelation = item.validations.relation;
     }
 
-    if(item.type=="matrix"){
+    if (item.type == "matrix") {
       formControl.sectionHeader = [item.sectionHeader];
     }
     if (item.type == "date") {
@@ -1011,10 +1029,13 @@ export class FieldBuilderComponent implements OnInit, AfterViewChecked {
       formControl.max = [item.validations.max, [Validators.required]];
 
     }
+    this.prefix = this.field.prefix;
     this.required = this.field.validations.required;
-    this.applicable = this.field.validations.applicable;
-    this.audiorecording = this.field.validations.audiorecording;
-    this.Instance = this.field.validations.Instance;
+    this.applicable = this.field.applicable;
+    this.audiorecording = this.field.audiorecording;
+    this.instanceIdentifier = this.field.instanceIdentifier;
+
+    this.filerequired = this.field.filerequired;
     console.log(this.openEditPopUp, "item.validations.required", this.field.isOpen);
 
     // this.editForm.formBuilder()
@@ -1053,70 +1074,46 @@ export class FieldBuilderComponent implements OnInit, AfterViewChecked {
       if (saveData) {
         this.openEdit = false;
         this.field.isOpen = false;
-      this.label = this.editForm.get('label').value;
-      // let obj = {
-      //   label: this.editForm.get('label').value,
-      //   type: this.type,
-      //   placeholder: this.placeholder,
-      //   options: this.options,
-      //   validations: this.validations,
-      //   field: this.field,
-      //   _id: this._id,
-      //   description: this.description,
-      //   pageNumber: this.pageNumber,
-      //   draftCriteriaId: this.draftCriteriaId,
-      // }
-      // if (this.type == 'date') {
-      //   obj['minDate'] = this.minDate;
-      //   obj['maxDate'] = this.maxDate
-      // } else if (this.type == 'slider') {
-      //   obj['min'] = this.min;
-      //   obj['max'] = this.max;
-      // }
-      // this.field.label = this.label;
-
+        this.label = this.editForm.get('label').value;
         this.field.label = this.editForm.get('label').value;
         this.field.type = this.type;
+        this.field.placeholder = this.editForm.get('placeholder').value;
+        this.field.description = this.editForm.get('description').value;
+        this.field.pageNumber = this.editForm.get('pageNumber').value;
+        this.field.draftCriteriaId = this.editForm.get('draftCriteriaId').value;
+        this.field.filerequired = this.editForm.get('filerequired').value;
+        this.field.filecount = this.editForm.get("filecount").value;
+        this.field.fileType = this.editForm.get('fileType').value;
+        this.field.caption = this.editForm.get('caption').value;
+        this.field.remarks = this.editForm.get('remarks').value;
+        this.field.audiorecording = this.editForm.get("audiorecording").value;
+        this.field.required = this.editForm.get("required").value;
+        this.field.prefix = this.editForm.get("prefix").value;
+        this.field.applicable = this.editForm.get("applicable").value;
 
-
-        // currentSelectedQtn: [null],
-        // selectedOption: [null]
-
-      this.field.placeholder = this.editForm.get('placeholder').value;
-      this.field.description = this.editForm.get('description').value;
-      this.field.pageNumber = this.editForm.get('pageNumber').value;
-      this.field.draftCriteriaId = this.editForm.get('draftCriteriaId').value;
-      this.field.filerequired = this.editForm.get('filerequired').value;
-      this.field.filecount = this.editForm.get("filecount").value;
-      this.field.fileType = this.editForm.get('fileType').value;
-      this.field.fileType = this.editForm.get('fileType').value;
-      this.field.caption = this.editForm.get('caption').value;
-      this.field.remarks = this.editForm.get('remarks').value;
-
-
-      // this.field.field = this.field.field;
-      if(this.type == 'matrix'){
-        this.field.sectionHeader = this.editForm.get('sectionHeader').value;
-      }else if (this.type == 'date') {
-        this.field.validations.minDate = this.editForm.get('minDate').value;
+        if (this.type == 'matrix') {
+          this.field.instanceIdentifier = this.editForm.get("instanceIdentifier").value;
+          this.field.sectionHeader = this.editForm.get('sectionHeader').value;
+        } else if (this.type == 'date') {
+          this.field.validations.minDate = this.editForm.get('minDate').value;
           this.field.validations.maxDate = this.editForm.get('maxDate').value;
           this.field.validations.autoCollect = this.editForm.get('autoCollect').value;
           this.field.validations.dateformat = this.editForm.get('dateformat').value;
-      } else if (this.type == 'slider') {
-        this.field.validations.min = this.editForm.get('max').value;
-        this.field.validations.max = this.editForm.get('min').value;
-      }else if(this.type == 'number'){
-        this.field.weightage = this.editForm.get('weightage').value;
-        this.field.validations.weightage = this.editForm.get('weightage').value;
-      }
-      if(this.type=="radio" || this.type=="checkbox" || this.type=="dropdown"){
-        this.field.options = this.editForm.get('options').value;
-      }
-      if (this.listOfRelation) {
-        this.field.validations.relation = this.listOfRelation;
-      }
-      this.field.validations.required = this.editForm.get('required').value;
-        
+        } else if (this.type == 'slider') {
+          this.field.validations.min = this.editForm.get('max').value;
+          this.field.validations.max = this.editForm.get('min').value;
+        } else if (this.type == 'number') {
+          this.field.weightage = this.editForm.get('weightage').value;
+          this.field.validations.weightage = this.editForm.get('weightage').value;
+        }
+        if (this.type == "radio" || this.type == "checkbox" || this.type == "dropdown") {
+          this.field.options = this.editForm.get('options').value;
+        }
+        if (this.listOfRelation) {
+          this.field.validations.relation = this.listOfRelation;
+        }
+        this.field.validations.required = this.editForm.get('required').value;
+
         let actionObject = {
           action: "save",
           data: this.field
@@ -1277,7 +1274,7 @@ export class FieldBuilderComponent implements OnInit, AfterViewChecked {
       condition: [null],
       currentSelectedQtn: [null],
       selectedOption: [null],
-      sectionHeader:[null]
+      sectionHeader: [null]
     });
   }
 

@@ -316,6 +316,8 @@ export class DynamicFormBuilderComponent implements OnInit {
 
   getToolObj(ele, len) {
 
+
+    console.log("getToolObj",ele);
     let obj = {
 
     }
@@ -325,7 +327,7 @@ export class DynamicFormBuilderComponent implements OnInit {
         "field": len + "question",
         "type": "text",
         "label": "Question",
-        "placeholder": "",
+        "placeholder": "new one",
         "description": "",
         "validations": {
           "required": true,
@@ -459,6 +461,7 @@ export class DynamicFormBuilderComponent implements OnInit {
           "maxLength": ""
         }
       }
+      obj['instanceIdentifier'] = false;
     } else if (ele == "slider") {
       obj = {
         field: len + "question",
@@ -489,6 +492,15 @@ export class DynamicFormBuilderComponent implements OnInit {
       }
     });
     obj['isOpen'] = true;
+    obj['prefix'] ="";
+    obj['applicable'] =true;
+    obj['sectionHeader'] = "";
+    obj['audiorecording'] = false;
+     obj['filecount'] = 1;
+    obj['fileType'] = "";
+    obj['caption'] = false;
+    obj['remarks'] =false;
+    obj['filerequired'] = true;
     return obj;
   }
 
