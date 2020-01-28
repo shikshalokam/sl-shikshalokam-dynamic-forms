@@ -1052,10 +1052,17 @@ export class FieldBuilderComponent implements OnInit, AfterViewChecked {
   filesChange() {
 
   }
+
+  openSnackBar(message: string, action: string) {
+    this._snackBar.open(message, action, {
+      duration: 2000,
+    });
+  }
+
   saveEdit() {
   }
   closeModel(action) {
-
+    this.openSnackBar("data updated Succesfully", "Updated");
     if (action == "save") {
       let saveData = false;
       if (this.editForm.valid) {
@@ -1105,8 +1112,7 @@ export class FieldBuilderComponent implements OnInit, AfterViewChecked {
         } else if (this.type == 'number') {
           this.field.weightage = this.editForm.get('weightage').value;
           this.field.validations.weightage = this.editForm.get('weightage').value;
-        }
-        if (this.type == "radio" || this.type == "checkbox" || this.type == "dropdown") {
+        } if (this.type == "radio" || this.type == "checkbox" || this.type == "dropdown") {
           this.field.options = this.editForm.get('options').value;
         }
         if (this.listOfRelation) {
