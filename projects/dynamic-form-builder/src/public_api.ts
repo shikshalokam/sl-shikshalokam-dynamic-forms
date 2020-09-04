@@ -3,7 +3,7 @@
  */
 
 export * from './lib/dynamic-form-builder.service';
-// export * from './lib/dynamic-form-builder.component';
+export * from './lib/dynamic-form-builder.component';
 export * from './lib/dynamic-form-builder.module';
 // export * from './lib/d'
 // export * from './lib/form.component';
