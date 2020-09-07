@@ -177,5 +177,8 @@
       }
     }
   },
-  "defaultProject": "angular-dynamic-form-builder"
+  "defaultProject": "angular-dynamic-form-builder",
+  "cli": {
+    "analytics": false
+  }
 }

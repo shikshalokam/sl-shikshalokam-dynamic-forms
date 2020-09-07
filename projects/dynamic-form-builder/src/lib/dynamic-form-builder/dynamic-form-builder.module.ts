@@ -13,22 +13,18 @@ import { CheckBoxComponent } from './atoms/checkbox';
 import { RadioComponent } from './atoms/radio';
 import { DateComponent } from './atoms/date';
 import { SliderComponent } from './atoms/slider';
-
-// import {MatIconModule} from '@angular/material/icon';
+import {MatIconModule} from '@angular/material/icon';
 // import { NgDragDropModule } from 'ng-drag-drop';
 // import { DragAndDropModule } from 'angular-draggable-droppable';
-import { AngularFontAwesomeModule } from 'angular-font-awesome';
-import  {
-  MatButtonModule,
-  MatRadioModule,
-  MatDatepickerModule,
-  MatFormFieldModule,
-  MatInputModule ,
-  MatSliderModule
-} from '@angular/material';
-import { DragDropModule } from "@angular/cdk/drag-drop";
+import { MatButtonModule } from '@angular/material/button';
+import { MatRadioModule } from '@angular/material/radio';
+import { MatDatepickerModule } from '@angular/material/datepicker';
+import { MatFormFieldModule } from '@angular/material/form-field';
+import { MatInputModule } from '@angular/material/input';
+import { MatSliderModule } from '@angular/material/slider';
+import { DragDropModule } from '@angular/cdk/drag-drop';
+// import { AngularFontAwesomeModule } from 'angular-font-awesome';
 
-// import {  } from '@angular/cdk/'
 
 
 @NgModule({
@@ -42,8 +38,8 @@ import { DragDropModule } from "@angular/cdk/drag-drop";
     MatFormFieldModule,
     MatInputModule,
     MatSliderModule,
-    // MatIconModule
-    AngularFontAwesomeModule,
+    MatIconModule,
+    // AngularFontAwesomeModule,
     DragDropModule
   ],
   declarations: [

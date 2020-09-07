@@ -6,3 +6,24 @@
   left: 94%;
   top: 25px;cursor: pointer;z-index: 100;
 }
+
+.mat-slider-horizontal {
+  min-width: 80% !important;
+}
+.example-radio-group {
+  display: flex;
+  flex-direction: block;
+  margin: 15px 0;
+}
+
+.example-radio-button {
+  margin: 5px;
+}
+.edit-icon {
+  position: relative;
+width: 36px;
+max-width: 57px;
+right: 0px;
+left: 94%;
+top: 25px;cursor: pointer;z-index: 100;
+}
